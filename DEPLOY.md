@@ -18,6 +18,30 @@
 
 ---
 
+## Варіант A — локальний прод (без акаунтів, для швидкої перевірки)
+
+Весь стек у прод-режимі через Docker на localhost. Фронти обслуговує nginx і сам проксить
+`/api`, `/uploads`, `/socket.io` на бекенд — тому крос-домену немає, `VITE_API_URL` не потрібен.
+
+```bash
+docker compose --profile full up -d --build     # збірка + запуск усіх 6 сервісів
+docker compose exec backend pnpm seed:prod       # наповнити демо-даними (один раз)
+```
+
+| Сервіс   | URL                      |
+|----------|--------------------------|
+| Магазин  | http://localhost:5173    |
+| Адмінка  | http://localhost:5174    |
+| CRM      | http://localhost:5175    |
+| API/docs | http://localhost:4000/api/docs |
+
+Зупинити: `docker compose --profile full down` (додайте `-v`, щоб стерти й дані БД).
+Міграції проганяються автоматично при старті бекенда.
+
+---
+
+## Варіант B — хмара (Render + Vercel)
+
 ## 0. Репозиторій на GitHub
 
 ```bash
