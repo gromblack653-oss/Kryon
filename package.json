@@ -1,0 +1,24 @@
+{
+  "name": "shopcore",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ShopCore — fullstack e-commerce (React + Node + PostgreSQL) monorepo",
+  "scripts": {
+    "dev": "pnpm -r --parallel run dev",
+    "dev:backend": "pnpm --filter shopcore-backend run dev",
+    "dev:frontend": "pnpm --filter shopcore-frontend run dev",
+    "dev:admin": "pnpm --filter shopcore-admin run dev",
+    "dev:crm": "pnpm --filter shopcore-crm run dev",
+    "build": "pnpm -r run build",
+    "test": "pnpm --filter shopcore-backend run test",
+    "migrate": "pnpm --filter shopcore-backend run migrate up",
+    "seed": "pnpm --filter shopcore-backend run seed"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  }
+}

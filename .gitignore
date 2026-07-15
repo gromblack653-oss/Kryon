@@ -1,0 +1,17 @@
+node_modules/
+dist/
+build/
+coverage/
+.env
+.env.local
+.env.production.local
+*.log
+.DS_Store
+
+# Завантаження: ігноруємо рантайм-файли, ОКРІМ сідованих фото товарів —
+# вони частина демо-даних і мають потрапити в репозиторій/деплой.
+backend/uploads/*
+!backend/uploads/products/
+
+# Vercel / службове
+.vercel/

@@ -1,0 +1,60 @@
+# ShopCore API — Render Blueprint.
+# Піднімає бекенд (довгоживучий Node-сервер із Socket.IO) + PostgreSQL + Redis.
+# Фронтенди хостяться окремо на Vercel (див. DEPLOY.md).
+#
+# Деплой: Render Dashboard → New → Blueprint → підключити цей репозиторій.
+
+databases:
+  - name: shopcore-db
+    plan: free
+    databaseName: shopcore
+    user: shopcore
+
+services:
+  # --- Redis (кеш каталогу + refresh-токени) ---
+  - type: redis
+    name: shopcore-redis
+    plan: free
+    ipAllowList: [] # порожній = лише внутрішні підключення з нашого сервісу
+
+  # --- Бекенд ---
+  - type: web
+    name: shopcore-api
+    runtime: node
+    plan: free
+    # Монорепо: ставимо й збираємо лише бекенд (фронти сюди не тягнемо).
+    buildCommand: corepack enable && pnpm install --filter shopcore-backend... --frozen-lockfile && pnpm --filter shopcore-backend build
+    # Міграції ідемпотентні — безпечно ганяти при кожному старті; далі — сервер.
+    startCommand: pnpm --filter shopcore-backend migrate:prod && pnpm --filter shopcore-backend start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Керована БД вимагає TLS — вмикаємо SSL у пулі pg.
+      - key: PGSSL
+        value: "true"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: shopcore-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: shopcore-redis
+          property: connectionString
+      # Секрети генеруються Render автоматично.
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: PAYMENT_WEBHOOK_SECRET
+        generateValue: true
+      - key: TELEPHONY_WEBHOOK_SECRET
+        generateValue: true
+      # Заповнити вручну після деплою фронтів на Vercel (через кому):
+      #   https://shopcore-shop.vercel.app,https://shopcore-admin.vercel.app,https://shopcore-crm.vercel.app
+      - key: CORS_ORIGIN
+        sync: false
+      # Куди шлюз повертає покупця після оплати (URL магазину на Vercel):
+      - key: PAYMENT_RETURN_URL
+        sync: false

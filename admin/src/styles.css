@@ -1,0 +1,182 @@
+/**
+ * Адмінка ShopCore.
+ * Токени, кнопки, поля, таблиці, пігулки й модалки — зі спільної дизайн-системи.
+ * Тут лишається тільки те, що властиве саме адмінці.
+ */
+@import '@shopcore/theme/tokens.css';
+
+/* ---- Каркас ---- */
+.admin-shell { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; }
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  border-right: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent);
+  backdrop-filter: blur(8px);
+}
+.sidebar-brand { padding: 20px 18px; border-bottom: 1px solid var(--border); }
+.sidebar-nav { display: flex; flex-direction: column; gap: 4px; padding: 14px 12px; flex: 1; }
+
+.sidebar-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 14px;
+  border-top: 1px solid var(--border);
+}
+.who { display: flex; flex-direction: column; overflow: hidden; }
+.who-name { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.who-role { font-size: 11px; color: var(--faint); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.content { padding: 28px 32px; max-width: 1280px; min-width: 0; }
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+label input, label select, label textarea { margin-top: 6px; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ---- Плитки статистики ---- */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.stat-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: relative;
+  overflow: hidden;
+}
+/* Тонка градієнтна смуга зверху — плитки читаються як «живі» показники. */
+.stat-tile::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: var(--grad);
+  opacity: 0.7;
+}
+.stat-label { color: var(--muted); font-size: 13px; }
+.stat-value { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; }
+.stat-sub { font-size: 12px; color: var(--faint); }
+.stat-value.accent {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.stat-value.success { color: var(--success); }
+.stat-value.danger { color: var(--danger); }
+
+.dash-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
+
+/* ---- Таблиці ---- */
+.table-wrap { overflow-x: auto; }
+
+/* ---- Пігулки статусів замовлення ---- */
+.pill-pending { background: rgba(251, 191, 36, 0.12); color: #ffe7ab; border-color: transparent; }
+.pill-paid { background: rgba(96, 165, 250, 0.12); color: #bfdbfe; border-color: transparent; }
+.pill-shipped { background: rgba(139, 92, 246, 0.16); color: #ddd6fe; border-color: transparent; }
+.pill-delivered { background: rgba(52, 211, 153, 0.12); color: #a7f3d0; border-color: transparent; }
+.pill-cancelled { background: rgba(251, 113, 133, 0.12); color: #ffc9d2; border-color: transparent; }
+
+/* ---- Зображення товарів ---- */
+.media-img { width: 100%; height: 100%; object-fit: contain; display: block; background: #fff; }
+.media-ph {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px;
+  text-align: center;
+  color: #fff;
+}
+.media-ph-brand { font-size: 11px; font-weight: 800; letter-spacing: 0.08em; }
+.media-ph-model { font-size: 14px; font-weight: 700; }
+.media-ph.compact .media-ph-brand { font-size: 9px; }
+.thumb {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--surface-hover);
+  flex-shrink: 0;
+}
+
+/* ---- Панель інструментів ---- */
+.toolbar { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.toolbar input, .toolbar select { width: auto; }
+.toolbar .search { flex: 1; min-width: 200px; }
+
+/* ---- Вхід ---- */
+.login-wrap { min-height: 100vh; display: grid; place-items: center; padding: 20px; }
+.login-card { width: 100%; max-width: 400px; }
+.login-card h1 { display: flex; align-items: center; gap: 8px; font-size: 20px; }
+.hint { margin-top: 14px; font-size: 12px; color: var(--faint); }
+.hint code {
+  font-family: var(--mono);
+  color: var(--cyan);
+  background: var(--grad-soft);
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+
+/* ---- Дрібниці ---- */
+.pagination { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 22px; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.row-actions { display: flex; gap: 6px; }
+.back-link { color: var(--muted); display: inline-block; margin-bottom: 14px; }
+.back-link:hover { color: var(--cyan); }
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.summary-row:last-child { border-bottom: 0; }
+
+@media (max-width: 900px) {
+  .admin-shell { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; }
+  .sidebar-nav { flex-direction: row; flex-wrap: wrap; }
+  .dash-grid { grid-template-columns: 1fr; }
+}
+
+/* ---- Графік доходу ---- */
+.chart-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.chart {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  align-items: end;
+  height: 170px;
+  margin-top: 14px;
+}
+.chart-col { display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; }
+.chart-bar-wrap { flex: 1; width: 100%; display: flex; align-items: flex-end; }
+.chart-bar {
+  width: 100%;
+  border-radius: 6px 6px 2px 2px;
+  background: var(--grad);
+  opacity: 0.85;
+  transition: opacity 0.15s, box-shadow 0.15s;
+}
+.chart-col:hover .chart-bar { opacity: 1; box-shadow: var(--glow); }
+.chart-x { font-size: 11px; color: var(--faint); font-family: var(--mono); }
