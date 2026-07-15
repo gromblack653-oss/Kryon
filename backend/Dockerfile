@@ -1,21 +1,40 @@
+# Бекенд ShopCore. Контекст збірки — КОРІНЬ репозиторію (pnpm-воркспейс).
+# docker compose будує з context: . та dockerfile: backend/Dockerfile
+
 # ---- build ----
-FROM node:20-alpine AS build
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
+FROM node:22-alpine AS build
+RUN corepack enable
+WORKDIR /repo
+# Спершу лише маніфести — щоб pnpm бачив увесь граф воркспейсу й кешував install.
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY backend/package.json backend/
+COPY frontend/package.json frontend/
+COPY admin/package.json admin/
+COPY crm/package.json crm/
+COPY packages/theme/package.json packages/theme/
+# Ставимо залежності лише бекенду (фронти сюди не тягнемо).
+RUN pnpm install --filter shopcore-backend... --frozen-lockfile
+COPY backend ./backend
+RUN pnpm --filter shopcore-backend build
 
 # ---- runtime ----
-FROM node:20-alpine
-WORKDIR /app
+FROM node:22-alpine AS runtime
+RUN corepack enable
+WORKDIR /repo
 ENV NODE_ENV=production
-COPY package*.json ./
-RUN npm install --omit=dev
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/src/db/migrations ./src/db/migrations
-COPY --from=build /app/src/assets ./src/assets
-COPY tsconfig.json ./
-RUN mkdir -p uploads
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY backend/package.json backend/
+COPY frontend/package.json frontend/
+COPY admin/package.json admin/
+COPY crm/package.json crm/
+COPY packages/theme/package.json packages/theme/
+# Лише прод-залежності (node-pg-migrate у dependencies — потрібен для міграцій).
+RUN pnpm install --filter shopcore-backend... --prod --frozen-lockfile
+COPY --from=build /repo/backend/dist ./backend/dist
+# Кириличний шрифт для PDF-накладних і сідовані фото товарів.
+COPY backend/src/assets ./backend/src/assets
+COPY backend/uploads ./backend/uploads
+WORKDIR /repo/backend
 EXPOSE 4000
-CMD ["node", "dist/server.js"]
+# Міграції ідемпотентні — безпечно при кожному старті; далі — сервер.
+CMD ["sh", "-c", "pnpm migrate:prod && node dist/server.js"]

@@ -32,7 +32,9 @@ services:
     # Локальна розробка йде через `pnpm run dev`, тож порт має лишатися вільним.
     # Весь стек у Docker: `docker compose --profile full up -d`.
     profiles: [full]
-    build: ./backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     container_name: shopcore-backend
     depends_on:
       postgres:
@@ -50,14 +52,16 @@ services:
     ports:
       - "4000:4000"
     volumes:
-      - uploads:/app/uploads
+      - uploads:/repo/backend/uploads
 
   frontend:
     # Профіль full: цей сервіс НЕ стартує при звичайному `docker compose up -d`.
     # Локальна розробка йде через `pnpm run dev`, тож порт має лишатися вільним.
     # Весь стек у Docker: `docker compose --profile full up -d`.
     profiles: [full]
-    build: ./frontend
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
     container_name: shopcore-frontend
     depends_on:
       - backend
@@ -69,7 +73,9 @@ services:
     # Локальна розробка йде через `pnpm run dev`, тож порт має лишатися вільним.
     # Весь стек у Docker: `docker compose --profile full up -d`.
     profiles: [full]
-    build: ./admin
+    build:
+      context: .
+      dockerfile: admin/Dockerfile
     container_name: shopcore-admin
     depends_on:
       - backend
@@ -81,7 +87,9 @@ services:
     # Локальна розробка йде через `pnpm run dev`, тож порт має лишатися вільним.
     # Весь стек у Docker: `docker compose --profile full up -d`.
     profiles: [full]
-    build: ./crm
+    build:
+      context: .
+      dockerfile: crm/Dockerfile
     container_name: shopcore-crm
     depends_on:
       - backend

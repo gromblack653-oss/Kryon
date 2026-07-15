@@ -1,0 +1,11 @@
+**/node_modules
+**/dist
+.git
+**/*.log
+**/.env
+**/.env.local
+.vercel
+# рантайм-завантаження не потрібні в образі (крім сідованих фото товарів)
+backend/uploads/*.wav
+backend/uploads/*.mp3
+backend/uploads/*.png
