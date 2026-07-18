@@ -1,7 +1,7 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ordersApi, paymentsApi } from '../api/endpoints';
-import { formatPrice, formatDate, orderStatusLabel, paymentStatusLabel } from '../lib/format';
+import { formatPrice, formatDate, orderStatusLabel, paymentStatusLabel } from '@shopcore/shared';
 import { useAuthStore } from '../store/authStore';
 import type { OrderStatus, DeliveryMethod, PaymentMethod } from '../types';
 

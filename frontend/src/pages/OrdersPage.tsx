@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ordersApi } from '../api/endpoints';
-import { formatPrice, formatDate, orderStatusLabel } from '../lib/format';
+import { formatPrice, formatDate, orderStatusLabel } from '@shopcore/shared';
 import { useAuthStore } from '../store/authStore';
 
 export function OrdersPage() {

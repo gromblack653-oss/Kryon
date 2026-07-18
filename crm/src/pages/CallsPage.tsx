@@ -5,7 +5,7 @@ import { crmApi } from '../api/endpoints';
 import { CallButton } from '../components/CallButton';
 import { CallRecording } from '../components/CallRecording';
 import { Avatar } from '../components/Avatar';
-import { CALL_OUTCOME_LABELS, formatDate, formatDuration } from '../lib/format';
+import { CALL_OUTCOME_LABELS, formatDate, formatDuration } from '@shopcore/shared';
 import type { CallSort } from '../types';
 
 const SORTS: Array<{ value: CallSort; label: string }> = [

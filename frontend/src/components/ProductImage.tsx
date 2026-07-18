@@ -1,6 +1,6 @@
 import type { Product } from '../types';
 import { brandLogos } from '../lib/brandLogos';
-import { assetUrl } from '../lib/assetUrl';
+import { assetUrl } from '@shopcore/shared';
 
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
 

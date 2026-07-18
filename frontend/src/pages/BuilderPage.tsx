@@ -2,8 +2,8 @@ import { useMemo, useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { builderApi, cartApi } from '../api/endpoints';
-import { formatPrice } from '../lib/format';
-import { assetUrl } from '../lib/assetUrl';
+import { formatPrice } from '@shopcore/shared';
+import { assetUrl } from '@shopcore/shared';
 import { useAuthStore } from '../store/authStore';
 import type { BuildPart, PartType } from '../types';
 

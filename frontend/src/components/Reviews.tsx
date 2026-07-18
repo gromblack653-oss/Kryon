@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { reviewsApi } from '../api/endpoints';
 import { useAuthStore } from '../store/authStore';
-import { formatDate } from '../lib/format';
+import { formatDate } from '@shopcore/shared';
 import { Stars } from './Stars';
 
 export function Reviews({ productId }: { productId: string }) {

@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { productsApi, categoriesApi, ProductQuery } from '../api/endpoints';
-import { formatPrice } from '../lib/format';
+import { formatPrice } from '@shopcore/shared';
 import { apiError } from '../api/client';
 import { ProductImage } from '../components/ProductImage';
 import type { Product } from '../types';

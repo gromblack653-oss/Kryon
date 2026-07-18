@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { cartApi } from '../api/endpoints';
-import { formatPrice } from '../lib/format';
+import { formatPrice } from '@shopcore/shared';
 import { ProductImage } from '../components/ProductImage';
 
 export function CartPage() {

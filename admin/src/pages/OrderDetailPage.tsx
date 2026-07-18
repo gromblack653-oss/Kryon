@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ordersApi } from '../api/endpoints';
 import { downloadFile } from '../lib/download';
-import { formatPrice, formatDate, orderStatusLabel, paymentStatusLabel } from '../lib/format';
+import { formatPrice, formatDate, orderStatusLabel, paymentStatusLabel } from '@shopcore/shared';
 import { apiError } from '../api/client';
 import type { OrderStatus, PaymentMethod, DeliveryMethod } from '../types';
 

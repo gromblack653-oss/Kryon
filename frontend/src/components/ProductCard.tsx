@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Product } from '../types';
-import { formatPrice } from '../lib/format';
+import { formatPrice } from '@shopcore/shared';
 import { cartApi } from '../api/endpoints';
 import { useAuthStore } from '../store/authStore';
 import { useCompareStore } from '../store/compareStore';

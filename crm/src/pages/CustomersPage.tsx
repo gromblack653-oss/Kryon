@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { crmApi } from '../api/endpoints';
-import { formatPrice, formatDateShort } from '../lib/format';
+import { formatPrice, formatDateShort } from '@shopcore/shared';
 import { Avatar } from '../components/Avatar';
 import { CallButton } from '../components/CallButton';
 

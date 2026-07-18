@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { ordersApi } from '../api/endpoints';
 import { downloadFile } from '../lib/download';
-import { formatPrice, formatDate, orderStatusLabel } from '../lib/format';
+import { formatPrice, formatDate, orderStatusLabel } from '@shopcore/shared';
 
 export function OrdersPage() {
   const [page, setPage] = useState(1);

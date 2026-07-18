@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { productsApi, cartApi } from '../api/endpoints';
-import { formatPrice } from '../lib/format';
+import { formatPrice } from '@shopcore/shared';
 import { useAuthStore } from '../store/authStore';
 import { useWishlist } from '../hooks/useWishlist';
 import { ProductImage } from '../components/ProductImage';
-import { assetUrl } from '../lib/assetUrl';
+import { assetUrl } from '@shopcore/shared';
 import { Stars } from '../components/Stars';
 import { Reviews } from '../components/Reviews';
 

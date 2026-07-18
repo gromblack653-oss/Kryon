@@ -35,6 +35,9 @@ importers:
 
   admin:
     dependencies:
+      '@shopcore/shared':
+        specifier: workspace:*
+        version: link:../packages/shared
       '@shopcore/theme':
         specifier: workspace:*
         version: link:../packages/theme
@@ -193,6 +196,9 @@ importers:
 
   crm:
     dependencies:
+      '@shopcore/shared':
+        specifier: workspace:*
+        version: link:../packages/shared
       '@shopcore/theme':
         specifier: workspace:*
         version: link:../packages/theme
@@ -236,6 +242,9 @@ importers:
 
   frontend:
     dependencies:
+      '@shopcore/shared':
+        specifier: workspace:*
+        version: link:../packages/shared
       '@shopcore/theme':
         specifier: workspace:*
         version: link:../packages/theme
@@ -279,6 +288,8 @@ importers:
       vite:
         specifier: ^5.3.3
         version: 5.4.21(@types/node@20.19.43)
+
+  packages/shared: {}
 
   packages/theme:
     devDependencies:

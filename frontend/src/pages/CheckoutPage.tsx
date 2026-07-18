@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { cartApi, ordersApi, deliveryApi, paymentsApi } from '../api/endpoints';
-import { formatPrice } from '../lib/format';
+import { formatPrice } from '@shopcore/shared';
 import { apiError } from '../api/client';
 import { useDebounce } from '../hooks/useDebounce';
 import type { DeliveryMethod, PaymentMethod } from '../types';

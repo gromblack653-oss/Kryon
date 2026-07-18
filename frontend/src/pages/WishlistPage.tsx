@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { cartApi } from '../api/endpoints';
 import { useWishlist } from '../hooks/useWishlist';
 import { ProductImage } from '../components/ProductImage';
-import { formatPrice } from '../lib/format';
+import { formatPrice } from '@shopcore/shared';
 
 export function WishlistPage() {
   const wishlist = useWishlist();

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { paymentsApi } from '../api/endpoints';
-import { formatPrice } from '../lib/format';
+import { formatPrice } from '@shopcore/shared';
 import { apiError } from '../api/client';
 
 /**

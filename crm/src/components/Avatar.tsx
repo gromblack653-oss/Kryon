@@ -1,4 +1,4 @@
-import { avatarColor, initials } from '../lib/format';
+import { avatarColor, initials } from '@shopcore/shared';
 
 export function Avatar({ name, size = 40 }: { name: string; size?: number }) {
   return (

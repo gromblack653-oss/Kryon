@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { statsApi } from '../api/endpoints';
-import { formatPrice, formatDate, ORDER_STATUS_LABELS, orderStatusLabel } from '../lib/format';
+import { formatPrice, formatDate, ORDER_STATUS_LABELS, orderStatusLabel } from '@shopcore/shared';
 
 export function DashboardPage() {
   const { data, isLoading, isError } = useQuery({ queryKey: ['stats'], queryFn: statsApi.get });

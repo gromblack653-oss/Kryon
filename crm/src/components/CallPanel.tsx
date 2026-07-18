@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { telephonyApi } from '../api/endpoints';
 import { useCallSocket } from '../hooks/useCallSocket';
-import { CALL_OUTCOME_LABELS } from '../lib/format';
+import { CALL_OUTCOME_LABELS } from '@shopcore/shared';
 import type { CallLog } from '../types';
 
 interface Props {

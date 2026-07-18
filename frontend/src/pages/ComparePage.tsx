@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { productsApi } from '../api/endpoints';
 import { useCompareStore } from '../store/compareStore';
 import { ProductImage } from '../components/ProductImage';
-import { formatPrice } from '../lib/format';
+import { formatPrice } from '@shopcore/shared';
 
 export function ComparePage() {
   const ids = useCompareStore((s) => s.ids);

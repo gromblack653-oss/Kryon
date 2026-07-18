@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { crmApi } from '../api/endpoints';
 import { useAuthStore } from '../store/authStore';
-import { CALL_OUTCOME_LABELS, formatDate, formatDuration, formatPrice } from '../lib/format';
+import { CALL_OUTCOME_LABELS, formatDate, formatDuration, formatPrice } from '@shopcore/shared';
 import { Avatar } from '../components/Avatar';
 import { CallButton } from '../components/CallButton';
 

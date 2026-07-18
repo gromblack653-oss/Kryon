@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { crmApi } from '../api/endpoints';
 import { downloadFile } from '../lib/download';
-import { formatPrice, formatDate, orderStatusLabel } from '../lib/format';
+import { formatPrice, formatDate, orderStatusLabel } from '@shopcore/shared';
 import type { CustomerOrder } from '../types';
 
 /** Рядок замовлення з розкриттям товарів та завантаженням накладної. */

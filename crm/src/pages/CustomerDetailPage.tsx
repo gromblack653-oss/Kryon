@@ -13,7 +13,7 @@ import {
   CALL_OUTCOME_LABELS,
   NOTE_TYPE_LABELS,
   NOTE_TYPE_ICONS,
-} from '../lib/format';
+} from '@shopcore/shared';
 import type { NoteType } from '../types';
 
 type TimelineItem =
