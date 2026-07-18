@@ -1,27 +1,5 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createAuthStore } from '@shopcore/shared';
 import type { User } from '../types';
 
-interface AuthState {
-  user: User | null;
-  accessToken: string | null;
-  refreshToken: string | null;
-  setAuth: (data: { user: User; accessToken: string; refreshToken: string }) => void;
-  setTokens: (accessToken: string, refreshToken: string) => void;
-  logout: () => void;
-}
-
-/** Сесія працівника CRM (окремий ключ від магазину/адмінки). */
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      user: null,
-      accessToken: null,
-      refreshToken: null,
-      setAuth: ({ user, accessToken, refreshToken }) => set({ user, accessToken, refreshToken }),
-      setTokens: (accessToken, refreshToken) => set({ accessToken, refreshToken }),
-      logout: () => set({ user: null, accessToken: null, refreshToken: null }),
-    }),
-    { name: 'shopcore-crm-auth' },
-  ),
-);
+/** Стан автентифікації (persist у localStorage). Логіка — у @shopcore/shared. */
+export const useAuthStore = createAuthStore<User>('shopcore-crm-auth');
