@@ -12,6 +12,7 @@ COPY frontend/package.json frontend/
 COPY admin/package.json admin/
 COPY crm/package.json crm/
 COPY packages/theme/package.json packages/theme/
+COPY packages/shared/package.json packages/shared/
 # Ставимо залежності лише бекенду (фронти сюди не тягнемо).
 RUN pnpm install --filter shopcore-backend... --frozen-lockfile
 COPY backend ./backend
@@ -28,6 +29,7 @@ COPY frontend/package.json frontend/
 COPY admin/package.json admin/
 COPY crm/package.json crm/
 COPY packages/theme/package.json packages/theme/
+COPY packages/shared/package.json packages/shared/
 # Лише прод-залежності (node-pg-migrate у dependencies — потрібен для міграцій).
 RUN pnpm install --filter shopcore-backend... --prod --frozen-lockfile
 COPY --from=build /repo/backend/dist ./backend/dist

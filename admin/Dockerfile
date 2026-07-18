@@ -11,8 +11,10 @@ COPY frontend/package.json frontend/
 COPY admin/package.json admin/
 COPY crm/package.json crm/
 COPY packages/theme/package.json packages/theme/
+COPY packages/shared/package.json packages/shared/
 RUN pnpm install --filter shopcore-admin... --frozen-lockfile
 COPY packages/theme ./packages/theme
+COPY packages/shared ./packages/shared
 COPY admin ./admin
 RUN pnpm --filter shopcore-admin build
 
