@@ -70,7 +70,8 @@ export function Layout() {
       </main>
 
       <footer className="footer">
-        ShopCore © {new Date().getFullYear()} — демо fullstack-проєкт (React · Node · PostgreSQL)
+        <strong>Kryon</strong> · Холодна голова, гаряча гра<br />
+        © {new Date().getFullYear()} — демо fullstack-проєкт (React · Node · PostgreSQL)
       </footer>
 
       <CompareBar />

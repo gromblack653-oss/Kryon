@@ -4,9 +4,9 @@ export const swaggerSpec = swaggerJsdoc({
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'ShopCore API',
+      title: 'Kryon API',
       version: '1.0.0',
-      description: 'REST API інтернет-магазину ShopCore (Node.js + Express + PostgreSQL).',
+      description: 'REST API інтернет-магазину Kryon (Node.js + Express + PostgreSQL).',
     },
     servers: [{ url: 'http://localhost:4000', description: 'Local' }],
     components: {

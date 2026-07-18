@@ -1,12 +1,12 @@
-# Деплой ShopCore
+# Деплой Kryon
 
 Архітектура хостингу:
 
 ```
 ┌─────────────── Vercel ───────────────┐        ┌──────────── Render ────────────┐
-│  Магазин   shopcore-shop.vercel.app   │  HTTPS │  shopcore-api  (Node + Socket) │
-│  Адмінка   shopcore-admin.vercel.app  │ ─────► │  PostgreSQL                    │
-│  CRM       shopcore-crm.vercel.app    │        │  Redis                         │
+│  Магазин   kryon-shop.vercel.app   │  HTTPS │  kryon-api  (Node + Socket) │
+│  Адмінка   kryon-admin.vercel.app  │ ─────► │  PostgreSQL                    │
+│  CRM       kryon-crm.vercel.app    │        │  Redis                         │
 └───────────────────────────────────────┘        └────────────────────────────────┘
 ```
 
@@ -56,24 +56,24 @@ git push -u origin main
 
 1. Render Dashboard → **New → Blueprint** → підключіть репозиторій.
 2. Render прочитає [`render.yaml`](render.yaml) і створить три ресурси:
-   `shopcore-api` (web), `shopcore-db` (Postgres), `shopcore-redis` (Redis).
-3. Перед «Apply» заповніть два env, позначені `sync: false` у сервісі `shopcore-api`:
+   `kryon-api` (web), `kryon-db` (Postgres), `kryon-redis` (Redis).
+3. Перед «Apply» заповніть два env, позначені `sync: false` у сервісі `kryon-api`:
    - `CORS_ORIGIN` — поки лишіть тимчасово `*` (уточнимо після кроку 2), або одразу впишіть
      майбутні домени Vercel через кому.
-   - `PAYMENT_RETURN_URL` — майбутній URL магазину (напр. `https://shopcore-shop.vercel.app/orders`).
+   - `PAYMENT_RETURN_URL` — майбутній URL магазину (напр. `https://kryon-shop.vercel.app/orders`).
 4. **Apply** — Render збере бекенд і при старті прожене міграції (`migrate:prod`).
-5. Коли `shopcore-api` стане `Live`, скопіюйте його URL (напр. `https://shopcore-api.onrender.com`).
+5. Коли `kryon-api` стане `Live`, скопіюйте його URL (напр. `https://kryon-api.onrender.com`).
 
 ### Наповнити демо-даними (один раз)
 
-Render Dashboard → `shopcore-api` → **Shell**:
+Render Dashboard → `kryon-api` → **Shell**:
 
 ```bash
 pnpm --filter shopcore-backend seed:prod
 ```
 
 > Сідер **скидає** каталог і демо-дані — запускайте лише коли треба «чистий» стан.
-> Health-check: `GET https://shopcore-api.onrender.com/health` → `{"status":"ok"}`.
+> Health-check: `GET https://kryon-api.onrender.com/health` → `{"status":"ok"}`.
 
 ---
 
@@ -92,23 +92,23 @@ pnpm --filter shopcore-backend seed:prod
 
    | Name           | Value                                 |
    |----------------|---------------------------------------|
-   | `VITE_API_URL` | `https://shopcore-api.onrender.com`   |
+   | `VITE_API_URL` | `https://kryon-api.onrender.com`   |
 
    > `VITE_*` інлайняться під час збірки — після зміни треба **Redeploy**.
 5. **Deploy**. Отримаєте три URL, напр.:
-   - `https://shopcore-shop.vercel.app`
-   - `https://shopcore-admin.vercel.app`
-   - `https://shopcore-crm.vercel.app`
+   - `https://kryon-shop.vercel.app`
+   - `https://kryon-admin.vercel.app`
+   - `https://kryon-crm.vercel.app`
 
 ---
 
 ## 3. Замкнути CORS (після кроку 2)
 
-Render → `shopcore-api` → **Environment** → впишіть реальні домени:
+Render → `kryon-api` → **Environment** → впишіть реальні домени:
 
 ```
-CORS_ORIGIN=https://shopcore-shop.vercel.app,https://shopcore-admin.vercel.app,https://shopcore-crm.vercel.app
-PAYMENT_RETURN_URL=https://shopcore-shop.vercel.app/orders
+CORS_ORIGIN=https://kryon-shop.vercel.app,https://kryon-admin.vercel.app,https://kryon-crm.vercel.app
+PAYMENT_RETURN_URL=https://kryon-shop.vercel.app/orders
 ```
 
 Збережіть — Render перезапустить сервіс. Готово.
@@ -119,9 +119,9 @@ PAYMENT_RETURN_URL=https://shopcore-shop.vercel.app/orders
 
 | Демо-доступ | Логін | Пароль |
 |-------------|-------|--------|
-| Покупець    | `olena@shopcore.dev`  | `User123!`  |
-| Адміністратор | `admin@shopcore.dev` | `Admin123!` |
-| Оператор CRM | `agent@shopcore.dev` | `Agent123!` |
+| Покупець    | `olena@kryon.ua`  | `User123!`  |
+| Адміністратор | `admin@kryon.ua` | `Admin123!` |
+| Оператор CRM | `agent@kryon.ua` | `Agent123!` |
 
 Наскрізний сценарій: магазин → кошик → оформлення (Нова Пошта, картка) → сторінка шлюзу →
 оплата → замовлення `оплачено`. В адмінці — статус замовлення й дохід, у CRM — дзвінок.

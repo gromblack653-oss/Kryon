@@ -25,7 +25,7 @@ import { productImages, extraProductImages } from './seed.images';
 import { gpuPower } from './seed.gpu-power';
 
 /**
- * Наповнює БД каталогом відеокарт ShopCore GPU.
+ * Наповнює БД каталогом відеокарт Kryon.
  *
  * Сідер приводить каталог до відомого стану: очищає старі товари/категорії/замовлення
  * (користувачі зберігаються) і вставляє актуальний асортимент + демо-замовлення.
@@ -122,7 +122,7 @@ async function seedUsers(client: PoolClient): Promise<void> {
             ($3, $4, 'Тестовий покупець', 'customer', $5),
             ($6, $7, $8, 'agent', NULL)
      ON CONFLICT (email) DO UPDATE SET phone = EXCLUDED.phone`,
-    ['admin@shopcore.dev', adminHash, 'user@shopcore.dev', userHash, defaultCustomerPhone,
+    ['admin@kryon.ua', adminHash, 'user@kryon.ua', userHash, defaultCustomerPhone,
      agentUser.email, agentHash, agentUser.name],
   );
   for (const c of extraCustomers) {

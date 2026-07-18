@@ -106,8 +106,8 @@ export async function buildInvoicePdf(orderId: string): Promise<PDFKit.PDFDocume
   const date = new Date(order.created_at).toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
   // --- Шапка ---
-  doc.fontSize(20).fillColor('#4f46e5').text('ShopCore GPU', { continued: false });
-  doc.fontSize(9).fillColor('#666').text('Інтернет-магазин відеокарт · shopcore.dev', { paragraphGap: 2 });
+  doc.fontSize(20).fillColor('#4f46e5').text('Kryon', { continued: false });
+  doc.fontSize(9).fillColor('#666').text('Інтернет-магазин відеокарт · kryon.ua', { paragraphGap: 2 });
   doc.moveDown(1.2);
 
   doc.fillColor('#111').fontSize(16).text(`Видаткова накладна № ${num}`);

@@ -55,8 +55,8 @@ export function LoginPage() {
         Немає акаунту? <Link to="/register">Зареєструватися</Link>
       </p>
       <div className="hint">
-        Демо: <code>admin@shopcore.dev / Admin123!</code> або{' '}
-        <code>user@shopcore.dev / User123!</code>
+        Демо: <code>admin@kryon.ua / Admin123!</code> або{' '}
+        <code>user@kryon.ua / User123!</code>
       </div>
     </div>
   );

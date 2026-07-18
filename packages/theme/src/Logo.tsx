@@ -1,5 +1,5 @@
 /**
- * Логотип ShopCore.
+ * Логотип Kryon.
  *
  * Знак — ізометричний куб, вписаний у гексагон: читається одночасно як
  * коробка (комерція) і як чип/ядро (техніка). Три грані дають об'єм, неоновий
@@ -36,7 +36,7 @@ export function LogoMark({ size = 28 }: { size?: number }) {
       viewBox="0 0 32 32"
       fill="none"
       role="img"
-      aria-label="ShopCore"
+      aria-label="Kryon"
     >
       <defs>
         <linearGradient id={gid} x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
@@ -71,7 +71,7 @@ export function Logo({ variant = 'shop', size = 28, markOnly }: Props) {
     <span className="sc-logo" style={{ fontSize: size * 0.62 }}>
       <LogoMark size={size} />
       <span className="sc-logo-text">
-        Shop<span className="sc-logo-accent">Core</span>
+        Kry<span className="sc-logo-accent">on</span>
       </span>
       {tag && <span className="sc-logo-tag">{tag}</span>}
     </span>

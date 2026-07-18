@@ -13,7 +13,7 @@ async function bootstrap(): Promise<void> {
   initIO(server);
 
   server.listen(env.port, () => {
-    logger.info(`ShopCore API running`, {
+    logger.info(`Kryon API running`, {
       port: env.port,
       docs: `http://localhost:${env.port}/api/docs`,
     });

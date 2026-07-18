@@ -60,7 +60,7 @@ export function LoginPage() {
           </button>
         </form>
         <div className="hint">
-          Демо-адмін: <code>admin@shopcore.dev / Admin123!</code>
+          Демо-адмін: <code>admin@kryon.ua / Admin123!</code>
         </div>
       </div>
     </div>

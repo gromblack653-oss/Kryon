@@ -52,7 +52,7 @@ function resolveBrand(title: string): Brand {
       model: title.replace(/\b(nvidia|geforce|amd|radeon|intel)\b/gi, '').replace(/\s+/g, ' ').trim(),
     };
   }
-  return { key: '', name: 'ShopCore', gradient: 'linear-gradient(135deg,#1e293b,#334155)', model: title };
+  return { key: '', name: 'Kryon', gradient: 'linear-gradient(135deg,#1e293b,#334155)', model: title };
 }
 
 interface Props {

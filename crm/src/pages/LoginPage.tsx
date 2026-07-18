@@ -56,8 +56,8 @@ export function LoginPage() {
         </form>
 
         <div className="hint">
-          Оператор: <code>agent@shopcore.dev / Agent123!</code>
-          <br />Адмін: <code>admin@shopcore.dev / Admin123!</code>
+          Оператор: <code>agent@kryon.ua / Agent123!</code>
+          <br />Адмін: <code>admin@kryon.ua / Admin123!</code>
         </div>
       </div>
     </div>

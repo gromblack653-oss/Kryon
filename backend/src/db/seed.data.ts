@@ -1,5 +1,5 @@
 /**
- * Демо-дані магазину відеокарт ShopCore GPU.
+ * Демо-дані магазину відеокарт Kryon.
  * Реальні моделі, випущені починаючи з 2019 року (NVIDIA, AMD, Intel).
  * Ціни — у копійках (грн × 100), орієнтовні для українського ринку.
  */
@@ -118,7 +118,7 @@ export const products: SeedProduct[] = [
   { title: 'Intel Arc A380', slug: 'arc-a380', price: 549900, stock: 26, cat: 'intel-arc', desc: '6 ГБ GDDR6, 96-біт. Бюджетна карта з апаратним AV1-кодеком, 2022 рік.' },
 ];
 
-/** Телефон стандартного покупця user@shopcore.dev. */
+/** Телефон стандартного покупця user@kryon.ua. */
 export const defaultCustomerPhone = '+380501112233';
 
 /** Тип компонента (поки один — відеокарти; фундамент під БЖ/корпуси/CPU). */
@@ -146,13 +146,13 @@ export const gpuAttributes: Array<{
 
 /** Додаткові тестові покупці (пароль у всіх — User123!). */
 export const extraCustomers = [
-  { email: 'olena@shopcore.dev', name: 'Олена Коваль', phone: '+380671234567' },
-  { email: 'ihor@shopcore.dev', name: 'Ігор Мельник', phone: '+380931112244' },
-  { email: 'maria@shopcore.dev', name: 'Марія Шевченко', phone: '+380637778899' },
+  { email: 'olena@kryon.ua', name: 'Олена Коваль', phone: '+380671234567' },
+  { email: 'ihor@kryon.ua', name: 'Ігор Мельник', phone: '+380931112244' },
+  { email: 'maria@kryon.ua', name: 'Марія Шевченко', phone: '+380637778899' },
 ];
 
 /** Працівник CRM (роль agent). Пароль — Agent123!. */
-export const agentUser = { email: 'agent@shopcore.dev', name: 'Андрій Оператор' };
+export const agentUser = { email: 'agent@kryon.ua', name: 'Андрій Оператор' };
 
 /** Демо-дзвінки (customerIdx — індекс серед покупців у порядку створення). */
 export const demoCalls: Array<{
