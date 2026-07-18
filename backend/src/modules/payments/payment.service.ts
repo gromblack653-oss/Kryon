@@ -47,10 +47,12 @@ export async function createSession(
   orderId: string,
   userId: string,
 ): Promise<{ paymentId: string; externalId: string; redirectUrl: string; amountCents: number }> {
-  const orders = await query<{ id: string; user_id: string; total_cents: number; payment_status: PaymentStatus }>(
-    'SELECT id, user_id, total_cents, payment_status FROM orders WHERE id = $1',
-    [orderId],
-  );
+  const orders = await query<{
+    id: string;
+    user_id: string;
+    total_cents: number;
+    payment_status: PaymentStatus;
+  }>('SELECT id, user_id, total_cents, payment_status FROM orders WHERE id = $1', [orderId]);
   const order = orders[0];
   if (!order) throw new NotFoundError('Order not found');
   if (order.user_id !== userId) throw new NotFoundError('Order not found');
@@ -82,10 +84,9 @@ export async function createSession(
 export async function handleWebhook(event: WebhookEvent): Promise<{ applied: boolean }> {
   return withTransaction(async (client) => {
     // Блокуємо рядок платежу — паралельні ретраї не переженуть один одного.
-    const { rows } = await client.query<Payment>(
-      'SELECT * FROM payments WHERE external_id = $1 FOR UPDATE',
-      [event.externalId],
-    );
+    const { rows } = await client.query<Payment>('SELECT * FROM payments WHERE external_id = $1 FOR UPDATE', [
+      event.externalId,
+    ]);
     const payment = rows[0];
     if (!payment) throw new NotFoundError('Payment not found');
 
@@ -103,10 +104,11 @@ export async function handleWebhook(event: WebhookEvent): Promise<{ applied: boo
       throw new BadRequestError('Сума платежу не збігається із замовленням');
     }
 
-    await client.query(
-      `UPDATE payments SET status = $1, raw = $2, updated_at = now() WHERE id = $3`,
-      [event.status, JSON.stringify(event), payment.id],
-    );
+    await client.query(`UPDATE payments SET status = $1, raw = $2, updated_at = now() WHERE id = $3`, [
+      event.status,
+      JSON.stringify(event),
+      payment.id,
+    ]);
 
     if (event.status === 'paid') {
       // Оплата підтверджена — замовлення переходить у «оплачено».
@@ -115,10 +117,9 @@ export async function handleWebhook(event: WebhookEvent): Promise<{ applied: boo
         [payment.order_id],
       );
     } else {
-      await client.query(
-        `UPDATE orders SET payment_status = 'failed', updated_at = now() WHERE id = $1`,
-        [payment.order_id],
-      );
+      await client.query(`UPDATE orders SET payment_status = 'failed', updated_at = now() WHERE id = $1`, [
+        payment.order_id,
+      ]);
     }
 
     logger.info('Payment webhook applied', { externalId: event.externalId, status: event.status });

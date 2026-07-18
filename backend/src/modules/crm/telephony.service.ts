@@ -170,10 +170,7 @@ export async function findCall(id: string): Promise<CallLog | undefined> {
 
 /** Нотатка — єдине, що справді не автоматизується. */
 export async function saveNote(id: string, note: string): Promise<CallLog> {
-  const rows = await query<CallLog>(
-    'UPDATE call_logs SET note = $2 WHERE id = $1 RETURNING *',
-    [id, note],
-  );
+  const rows = await query<CallLog>('UPDATE call_logs SET note = $2 WHERE id = $1 RETURNING *', [id, note]);
   if (!rows[0]) throw new NotFoundError('Call not found');
   return rows[0];
 }

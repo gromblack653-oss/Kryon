@@ -60,10 +60,11 @@ export const cartRepository = {
 
   async setQuantity(userId: string, productId: string, quantity: number): Promise<void> {
     const cartId = await ensureCart(userId);
-    await query(
-      `UPDATE cart_items SET quantity = $3 WHERE cart_id = $1 AND product_id = $2`,
-      [cartId, productId, quantity],
-    );
+    await query(`UPDATE cart_items SET quantity = $3 WHERE cart_id = $1 AND product_id = $2`, [
+      cartId,
+      productId,
+      quantity,
+    ]);
   },
 
   async removeItem(userId: string, productId: string): Promise<void> {

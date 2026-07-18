@@ -49,11 +49,7 @@ export function connectRedis(): void {
  * Кеш через Redis із graceful-фолбеком: якщо Redis недоступний,
  * просто виконуємо loader без кешування (замість помилки).
  */
-export async function cached<T>(
-  key: string,
-  ttlSeconds: number,
-  loader: () => Promise<T>,
-): Promise<T> {
+export async function cached<T>(key: string, ttlSeconds: number, loader: () => Promise<T>): Promise<T> {
   if (!redis.isReady) return loader();
   try {
     const hit = await redis.get(key);

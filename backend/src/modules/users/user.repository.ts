@@ -12,19 +12,11 @@ export const userRepository = {
   },
 
   async findById(id: string): Promise<User | null> {
-    const rows = await query<User>(
-      'SELECT id, email, name, role, created_at FROM users WHERE id = $1',
-      [id],
-    );
+    const rows = await query<User>('SELECT id, email, name, role, created_at FROM users WHERE id = $1', [id]);
     return rows[0] ?? null;
   },
 
-  async create(input: {
-    email: string;
-    passwordHash: string;
-    name: string;
-    role?: UserRole;
-  }): Promise<User> {
+  async create(input: { email: string; passwordHash: string; name: string; role?: UserRole }): Promise<User> {
     const rows = await query<User>(
       `INSERT INTO users (email, password_hash, name, role)
        VALUES ($1, $2, $3, COALESCE($4, 'customer'))

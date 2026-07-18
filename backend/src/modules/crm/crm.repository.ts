@@ -52,7 +52,9 @@ export const crmRepository = {
     const params: unknown[] = [];
     if (search) {
       params.push(`%${search}%`);
-      where.push(`(u.name ILIKE $${params.length} OR u.email ILIKE $${params.length} OR u.phone ILIKE $${params.length})`);
+      where.push(
+        `(u.name ILIKE $${params.length} OR u.email ILIKE $${params.length} OR u.phone ILIKE $${params.length})`,
+      );
     }
     const whereSql = `WHERE ${where.join(' AND ')}`;
 
@@ -132,7 +134,15 @@ export const crmRepository = {
     const rows = await query<CallLog>(
       `INSERT INTO call_logs (customer_id, agent_id, phone, direction, outcome, duration_seconds, note)
        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-      [input.customerId, input.agentId, input.phone, input.direction, input.outcome, input.durationSeconds, input.note],
+      [
+        input.customerId,
+        input.agentId,
+        input.phone,
+        input.direction,
+        input.outcome,
+        input.durationSeconds,
+        input.note,
+      ],
     );
     return rows[0];
   },
@@ -158,15 +168,20 @@ export const crmRepository = {
   },
 
   async setRecording(callId: string, url: string): Promise<CallLog | null> {
-    const rows = await query<CallLog>(
-      `UPDATE call_logs SET recording_url = $1 WHERE id = $2 RETURNING *`,
-      [url, callId],
-    );
+    const rows = await query<CallLog>(`UPDATE call_logs SET recording_url = $1 WHERE id = $2 RETURNING *`, [
+      url,
+      callId,
+    ]);
     return rows[0] ?? null;
   },
 
   // --- Нотатки ---
-  async addNote(input: { customerId: string; agentId: string; type: string; body: string }): Promise<CustomerNote> {
+  async addNote(input: {
+    customerId: string;
+    agentId: string;
+    type: string;
+    body: string;
+  }): Promise<CustomerNote> {
     const rows = await query<CustomerNote>(
       `INSERT INTO customer_notes (customer_id, agent_id, type, body)
        VALUES ($1, $2, $3, $4) RETURNING *`,

@@ -66,10 +66,7 @@ describe('Вебхук платіжного шлюзу', () => {
   });
 
   it('відхиляє подію з невірним підписом', async () => {
-    const res = await sendWebhook(
-      { externalId: 'mock_abc', status: 'paid', amountCents: 71094 },
-      'deadbeef',
-    );
+    const res = await sendWebhook({ externalId: 'mock_abc', status: 'paid', amountCents: 71094 }, 'deadbeef');
     expect(res.status).toBe(400);
     expect(payment.status).toBe('pending'); // нічого не змінилось
   });

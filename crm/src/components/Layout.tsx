@@ -43,7 +43,9 @@ export function Layout() {
             <span className="su-name">{user?.name}</span>
             <span className="su-role">{user?.role === 'admin' ? 'Адміністратор' : 'Оператор'}</span>
           </div>
-          <button className="icon-btn" title="Вийти" onClick={handleLogout}>⎋</button>
+          <button className="icon-btn" title="Вийти" onClick={handleLogout}>
+            ⎋
+          </button>
         </div>
       </aside>
 

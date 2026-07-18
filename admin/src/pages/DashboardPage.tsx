@@ -63,7 +63,9 @@ export function DashboardPage() {
                     </td>
                     <td>{o.customer_name}</td>
                     <td>
-                      <span className={`pill pill-${o.status}`}>{orderStatusLabel(o.status, o.payment_method)}</span>
+                      <span className={`pill pill-${o.status}`}>
+                        {orderStatusLabel(o.status, o.payment_method)}
+                      </span>
                     </td>
                     <td>{formatPrice(o.total_cents)}</td>
                     <td className="muted">{formatDate(o.created_at)}</td>
@@ -143,7 +145,9 @@ function RevenueChart({ data }: { data: Array<{ day: string; cents: number }> })
     <div className="card">
       <div className="chart-head">
         <h3>Дохід за 7 днів</h3>
-        <strong className="stat-value accent" style={{ fontSize: 20 }}>{formatPrice(total)}</strong>
+        <strong className="stat-value accent" style={{ fontSize: 20 }}>
+          {formatPrice(total)}
+        </strong>
       </div>
       <div className="chart">
         {data.map((d) => (
@@ -152,7 +156,9 @@ function RevenueChart({ data }: { data: Array<{ day: string; cents: number }> })
               {/* Мінімум 2% — щоб порожній день лишався видимим слідом, а не зникав. */}
               <div className="chart-bar" style={{ height: `${Math.max(2, (d.cents / max) * 100)}%` }} />
             </div>
-            <span className="chart-x">{d.day.slice(8)}.{d.day.slice(5, 7)}</span>
+            <span className="chart-x">
+              {d.day.slice(8)}.{d.day.slice(5, 7)}
+            </span>
           </div>
         ))}
       </div>

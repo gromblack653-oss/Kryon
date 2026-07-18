@@ -36,7 +36,11 @@ export function OrderDetailPage() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { data: order, isLoading, isError } = useQuery({
+  const {
+    data: order,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ['order', id],
     queryFn: () => ordersApi.get(id!),
     enabled: !!id,
@@ -110,11 +114,7 @@ export function OrderDetailPage() {
       {/* Незавершену онлайн-оплату можна доплатити з картки замовлення. */}
       {order.payment_method === 'card' &&
         (order.payment_status === 'unpaid' || order.payment_status === 'failed') && (
-          <button
-            className="btn btn-primary"
-            disabled={payNow.isPending}
-            onClick={() => payNow.mutate()}
-          >
+          <button className="btn btn-primary" disabled={payNow.isPending} onClick={() => payNow.mutate()}>
             {payNow.isPending ? 'Створюємо платіж...' : 'Сплатити зараз'}
           </button>
         )}

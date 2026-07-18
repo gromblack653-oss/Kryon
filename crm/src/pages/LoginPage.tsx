@@ -32,7 +32,9 @@ export function LoginPage() {
         <div className="login-brand">
           <Logo variant="crm" size={30} />
         </div>
-        <p className="muted" style={{ marginBottom: '1.4rem' }}>Робоче місце оператора</p>
+        <p className="muted" style={{ marginBottom: '1.4rem' }}>
+          Робоче місце оператора
+        </p>
 
         <form
           onSubmit={(e) => {
@@ -50,14 +52,19 @@ export function LoginPage() {
             <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
           </label>
           {error && <p className="error">{error}</p>}
-          <button className="btn btn-primary" style={{ width: '100%', marginTop: '0.3rem' }} disabled={login.isPending}>
+          <button
+            className="btn btn-primary"
+            style={{ width: '100%', marginTop: '0.3rem' }}
+            disabled={login.isPending}
+          >
             {login.isPending ? 'Вхід...' : 'Увійти'}
           </button>
         </form>
 
         <div className="hint">
           Оператор: <code>agent@kryon.ua / Agent123!</code>
-          <br />Адмін: <code>admin@kryon.ua / Admin123!</code>
+          <br />
+          Адмін: <code>admin@kryon.ua / Admin123!</code>
         </div>
       </div>
     </div>

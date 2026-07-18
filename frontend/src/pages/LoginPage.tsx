@@ -39,12 +39,7 @@ export function LoginPage() {
         </label>
         <label>
           Пароль
-          <input
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
         </label>
         {error && <p className="error">{error}</p>}
         <button className="btn btn-primary btn-lg" disabled={login.isPending}>
@@ -55,8 +50,7 @@ export function LoginPage() {
         Немає акаунту? <Link to="/register">Зареєструватися</Link>
       </p>
       <div className="hint">
-        Демо: <code>admin@kryon.ua / Admin123!</code> або{' '}
-        <code>user@kryon.ua / User123!</code>
+        Демо: <code>admin@kryon.ua / Admin123!</code> або <code>user@kryon.ua / User123!</code>
       </div>
     </div>
   );

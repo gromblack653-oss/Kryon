@@ -8,7 +8,11 @@ export function formatPrice(cents: number): string {
 
 export function formatDate(iso: string): string {
   return new Date(iso).toLocaleString('uk-UA', {
-    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   });
 }
 
@@ -26,21 +30,33 @@ export function formatDuration(seconds: number): string {
 }
 
 export const ORDER_STATUS_LABELS: Record<string, string> = {
-  pending: 'Очікує оплати', paid: 'Оплачено', shipped: 'Відправлено',
-  delivered: 'Доставлено', cancelled: 'Скасовано',
+  pending: 'Очікує оплати',
+  paid: 'Оплачено',
+  shipped: 'Відправлено',
+  delivered: 'Доставлено',
+  cancelled: 'Скасовано',
 };
 
 export const CALL_OUTCOME_LABELS: Record<string, string> = {
-  answered: 'Відповіли', no_answer: 'Не відповіли', busy: 'Зайнято',
-  voicemail: 'Голосова пошта', failed: 'Помилка',
+  answered: 'Відповіли',
+  no_answer: 'Не відповіли',
+  busy: 'Зайнято',
+  voicemail: 'Голосова пошта',
+  failed: 'Помилка',
 };
 
 export const NOTE_TYPE_LABELS: Record<string, string> = {
-  note: 'Нотатка', task: 'Задача', meeting: 'Зустріч', email: 'Email',
+  note: 'Нотатка',
+  task: 'Задача',
+  meeting: 'Зустріч',
+  email: 'Email',
 };
 
 export const NOTE_TYPE_ICONS: Record<string, string> = {
-  note: '📝', task: '✅', meeting: '📅', email: '✉️',
+  note: '📝',
+  task: '✅',
+  meeting: '📅',
+  email: '✉️',
 };
 
 /** Детермінований колір аватара за рядком (ім'ям). */
@@ -65,21 +81,21 @@ export function initials(name: string): string {
  * оплати» — воно вже прийняте в роботу.
  */
 export function orderStatusLabel(status: string, paymentMethod?: string): string {
-  if (status === "pending" && paymentMethod === "cod") return "Прийнято";
+  if (status === 'pending' && paymentMethod === 'cod') return 'Прийнято';
   return ORDER_STATUS_LABELS[status] ?? status;
 }
 
 /** Підпис стану оплати: для накладеного платежу «не оплачено» = «при отриманні». */
 export function paymentStatusLabel(paymentStatus: string, paymentMethod?: string): string {
-  if (paymentMethod === "cod" && (paymentStatus === "unpaid" || paymentStatus === "pending")) {
-    return "при отриманні";
+  if (paymentMethod === 'cod' && (paymentStatus === 'unpaid' || paymentStatus === 'pending')) {
+    return 'при отриманні';
   }
   const labels: Record<string, string> = {
-    unpaid: "не оплачено",
-    pending: "очікує оплати",
-    paid: "оплачено",
-    failed: "оплата не пройшла",
-    refunded: "повернено",
+    unpaid: 'не оплачено',
+    pending: 'очікує оплати',
+    paid: 'оплачено',
+    failed: 'оплата не пройшла',
+    refunded: 'повернено',
   };
   return labels[paymentStatus] ?? paymentStatus;
 }

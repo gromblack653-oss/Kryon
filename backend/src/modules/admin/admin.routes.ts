@@ -9,8 +9,11 @@ const router = Router();
 router.use(authenticate, authorize('admin'));
 
 const STATUS_LABELS: Record<string, string> = {
-  pending: 'Очікує оплати', paid: 'Оплачено', shipped: 'Відправлено',
-  delivered: 'Доставлено', cancelled: 'Скасовано',
+  pending: 'Очікує оплати',
+  paid: 'Оплачено',
+  shipped: 'Відправлено',
+  delivered: 'Доставлено',
+  cancelled: 'Скасовано',
 };
 
 /** Екранує значення для CSV (лапки, коми, переноси рядків). */
@@ -33,9 +36,15 @@ router.get(
   '/orders/export',
   asyncHandler(async (_req, res) => {
     const rows = await query<{
-      id: string; created_at: string; status: string; total_cents: number;
-      customer_name: string; customer_email: string; customer_phone: string | null;
-      shipping_address: string; items: string;
+      id: string;
+      created_at: string;
+      status: string;
+      total_cents: number;
+      customer_name: string;
+      customer_email: string;
+      customer_phone: string | null;
+      shipping_address: string;
+      items: string;
     }>(
       `SELECT o.id, o.created_at, o.status, o.total_cents, o.shipping_address,
               u.name AS customer_name, u.email AS customer_email, u.phone AS customer_phone,
@@ -47,7 +56,17 @@ router.get(
        ORDER BY o.created_at DESC`,
     );
 
-    const header = ['№ замовлення', 'Дата', 'Статус', 'Клієнт', 'Email', 'Телефон', 'Адреса', 'Товари', 'Сума, грн'];
+    const header = [
+      '№ замовлення',
+      'Дата',
+      'Статус',
+      'Клієнт',
+      'Email',
+      'Телефон',
+      'Адреса',
+      'Товари',
+      'Сума, грн',
+    ];
     const lines = rows.map((r) =>
       [
         r.id.slice(0, 8).toUpperCase(),
@@ -59,7 +78,9 @@ router.get(
         r.shipping_address,
         r.items,
         (r.total_cents / 100).toFixed(2),
-      ].map(csvCell).join(','),
+      ]
+        .map(csvCell)
+        .join(','),
     );
     // BOM, щоб Excel коректно розпізнав UTF-8.
     const csv = '﻿' + [header.map(csvCell).join(','), ...lines].join('\r\n');

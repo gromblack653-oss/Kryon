@@ -21,7 +21,9 @@ export function ComparePage() {
       <div className="empty-state">
         <h1 className="page-title">Порівняння</h1>
         <p className="muted">Ви ще не додали товарів до порівняння. Натисніть ⇄ на картці товару.</p>
-        <Link to="/" className="btn btn-primary">До каталогу</Link>
+        <Link to="/" className="btn btn-primary">
+          До каталогу
+        </Link>
       </div>
     );
   }
@@ -48,8 +50,12 @@ export function ComparePage() {
   return (
     <div>
       <div className="results-head">
-        <h1 className="page-title" style={{ marginBottom: 0 }}>Порівняння · {products.length}</h1>
-        <button className="btn btn-ghost btn-sm" onClick={clear}>Очистити все</button>
+        <h1 className="page-title" style={{ marginBottom: 0 }}>
+          Порівняння · {products.length}
+        </h1>
+        <button className="btn btn-ghost btn-sm" onClick={clear}>
+          Очистити все
+        </button>
       </div>
 
       <div className="compare-scroll">
@@ -60,10 +66,16 @@ export function ComparePage() {
               {products.map((p) => (
                 <th key={p.id}>
                   <div className="cmp-head">
-                    <div className="cmp-thumb"><ProductImage product={p} compact /></div>
-                    <Link to={`/products/${p.id}`} className="cmp-title">{p.title}</Link>
+                    <div className="cmp-thumb">
+                      <ProductImage product={p} compact />
+                    </div>
+                    <Link to={`/products/${p.id}`} className="cmp-title">
+                      {p.title}
+                    </Link>
                     <div className="cmp-price">{formatPrice(p.price_cents)}</div>
-                    <button className="cmp-remove" onClick={() => remove(p.id)}>✕ прибрати</button>
+                    <button className="cmp-remove" onClick={() => remove(p.id)}>
+                      ✕ прибрати
+                    </button>
                   </div>
                 </th>
               ))}
@@ -74,7 +86,11 @@ export function ComparePage() {
               <td className="rk">Наявність</td>
               {products.map((p) => (
                 <td key={p.id}>
-                  {p.stock > 0 ? <span className="stock in">В наявності</span> : <span className="stock out">Немає</span>}
+                  {p.stock > 0 ? (
+                    <span className="stock in">В наявності</span>
+                  ) : (
+                    <span className="stock out">Немає</span>
+                  )}
                 </td>
               ))}
             </tr>
@@ -82,7 +98,9 @@ export function ComparePage() {
               <tr key={key} className={rowDiffers(key) ? 'diff' : ''}>
                 <td className="rk">{meta.label}</td>
                 {products.map((_, i) => (
-                  <td key={i} className="mono">{valueOf(i, key)}</td>
+                  <td key={i} className="mono">
+                    {valueOf(i, key)}
+                  </td>
                 ))}
               </tr>
             ))}

@@ -109,7 +109,6 @@ function parseGpuSpecs(title: string, desc: string): Record<string, string | num
   return specs;
 }
 
-
 async function seedUsers(client: PoolClient): Promise<void> {
   const adminHash = await bcrypt.hash('Admin123!', 10);
   const userHash = await bcrypt.hash('User123!', 10);
@@ -122,8 +121,16 @@ async function seedUsers(client: PoolClient): Promise<void> {
             ($3, $4, 'Тестовий покупець', 'customer', $5),
             ($6, $7, $8, 'agent', NULL)
      ON CONFLICT (email) DO UPDATE SET phone = EXCLUDED.phone`,
-    ['admin@kryon.ua', adminHash, 'user@kryon.ua', userHash, defaultCustomerPhone,
-     agentUser.email, agentHash, agentUser.name],
+    [
+      'admin@kryon.ua',
+      adminHash,
+      'user@kryon.ua',
+      userHash,
+      defaultCustomerPhone,
+      agentUser.email,
+      agentHash,
+      agentUser.name,
+    ],
   );
   for (const c of extraCustomers) {
     await client.query(
@@ -146,10 +153,7 @@ async function seedTypes(client: PoolClient): Promise<SeededTypes> {
   const ids: SeededTypes['ids'] = {};
   const attrs: SeededTypes['attrs'] = {};
 
-  const allTypes = [
-    { ...gpuType, attributes: gpuAttributes },
-    ...componentTypes,
-  ];
+  const allTypes = [{ ...gpuType, attributes: gpuAttributes }, ...componentTypes];
 
   for (const t of allTypes) {
     const { rows } = await client.query<{ id: string }>(
@@ -163,7 +167,16 @@ async function seedTypes(client: PoolClient): Promise<SeededTypes> {
       const { rows: ar } = await client.query<{ id: string }>(
         `INSERT INTO attributes (type_id, key, label, unit, data_type, is_filterable, show_on_card, position)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
-        [ids[t.key], a.key, a.label, a.unit ?? null, a.dataType, a.filterable, a.showOnCard ?? false, a.position],
+        [
+          ids[t.key],
+          a.key,
+          a.label,
+          a.unit ?? null,
+          a.dataType,
+          a.filterable,
+          a.showOnCard ?? false,
+          a.position,
+        ],
       );
       attrs[t.key][a.key] = { id: ar[0].id, dataType: a.dataType };
     }
@@ -199,7 +212,9 @@ async function seedCategories(client: PoolClient, gpuTypeId: string): Promise<Re
   // Серії відеокарт належать типу «Відеокарти».
   for (const c of categories) {
     await client.query('INSERT INTO categories (name, slug, type_id) VALUES ($1, $2, $3)', [
-      c.name, c.slug, gpuTypeId,
+      c.name,
+      c.slug,
+      gpuTypeId,
     ]);
   }
   const { rows } = await client.query<{ id: string; slug: string }>('SELECT id, slug FROM categories');
@@ -219,7 +234,8 @@ async function seedComponents(client: PoolClient, types: SeededTypes): Promise<v
     values += await insertAttrValues(client, rows[0].id, p.type, types, p.attrs);
     if (image) {
       await client.query(`INSERT INTO product_images (product_id, url, position) VALUES ($1, $2, 0)`, [
-        rows[0].id, image,
+        rows[0].id,
+        image,
       ]);
     }
   }
@@ -252,17 +268,18 @@ async function seedProducts(
 
     // Обкладинка стає першим фото галереї, далі — додаткові ракурси.
     if (image) {
-      await client.query(
-        `INSERT INTO product_images (product_id, url, position) VALUES ($1, $2, 0)`,
-        [rows[0].id, image],
-      );
+      await client.query(`INSERT INTO product_images (product_id, url, position) VALUES ($1, $2, 0)`, [
+        rows[0].id,
+        image,
+      ]);
     }
     const extras = extraProductImages[p.slug] ?? [];
     for (const [i, url] of extras.entries()) {
-      await client.query(
-        `INSERT INTO product_images (product_id, url, position) VALUES ($1, $2, $3)`,
-        [rows[0].id, url, i + 1],
-      );
+      await client.query(`INSERT INTO product_images (product_id, url, position) VALUES ($1, $2, $3)`, [
+        rows[0].id,
+        url,
+        i + 1,
+      ]);
     }
   }
   logger.info('GPU products seeded', { products: products.length, attrValues });
@@ -305,9 +322,7 @@ async function seedDemoOrders(
 
   for (const order of demoOrders) {
     const user = customers[order.customerIdx % customers.length];
-    const lines = order.lines
-      .map((l) => ({ p: prodBySlug[l.slug], qty: l.qty }))
-      .filter((l) => l.p);
+    const lines = order.lines.map((l) => ({ p: prodBySlug[l.slug], qty: l.qty })).filter((l) => l.p);
     if (!lines.length) continue;
 
     const total = lines.reduce((sum, l) => sum + l.p.price * l.qty, 0);
@@ -392,8 +407,16 @@ async function seedCrm(client: PoolClient): Promise<void> {
     await client.query(
       `INSERT INTO call_logs (customer_id, agent_id, phone, direction, outcome, duration_seconds, note, recording_url)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-      [cust.id, agentId, cust.phone ?? '+380000000000', call.direction, call.outcome, call.durationSeconds, call.note,
-       call.recording ? recordingUrl : null],
+      [
+        cust.id,
+        agentId,
+        cust.phone ?? '+380000000000',
+        call.direction,
+        call.outcome,
+        call.durationSeconds,
+        call.note,
+        call.recording ? recordingUrl : null,
+      ],
     );
   }
 

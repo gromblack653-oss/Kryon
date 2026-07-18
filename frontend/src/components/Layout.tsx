@@ -38,7 +38,9 @@ export function Layout() {
           <NavLink to="/builder">Збірка ПК</NavLink>
           {user?.role === 'customer' && (
             <>
-              <NavLink to="/wishlist">Обране{wishlist.count > 0 && <span className="badge">{wishlist.count}</span>}</NavLink>
+              <NavLink to="/wishlist">
+                Обране{wishlist.count > 0 && <span className="badge">{wishlist.count}</span>}
+              </NavLink>
               <NavLink to="/cart">Кошик{cartCount > 0 && <span className="badge">{cartCount}</span>}</NavLink>
               <NavLink to="/orders">Мої замовлення</NavLink>
             </>
@@ -70,8 +72,8 @@ export function Layout() {
       </main>
 
       <footer className="footer">
-        <strong>Kryon</strong> · Холодна голова, гаряча гра<br />
-        © {new Date().getFullYear()} — демо fullstack-проєкт (React · Node · PostgreSQL)
+        <strong>Kryon</strong> · Холодна голова, гаряча гра
+        <br />© {new Date().getFullYear()} — демо fullstack-проєкт (React · Node · PostgreSQL)
       </footer>
 
       <CompareBar />

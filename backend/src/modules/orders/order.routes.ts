@@ -28,14 +28,19 @@ router.get(
     const role = req.user!.role;
     if (role !== 'admin' && role !== 'agent') {
       // Звичайний користувач може завантажити накладну лише свого замовлення.
-      const rows = await query<{ user_id: string }>('SELECT user_id FROM orders WHERE id = $1', [req.params.id]);
+      const rows = await query<{ user_id: string }>('SELECT user_id FROM orders WHERE id = $1', [
+        req.params.id,
+      ]);
       if (!rows[0]) throw new NotFoundError('Order not found');
       if (rows[0].user_id !== req.user!.id) throw new ForbiddenError();
     }
 
     const doc = await buildInvoicePdf(req.params.id);
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="invoice-${invoiceNumber(req.params.id)}.pdf"`);
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="invoice-${invoiceNumber(req.params.id)}.pdf"`,
+    );
     doc.pipe(res);
     doc.end();
   }),

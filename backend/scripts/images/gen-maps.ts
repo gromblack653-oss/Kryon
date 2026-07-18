@@ -35,12 +35,18 @@ for (const [slug, urls] of gallery) extraMap[slug] = urls;
 
 const missGpu = [...gpuSlugs].filter((s) => !gpuMap[s]);
 const missComp = [...compSlugs].filter((s) => !compMap[s]);
-process.stderr.write(`GPU покрито ${Object.keys(gpuMap).length}/${gpuSlugs.size}; комплектуючі ${Object.keys(compMap).length}/${compSlugs.size}\n`);
+process.stderr.write(
+  `GPU покрито ${Object.keys(gpuMap).length}/${gpuSlugs.size}; комплектуючі ${Object.keys(compMap).length}/${compSlugs.size}\n`,
+);
 if (missGpu.length) process.stderr.write(`GPU без фото: ${missGpu.join(', ')}\n`);
 if (missComp.length) process.stderr.write(`Компл. без фото: ${missComp.join(', ')}\n`);
 
-const gpuSorted = Object.keys(gpuMap).sort().reduce((a, k) => ((a[k] = gpuMap[k]), a), {} as Record<string, string>);
-const compSorted = Object.keys(compMap).sort().reduce((a, k) => ((a[k] = compMap[k]), a), {} as Record<string, string>);
+const gpuSorted = Object.keys(gpuMap)
+  .sort()
+  .reduce((a, k) => ((a[k] = gpuMap[k]), a), {} as Record<string, string>);
+const compSorted = Object.keys(compMap)
+  .sort()
+  .reduce((a, k) => ((a[k] = compMap[k]), a), {} as Record<string, string>);
 
 const imagesTs = `/**
  * Зображення відеокарт — самохостинг у backend/uploads/products.

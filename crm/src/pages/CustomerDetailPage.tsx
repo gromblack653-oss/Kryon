@@ -7,14 +7,36 @@ import { CallButton } from '../components/CallButton';
 import { CallRecording } from '../components/CallRecording';
 import { OrderRow } from '../components/OrderRow';
 import {
-  formatPrice, formatDate, formatDateShort,
-  CALL_OUTCOME_LABELS, NOTE_TYPE_LABELS, NOTE_TYPE_ICONS,
+  formatPrice,
+  formatDate,
+  formatDateShort,
+  CALL_OUTCOME_LABELS,
+  NOTE_TYPE_LABELS,
+  NOTE_TYPE_ICONS,
 } from '../lib/format';
 import type { NoteType } from '../types';
 
 type TimelineItem =
-  | { kind: 'call'; id: string; at: string; icon: string; title: string; outcome: string; text: string; agent?: string | null; recordingUrl: string | null }
-  | { kind: 'note'; id: string; at: string; icon: string; title: string; text: string; agent?: string | null };
+  | {
+      kind: 'call';
+      id: string;
+      at: string;
+      icon: string;
+      title: string;
+      outcome: string;
+      text: string;
+      agent?: string | null;
+      recordingUrl: string | null;
+    }
+  | {
+      kind: 'note';
+      id: string;
+      at: string;
+      icon: string;
+      title: string;
+      text: string;
+      agent?: string | null;
+    };
 
 const NOTE_TYPES: NoteType[] = ['note', 'task', 'meeting', 'email'];
 
@@ -50,19 +72,32 @@ export function CustomerDetailPage() {
 
   const timeline: TimelineItem[] = [
     ...calls.map((c): TimelineItem => ({
-      kind: 'call', id: c.id, at: c.created_at, icon: c.direction === 'outbound' ? '📤' : '📥',
+      kind: 'call',
+      id: c.id,
+      at: c.created_at,
+      icon: c.direction === 'outbound' ? '📤' : '📥',
       title: c.direction === 'outbound' ? 'Вихідний дзвінок' : 'Вхідний дзвінок',
-      outcome: c.outcome, text: c.note, agent: c.agent_name, recordingUrl: c.recording_url,
+      outcome: c.outcome,
+      text: c.note,
+      agent: c.agent_name,
+      recordingUrl: c.recording_url,
     })),
     ...notes.map((n): TimelineItem => ({
-      kind: 'note', id: n.id, at: n.created_at, icon: NOTE_TYPE_ICONS[n.type],
-      title: NOTE_TYPE_LABELS[n.type], text: n.body, agent: n.agent_name,
+      kind: 'note',
+      id: n.id,
+      at: n.created_at,
+      icon: NOTE_TYPE_ICONS[n.type],
+      title: NOTE_TYPE_LABELS[n.type],
+      text: n.body,
+      agent: n.agent_name,
     })),
   ].sort((a, b) => (a.at < b.at ? 1 : -1));
 
   return (
     <div>
-      <Link to="/customers" className="back-link">← Усі клієнти</Link>
+      <Link to="/customers" className="back-link">
+        ← Усі клієнти
+      </Link>
 
       <div className="grid-detail">
         {/* --- Profile --- */}
@@ -81,15 +116,33 @@ export function CustomerDetailPage() {
           </div>
 
           <div className="contact">
-            <div className="contact-row"><span className="ci">✉️</span>{customer.email}</div>
-            <div className="contact-row"><span className="ci">📱</span><span className="mono">{customer.phone ?? 'номер не вказано'}</span></div>
+            <div className="contact-row">
+              <span className="ci">✉️</span>
+              {customer.email}
+            </div>
+            <div className="contact-row">
+              <span className="ci">📱</span>
+              <span className="mono">{customer.phone ?? 'номер не вказано'}</span>
+            </div>
           </div>
 
           <div className="profile-stats">
-            <div className="ps"><div className="ps-val">{customer.orders_count}</div><div className="ps-lbl">замовлень</div></div>
-            <div className="ps"><div className="ps-val">{formatPrice(customer.total_spent_cents)}</div><div className="ps-lbl">витрачено</div></div>
-            <div className="ps"><div className="ps-val">{customer.calls_count}</div><div className="ps-lbl">дзвінків</div></div>
-            <div className="ps"><div className="ps-val">{orders.length}</div><div className="ps-lbl">в історії</div></div>
+            <div className="ps">
+              <div className="ps-val">{customer.orders_count}</div>
+              <div className="ps-lbl">замовлень</div>
+            </div>
+            <div className="ps">
+              <div className="ps-val">{formatPrice(customer.total_spent_cents)}</div>
+              <div className="ps-lbl">витрачено</div>
+            </div>
+            <div className="ps">
+              <div className="ps-val">{customer.calls_count}</div>
+              <div className="ps-lbl">дзвінків</div>
+            </div>
+            <div className="ps">
+              <div className="ps-val">{orders.length}</div>
+              <div className="ps-lbl">в історії</div>
+            </div>
           </div>
         </div>
 
@@ -97,15 +150,34 @@ export function CustomerDetailPage() {
         <div className="stack">
           {/* Shared orders */}
           <div className="card">
-            <div className="card-title">🛒 Замовлення <span className="muted" style={{ fontWeight: 400 }}>(спільні з магазином · натисніть для товарів)</span></div>
+            <div className="card-title">
+              🛒 Замовлення{' '}
+              <span className="muted" style={{ fontWeight: 400 }}>
+                (спільні з магазином · натисніть для товарів)
+              </span>
+            </div>
             <div className="table-wrap">
               <table className="table">
-                <thead><tr><th>Замовлення</th><th>Статус</th><th>Сума</th><th>Дата</th><th>Накладна</th></tr></thead>
+                <thead>
+                  <tr>
+                    <th>Замовлення</th>
+                    <th>Статус</th>
+                    <th>Сума</th>
+                    <th>Дата</th>
+                    <th>Накладна</th>
+                  </tr>
+                </thead>
                 <tbody>
                   {orders.map((o) => (
                     <OrderRow key={o.id} order={o} />
                   ))}
-                  {orders.length === 0 && <tr><td colSpan={5} className="empty">Замовлень ще немає.</td></tr>}
+                  {orders.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="empty">
+                        Замовлень ще немає.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -130,7 +202,11 @@ export function CustomerDetailPage() {
                 onChange={(e) => setNoteBody(e.target.value)}
               />
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <button className="btn btn-primary btn-sm" disabled={!noteBody.trim() || addNote.isPending} onClick={() => addNote.mutate()}>
+                <button
+                  className="btn btn-primary btn-sm"
+                  disabled={!noteBody.trim() || addNote.isPending}
+                  onClick={() => addNote.mutate()}
+                >
                   {addNote.isPending ? 'Додаємо...' : 'Додати'}
                 </button>
               </div>
@@ -160,7 +236,9 @@ export function CustomerDetailPage() {
                   </div>
                 </div>
               ))}
-              {timeline.length === 0 && <div className="empty">Активності ще немає. Подзвоніть або додайте нотатку.</div>}
+              {timeline.length === 0 && (
+                <div className="empty">Активності ще немає. Подзвоніть або додайте нотатку.</div>
+              )}
             </div>
           </div>
         </div>

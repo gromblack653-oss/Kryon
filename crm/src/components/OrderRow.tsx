@@ -29,13 +29,23 @@ export function OrderRow({ order }: { order: CustomerOrder }) {
     <>
       <tr className="order-main" onClick={() => setOpen((o) => !o)} style={{ cursor: 'pointer' }}>
         <td>
-          <span className="chevron">{open ? '▾' : '▸'}</span> <span className="mono">#{order.id.slice(0, 8)}</span>
+          <span className="chevron">{open ? '▾' : '▸'}</span>{' '}
+          <span className="mono">#{order.id.slice(0, 8)}</span>
         </td>
-        <td><span className={`pill pill-${order.status}`}>{orderStatusLabel(order.status, order.payment_method)}</span></td>
+        <td>
+          <span className={`pill pill-${order.status}`}>
+            {orderStatusLabel(order.status, order.payment_method)}
+          </span>
+        </td>
         <td style={{ fontWeight: 600 }}>{formatPrice(order.total_cents)}</td>
         <td className="muted">{formatDate(order.created_at)}</td>
         <td onClick={(e) => e.stopPropagation()}>
-          <button className="btn btn-ghost btn-sm" disabled={downloading} onClick={invoice} title="Завантажити накладну PDF">
+          <button
+            className="btn btn-ghost btn-sm"
+            disabled={downloading}
+            onClick={invoice}
+            title="Завантажити накладну PDF"
+          >
             {downloading ? '⏳' : '📄 Накладна'}
           </button>
         </td>
@@ -48,7 +58,12 @@ export function OrderRow({ order }: { order: CustomerOrder }) {
             ) : (
               <table className="table sub-table">
                 <thead>
-                  <tr><th>Товар</th><th>К-сть</th><th>Ціна</th><th>Сума</th></tr>
+                  <tr>
+                    <th>Товар</th>
+                    <th>К-сть</th>
+                    <th>Ціна</th>
+                    <th>Сума</th>
+                  </tr>
                 </thead>
                 <tbody>
                   {items?.map((it) => (
@@ -59,7 +74,13 @@ export function OrderRow({ order }: { order: CustomerOrder }) {
                       <td style={{ fontWeight: 600 }}>{formatPrice(it.price_cents * it.quantity)}</td>
                     </tr>
                   ))}
-                  {items && items.length === 0 && <tr><td colSpan={4} className="muted">Позицій немає.</td></tr>}
+                  {items && items.length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="muted">
+                        Позицій немає.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             )}

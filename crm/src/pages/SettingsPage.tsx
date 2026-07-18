@@ -25,14 +25,18 @@ export function SettingsPage() {
         <div className="card">
           <div className="card-title">☎ Протокол дзвінка</div>
           <p className="muted" style={{ marginBottom: '1rem' }}>
-            Який застосунок відкривати при натисканні «Подзвонити». MicroSIP реєструє протокол <code>sip:</code>.
+            Який застосунок відкривати при натисканні «Подзвонити». MicroSIP реєструє протокол{' '}
+            <code>sip:</code>.
           </p>
           <div className="stack" style={{ gap: '0.6rem' }}>
             {PROTOCOLS.map((p) => (
               <label
                 key={p.value}
                 className="contact-row"
-                style={{ cursor: 'pointer', outline: protocol === p.value ? '2px solid var(--primary)' : 'none' }}
+                style={{
+                  cursor: 'pointer',
+                  outline: protocol === p.value ? '2px solid var(--primary)' : 'none',
+                }}
               >
                 <input
                   type="radio"
@@ -43,7 +47,9 @@ export function SettingsPage() {
                 />
                 <div>
                   <strong className="mono">{p.label}</strong>
-                  <div className="muted" style={{ fontSize: '0.8rem' }}>{p.hint}</div>
+                  <div className="muted" style={{ fontSize: '0.8rem' }}>
+                    {p.hint}
+                  </div>
                 </div>
               </label>
             ))}
@@ -65,10 +71,18 @@ export function SettingsPage() {
 
           <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'var(--bg)', borderRadius: 12 }}>
             <strong>Як під'єднати MicroSIP</strong>
-            <ol className="muted" style={{ margin: '0.5rem 0 0', paddingLeft: '1.1rem', fontSize: '0.85rem', lineHeight: 1.7 }}>
+            <ol
+              className="muted"
+              style={{ margin: '0.5rem 0 0', paddingLeft: '1.1rem', fontSize: '0.85rem', lineHeight: 1.7 }}
+            >
               <li>Встановіть та налаштуйте акаунт у MicroSIP.</li>
-              <li>У MicroSIP → Settings увімкніть реєстрацію протоколу <code>sip:</code>.</li>
-              <li>Тут залишіть протокол <code>sip:</code> — і кнопки «Подзвонити» відкриватимуть MicroSIP із набраним номером.</li>
+              <li>
+                У MicroSIP → Settings увімкніть реєстрацію протоколу <code>sip:</code>.
+              </li>
+              <li>
+                Тут залишіть протокол <code>sip:</code> — і кнопки «Подзвонити» відкриватимуть MicroSIP із
+                набраним номером.
+              </li>
             </ol>
           </div>
         </div>

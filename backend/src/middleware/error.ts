@@ -9,13 +9,7 @@ export function notFound(req: Request, res: Response): void {
 }
 
 /** Централізований обробник помилок. */
-export function errorHandler(
-  err: unknown,
-  _req: Request,
-  res: Response,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _next: NextFunction,
-): void {
+export function errorHandler(err: unknown, _req: Request, res: Response, _next: NextFunction): void {
   if (err instanceof AppError) {
     res.status(err.statusCode).json({
       error: { message: err.message, ...(err.details ? { details: err.details } : {}) },

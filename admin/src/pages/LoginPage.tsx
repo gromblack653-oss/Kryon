@@ -47,12 +47,7 @@ export function LoginPage() {
           </label>
           <label>
             Пароль
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
           </label>
           {error && <p className="error">{error}</p>}
           <button className="btn btn-primary" style={{ width: '100%' }} disabled={login.isPending}>

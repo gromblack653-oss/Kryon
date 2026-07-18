@@ -1,11 +1,19 @@
 import { api } from './client';
-import type { AuthResponse, CallLog, CallSort, CrmStats, Customer, CustomerProfile, OrderItem, Paged } from '../types';
+import type {
+  AuthResponse,
+  CallLog,
+  CallSort,
+  CrmStats,
+  Customer,
+  CustomerProfile,
+  OrderItem,
+  Paged,
+} from '../types';
 
 export const authApi = {
   login: (body: { email: string; password: string }) =>
     api.post<AuthResponse>('/api/auth/login', body).then((r) => r.data),
-  logout: (refreshToken: string) =>
-    api.post('/api/auth/logout', { refreshToken }).then((r) => r.data),
+  logout: (refreshToken: string) => api.post('/api/auth/logout', { refreshToken }).then((r) => r.data),
 };
 
 export const crmApi = {
@@ -14,8 +22,7 @@ export const crmApi = {
   customers: (params: { page?: number; limit?: number; search?: string }) =>
     api.get<Paged<Customer>>('/api/crm/customers', { params }).then((r) => r.data),
 
-  customer: (id: string) =>
-    api.get<CustomerProfile>(`/api/crm/customers/${id}`).then((r) => r.data),
+  customer: (id: string) => api.get<CustomerProfile>(`/api/crm/customers/${id}`).then((r) => r.data),
 
   orderItems: (orderId: string) =>
     api.get<OrderItem[]>(`/api/crm/orders/${orderId}/items`).then((r) => r.data),
@@ -23,13 +30,11 @@ export const crmApi = {
   updatePhone: (id: string, phone: string | null) =>
     api.patch<Customer>(`/api/crm/customers/${id}/phone`, { phone }).then((r) => r.data),
 
-
   addNote: (customerId: string, body: { type: string; body: string }) =>
     api.post(`/api/crm/customers/${customerId}/notes`, body).then((r) => r.data),
 
   recentCalls: (sort: CallSort = 'newest') =>
     api.get<CallLog[]>('/api/crm/calls', { params: { sort } }).then((r) => r.data),
-
 
   uploadRecording: (callId: string, file: File) => {
     const form = new FormData();

@@ -36,7 +36,11 @@ export function CustomersPage() {
             setSearch(input || undefined);
           }}
         >
-          <input placeholder="Пошук за ім'ям, email або телефоном..." value={input} onChange={(e) => setInput(e.target.value)} />
+          <input
+            placeholder="Пошук за ім'ям, email або телефоном..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          />
         </form>
       </div>
 
@@ -61,7 +65,9 @@ export function CustomersPage() {
                       <Avatar name={c.name} size={38} />
                       <div>
                         <div className="cust-name">{c.name}</div>
-                        <div className="muted" style={{ fontSize: '0.8rem' }}>{c.email}</div>
+                        <div className="muted" style={{ fontSize: '0.8rem' }}>
+                          {c.email}
+                        </div>
                       </div>
                     </Link>
                   </td>
@@ -83,7 +89,13 @@ export function CustomersPage() {
                   </td>
                 </tr>
               ))}
-              {data && data.items.length === 0 && <tr><td colSpan={6} className="empty">Клієнтів не знайдено.</td></tr>}
+              {data && data.items.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="empty">
+                    Клієнтів не знайдено.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -91,9 +103,19 @@ export function CustomersPage() {
 
       {data && data.pages > 1 && (
         <div className="pagination">
-          <button className="btn btn-ghost btn-sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>← Назад</button>
-          <span className="muted">{data.page} / {data.pages}</span>
-          <button className="btn btn-ghost btn-sm" disabled={page >= data.pages} onClick={() => setPage((p) => p + 1)}>Далі →</button>
+          <button className="btn btn-ghost btn-sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
+            ← Назад
+          </button>
+          <span className="muted">
+            {data.page} / {data.pages}
+          </span>
+          <button
+            className="btn btn-ghost btn-sm"
+            disabled={page >= data.pages}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            Далі →
+          </button>
         </div>
       )}
     </div>

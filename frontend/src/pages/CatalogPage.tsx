@@ -110,7 +110,11 @@ export function CatalogPage() {
           <span className="tt-count">{types?.reduce((s, t) => s + t.count, 0) ?? ''}</span>
         </button>
         {types?.map((t) => (
-          <button key={t.key} className={`type-tab ${type === t.key ? 'active' : ''}`} onClick={() => changeType(t.key)}>
+          <button
+            key={t.key}
+            className={`type-tab ${type === t.key ? 'active' : ''}`}
+            onClick={() => changeType(t.key)}
+          >
             <span className="tt-icon">{t.icon}</span> {t.name}
             <span className="tt-count">{t.count}</span>
           </button>
@@ -125,10 +129,18 @@ export function CatalogPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          {search && <button className="search-clear" onClick={() => setSearch('')} aria-label="Очистити">✕</button>}
+          {search && (
+            <button className="search-clear" onClick={() => setSearch('')} aria-label="Очистити">
+              ✕
+            </button>
+          )}
         </div>
         <select className="sort-select" value={sort} onChange={(e) => setSort(e.target.value as typeof sort)}>
-          {SORTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+          {SORTS.map((s) => (
+            <option key={s.value} value={s.value}>
+              {s.label}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -139,7 +151,11 @@ export function CatalogPage() {
               <h4>Серія</h4>
               <select value={category ?? ''} onChange={(e) => setCategory(e.target.value || undefined)}>
                 <option value="">Усі серії</option>
-                {categories.map((c) => <option key={c.id} value={c.slug}>{c.name}</option>)}
+                {categories.map((c) => (
+                  <option key={c.id} value={c.slug}>
+                    {c.name}
+                  </option>
+                ))}
               </select>
             </div>
           )}
@@ -147,16 +163,31 @@ export function CatalogPage() {
           <div className="filter-group">
             <h4>Ціна, грн</h4>
             <div className="price-row">
-              <input type="number" min={0} placeholder="від" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} />
+              <input
+                type="number"
+                min={0}
+                placeholder="від"
+                value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
+              />
               <span>—</span>
-              <input type="number" min={0} placeholder="до" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} />
+              <input
+                type="number"
+                min={0}
+                placeholder="до"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+              />
             </div>
           </div>
 
           {/* Динамічні фільтри характеристик — залежать від обраного типу */}
           {facets?.map((f) => (
             <div className="filter-group" key={f.key}>
-              <h4>{f.label}{f.unit ? `, ${f.unit}` : ''}</h4>
+              <h4>
+                {f.label}
+                {f.unit ? `, ${f.unit}` : ''}
+              </h4>
               <div className="facet-list">
                 {f.options.map((o) => (
                   <label key={o.value} className="facet-row">
@@ -180,7 +211,11 @@ export function CatalogPage() {
             </label>
           </div>
 
-          {hasFilters && <button className="btn btn-ghost btn-sm reset-btn" onClick={resetAll}>Скинути фільтри</button>}
+          {hasFilters && (
+            <button className="btn btn-ghost btn-sm reset-btn" onClick={resetAll}>
+              Скинути фільтри
+            </button>
+          )}
         </aside>
 
         <div className="catalog-results">
@@ -190,18 +225,37 @@ export function CatalogPage() {
               {isFetching && data && ' · оновлення...'}
             </span>
             <div className="active-chips">
-              {debSearch && <span className="achip" onClick={() => setSearch('')}>«{debSearch}» ✕</span>}
-              {category && <span className="achip" onClick={() => setCategory(undefined)}>{catName(category)} ✕</span>}
+              {debSearch && (
+                <span className="achip" onClick={() => setSearch('')}>
+                  «{debSearch}» ✕
+                </span>
+              )}
+              {category && (
+                <span className="achip" onClick={() => setCategory(undefined)}>
+                  {catName(category)} ✕
+                </span>
+              )}
               {(debMin || debMax) && (
-                <span className="achip" onClick={() => { setMinPrice(''); setMaxPrice(''); }}>
+                <span
+                  className="achip"
+                  onClick={() => {
+                    setMinPrice('');
+                    setMaxPrice('');
+                  }}
+                >
                   {debMin || '0'}–{debMax || '∞'} грн ✕
                 </span>
               )}
-              {inStock && <span className="achip" onClick={() => setInStock(false)}>В наявності ✕</span>}
+              {inStock && (
+                <span className="achip" onClick={() => setInStock(false)}>
+                  В наявності ✕
+                </span>
+              )}
               {attrPairs.flatMap(([key, values]) =>
                 values.map((v) => (
                   <span key={`${key}-${v}`} className="achip" onClick={() => toggleAttr(key, v)}>
-                    {facetLabel(key)}: {v}{facetUnit(key) ? ` ${facetUnit(key)}` : ''} ✕
+                    {facetLabel(key)}: {v}
+                    {facetUnit(key) ? ` ${facetUnit(key)}` : ''} ✕
                   </span>
                 )),
               )}
@@ -213,19 +267,35 @@ export function CatalogPage() {
           {data && data.items.length === 0 && (
             <div className="empty-state">
               <p className="muted">За вашим запитом нічого не знайдено.</p>
-              {hasFilters && <button className="btn btn-primary" onClick={resetAll}>Скинути фільтри</button>}
+              {hasFilters && (
+                <button className="btn btn-primary" onClick={resetAll}>
+                  Скинути фільтри
+                </button>
+              )}
             </div>
           )}
 
           <div className="grid">
-            {data?.items.map((p) => <ProductCard key={p.id} product={p} />)}
+            {data?.items.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
           </div>
 
           {data && data.pages > 1 && (
             <div className="pagination">
-              <button className="btn btn-ghost" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>← Назад</button>
-              <span>Сторінка {data.page} з {data.pages}</span>
-              <button className="btn btn-ghost" disabled={data.page >= data.pages} onClick={() => setPage((p) => p + 1)}>Далі →</button>
+              <button className="btn btn-ghost" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
+                ← Назад
+              </button>
+              <span>
+                Сторінка {data.page} з {data.pages}
+              </span>
+              <button
+                className="btn btn-ghost"
+                disabled={data.page >= data.pages}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                Далі →
+              </button>
             </div>
           )}
         </div>

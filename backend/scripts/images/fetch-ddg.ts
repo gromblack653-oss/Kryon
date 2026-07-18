@@ -37,9 +37,20 @@ const VENDOR_WORDS =
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const glue = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
 const modelToken = (title: string): string =>
-  glue(title.replace(VENDOR_WORDS, ' ').replace(/\b\d+\s?gb\b/gi, ' ').replace(/\bddr\d\b/gi, ' '));
+  glue(
+    title
+      .replace(VENDOR_WORDS, ' ')
+      .replace(/\b\d+\s?gb\b/gi, ' ')
+      .replace(/\bddr\d\b/gi, ' '),
+  );
 
-interface DdgResult { title: string; image: string; source?: string; width?: number; height?: number }
+interface DdgResult {
+  title: string;
+  image: string;
+  source?: string;
+  width?: number;
+  height?: number;
+}
 
 async function vqdToken(query: string): Promise<string | null> {
   const r = await fetch(`https://duckduckgo.com/?q=${encodeURIComponent(query)}&iax=images&ia=images`, {
@@ -83,7 +94,9 @@ function pickBest(results: DdgResult[], token: string): string | null {
 async function run(): Promise<void> {
   const outPath = process.argv[2];
   if (!outPath) throw new Error('Вкажіть шлях до JSON');
-  const result: Record<string, string> = fs.existsSync(outPath) ? JSON.parse(fs.readFileSync(outPath, 'utf8')) : {};
+  const result: Record<string, string> = fs.existsSync(outPath)
+    ? JSON.parse(fs.readFileSync(outPath, 'utf8'))
+    : {};
 
   const good = new Set([...Object.keys(productImages), ...Object.keys(componentImages)]);
   const all = [

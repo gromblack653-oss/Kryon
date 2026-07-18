@@ -75,7 +75,11 @@ export async function listWarehouses(cityRef: string, q = ''): Promise<NpWarehou
     if (!isLiveNp()) return local();
     try {
       const raw = await call<{
-        Ref: string; Number: string; Description: string; ShortAddress?: string; PlaceMaxWeightAllowed?: string;
+        Ref: string;
+        Number: string;
+        Description: string;
+        ShortAddress?: string;
+        PlaceMaxWeightAllowed?: string;
       }>('Address', 'getWarehouses', { CityRef: cityRef, FindByString: q, Limit: 50 });
 
       return raw.map((w) => ({

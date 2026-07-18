@@ -7,11 +7,11 @@ services:
       POSTGRES_PASSWORD: shopcore
       POSTGRES_DB: shopcore
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U shopcore"]
+      test: ['CMD-SHELL', 'pg_isready -U shopcore']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -20,9 +20,9 @@ services:
     image: redis:7-alpine
     container_name: shopcore-redis
     ports:
-      - "6379:6379"
+      - '6379:6379'
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -50,7 +50,7 @@ services:
       JWT_REFRESH_SECRET: super-refresh-secret-change-me
       CORS_ORIGIN: http://localhost:5173,http://localhost:5174,http://localhost:5175
     ports:
-      - "4000:4000"
+      - '4000:4000'
     volumes:
       - uploads:/repo/backend/uploads
 
@@ -66,7 +66,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "5173:80"
+      - '5173:80'
 
   admin:
     # Профіль full: цей сервіс НЕ стартує при звичайному `docker compose up -d`.
@@ -80,7 +80,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "5174:80"
+      - '5174:80'
 
   crm:
     # Профіль full: цей сервіс НЕ стартує при звичайному `docker compose up -d`.
@@ -94,7 +94,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "5175:80"
+      - '5175:80'
 
 volumes:
   pgdata:

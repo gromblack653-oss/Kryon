@@ -9,14 +9,24 @@ const part = (title: string, attrs: Record<string, string | number>, price = 100
 
 // Базові сумісні комплектуючі (AM5 + DDR5 + Mid Tower).
 const cpuAm5 = part('Ryzen 7 9800X3D', { socket: 'AM5', tdp: 120 });
-const moboAm5 = part('MSI B650 Tomahawk', { socket: 'AM5', mem_type: 'DDR5', mem_slots: 4, form_factor: 'ATX' });
+const moboAm5 = part('MSI B650 Tomahawk', {
+  socket: 'AM5',
+  mem_type: 'DDR5',
+  mem_slots: 4,
+  form_factor: 'ATX',
+});
 const ramDdr5 = part('Kingston Fury 32GB', { mem_type: 'DDR5', modules: 2 });
 const gpuMid = part('RTX 4070', { tdp: 200, length_mm: 285 });
 const psu850 = part('Corsair RM850e', { wattage: 850, form_factor: 'ATX' });
 const caseMid = part('NZXT H7 Flow', { form_factor: 'Mid Tower', max_gpu_len: 400 });
 
 const goodBuild: BuildSelection = {
-  cpu: cpuAm5, mobo: moboAm5, ram: ramDdr5, gpu: gpuMid, psu: psu850, case: caseMid,
+  cpu: cpuAm5,
+  mobo: moboAm5,
+  ram: ramDdr5,
+  gpu: gpuMid,
+  psu: psu850,
+  case: caseMid,
 };
 
 describe('checkBuild — движок сумісності', () => {
@@ -47,8 +57,17 @@ describe('checkBuild — движок сумісності', () => {
   });
 
   it('ловить брак слотів пам’яті на платі', () => {
-    const itxMobo = part('B650I ITX', { socket: 'AM5', mem_type: 'DDR5', mem_slots: 2, form_factor: 'Mini-ITX' });
-    const r = checkBuild({ ...goodBuild, mobo: itxMobo, ram: part('4×16 ГБ', { mem_type: 'DDR5', modules: 4 }) });
+    const itxMobo = part('B650I ITX', {
+      socket: 'AM5',
+      mem_type: 'DDR5',
+      mem_slots: 2,
+      form_factor: 'Mini-ITX',
+    });
+    const r = checkBuild({
+      ...goodBuild,
+      mobo: itxMobo,
+      ram: part('4×16 ГБ', { mem_type: 'DDR5', modules: 4 }),
+    });
     expect(r.issues.some((i) => i.message.includes('слоти'))).toBe(true);
   });
 
@@ -63,7 +82,10 @@ describe('checkBuild — движок сумісності', () => {
   });
 
   it('попереджає, коли карта стає впритул', () => {
-    const r = checkBuild({ ...goodBuild, case: part('Тісний корпус', { form_factor: 'Mid Tower', max_gpu_len: 295 }) });
+    const r = checkBuild({
+      ...goodBuild,
+      case: part('Тісний корпус', { form_factor: 'Mid Tower', max_gpu_len: 295 }),
+    });
     const warn = r.issues.find((i) => i.level === 'warning' && i.parts.includes('gpu'));
     expect(warn).toBeDefined();
     expect(r.hasErrors).toBe(false);
@@ -79,7 +101,12 @@ describe('checkBuild — движок сумісності', () => {
   });
 
   it('ловить ATX-блок живлення в Mini-ITX корпусі', () => {
-    const itxMobo = part('B650I ITX', { socket: 'AM5', mem_type: 'DDR5', mem_slots: 2, form_factor: 'Mini-ITX' });
+    const itxMobo = part('B650I ITX', {
+      socket: 'AM5',
+      mem_type: 'DDR5',
+      mem_slots: 2,
+      form_factor: 'Mini-ITX',
+    });
     const r = checkBuild({
       ...goodBuild,
       mobo: itxMobo,

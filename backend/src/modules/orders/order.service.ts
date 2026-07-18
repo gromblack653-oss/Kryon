@@ -113,10 +113,16 @@ export const orderService = {
                              recipient_name, recipient_phone, payment_method, payment_status)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'unpaid') RETURNING *`,
         [
-          userId, total, input.shippingAddress, input.deliveryMethod,
-          input.npCityRef ?? null, city?.name ?? null,
-          input.npWarehouseRef ?? null, warehouse ? `${warehouse.name} — ${warehouse.address}` : null,
-          input.recipientName ?? null, input.recipientPhone ?? null,
+          userId,
+          total,
+          input.shippingAddress,
+          input.deliveryMethod,
+          input.npCityRef ?? null,
+          city?.name ?? null,
+          input.npWarehouseRef ?? null,
+          warehouse ? `${warehouse.name} — ${warehouse.address}` : null,
+          input.recipientName ?? null,
+          input.recipientPhone ?? null,
           input.paymentMethod,
         ],
       );
@@ -169,10 +175,10 @@ export const orderService = {
 
   async listAll(page: number, limit: number): Promise<{ items: Order[]; total: number }> {
     const offset = (page - 1) * limit;
-    const items = await query<Order>(
-      `SELECT * FROM orders ORDER BY created_at DESC LIMIT $1 OFFSET $2`,
-      [limit, offset],
-    );
+    const items = await query<Order>(`SELECT * FROM orders ORDER BY created_at DESC LIMIT $1 OFFSET $2`, [
+      limit,
+      offset,
+    ]);
     const countRows = await query<{ count: string }>('SELECT COUNT(*)::int AS count FROM orders');
     return { items, total: Number(countRows[0]?.count ?? 0) };
   },

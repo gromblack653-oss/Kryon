@@ -7,9 +7,24 @@ interface Brand {
 }
 
 const BRANDS: Array<{ test: RegExp } & Brand> = [
-  { test: /nvidia|geforce|rtx|gtx/i, name: 'NVIDIA', accent: '#76B900', gradient: 'linear-gradient(135deg,#0f1a0a,#2d4a10)' },
-  { test: /radeon|amd|\brx\b/i, name: 'AMD', accent: '#ED1C24', gradient: 'linear-gradient(135deg,#1a0a0b,#5a0f14)' },
-  { test: /intel|\barc\b/i, name: 'Intel', accent: '#0071C5', gradient: 'linear-gradient(135deg,#0a1420,#00396b)' },
+  {
+    test: /nvidia|geforce|rtx|gtx/i,
+    name: 'NVIDIA',
+    accent: '#76B900',
+    gradient: 'linear-gradient(135deg,#0f1a0a,#2d4a10)',
+  },
+  {
+    test: /radeon|amd|\brx\b/i,
+    name: 'AMD',
+    accent: '#ED1C24',
+    gradient: 'linear-gradient(135deg,#1a0a0b,#5a0f14)',
+  },
+  {
+    test: /intel|\barc\b/i,
+    name: 'Intel',
+    accent: '#0071C5',
+    gradient: 'linear-gradient(135deg,#0a1420,#00396b)',
+  },
 ];
 
 function brandOf(title: string): Brand {
@@ -23,7 +38,10 @@ function brandOf(title: string): Brand {
 }
 
 function modelName(title: string): string {
-  return title.replace(/\b(nvidia|geforce|amd|radeon|intel)\b/gi, '').replace(/\s+/g, ' ').trim();
+  return title
+    .replace(/\b(nvidia|geforce|amd|radeon|intel)\b/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 interface Props {

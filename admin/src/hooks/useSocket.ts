@@ -19,7 +19,10 @@ export function useSocket() {
       return;
     }
 
-    socket = io(import.meta.env.VITE_API_URL || '/', { auth: { token }, transports: ['websocket', 'polling'] });
+    socket = io(import.meta.env.VITE_API_URL || '/', {
+      auth: { token },
+      transports: ['websocket', 'polling'],
+    });
     const refresh = () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
       queryClient.invalidateQueries({ queryKey: ['stats'] });

@@ -15,7 +15,10 @@ export function useCallSocket(onUpdate: (call: CallLog) => void): void {
   useEffect(() => {
     if (!token) return;
 
-    socket = io(import.meta.env.VITE_API_URL || '/', { auth: { token }, transports: ['websocket', 'polling'] });
+    socket = io(import.meta.env.VITE_API_URL || '/', {
+      auth: { token },
+      transports: ['websocket', 'polling'],
+    });
     socket.on('call:update', onUpdate);
 
     return () => {

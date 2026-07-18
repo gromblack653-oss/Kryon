@@ -103,7 +103,11 @@ export async function buildInvoicePdf(orderId: string): Promise<PDFKit.PDFDocume
   doc.font('main');
 
   const num = order.id.slice(0, 8).toUpperCase();
-  const date = new Date(order.created_at).toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const date = new Date(order.created_at).toLocaleDateString('uk-UA', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
 
   // --- Шапка ---
   doc.fontSize(20).fillColor('#4f46e5').text('Kryon', { continued: false });
@@ -117,7 +121,9 @@ export async function buildInvoicePdf(orderId: string): Promise<PDFKit.PDFDocume
 
   // --- Покупець ---
   doc.fontSize(11).fillColor('#111').text('Отримувач:');
-  doc.fontSize(10).fillColor('#333')
+  doc
+    .fontSize(10)
+    .fillColor('#333')
     .text(order.recipient_name ?? order.customer_name)
     .text(`Email: ${order.customer_email}`)
     .text(`Телефон: ${order.recipient_phone ?? order.customer_phone ?? '—'}`);
@@ -125,7 +131,9 @@ export async function buildInvoicePdf(orderId: string): Promise<PDFKit.PDFDocume
 
   // --- Доставка й оплата ---
   doc.fontSize(11).fillColor('#111').text('Доставка та оплата:');
-  doc.fontSize(10).fillColor('#333')
+  doc
+    .fontSize(10)
+    .fillColor('#333')
     .text(`Спосіб доставки: ${DELIVERY_LABELS[order.delivery_method]}`)
     .text(`Адреса: ${order.shipping_address}`);
   if (order.ttn) doc.text(`Номер накладної НП: ${order.ttn}`);
@@ -172,17 +180,29 @@ export async function buildInvoicePdf(orderId: string): Promise<PDFKit.PDFDocume
     doc.text(uah(it.price_cents), colPrice, y, { width: 80 });
     doc.text(uah(it.price_cents * it.quantity), colSum, y, { width: 65, align: 'right' });
     y += rowH;
-    doc.moveTo(startX, y - 4).lineTo(startX + 495, y - 4).strokeColor('#eee').stroke();
+    doc
+      .moveTo(startX, y - 4)
+      .lineTo(startX + 495, y - 4)
+      .strokeColor('#eee')
+      .stroke();
   });
 
   // --- Разом ---
   y += 6;
-  doc.fontSize(12).fillColor('#111').text('Разом до сплати:', colPrice - 60, y, { width: 130 });
-  doc.fontSize(12).fillColor('#4f46e5').text(uah(order.total_cents), colSum - 40, y, { width: 105, align: 'right' });
+  doc
+    .fontSize(12)
+    .fillColor('#111')
+    .text('Разом до сплати:', colPrice - 60, y, { width: 130 });
+  doc
+    .fontSize(12)
+    .fillColor('#4f46e5')
+    .text(uah(order.total_cents), colSum - 40, y, { width: 105, align: 'right' });
 
   // --- Підпис ---
   doc.moveDown(4);
-  doc.fontSize(9).fillColor('#666')
+  doc
+    .fontSize(9)
+    .fillColor('#666')
     .text('Склав(ла): ______________________', 50, doc.y)
     .moveDown(0.5)
     .text('Отримав(ла): ______________________');

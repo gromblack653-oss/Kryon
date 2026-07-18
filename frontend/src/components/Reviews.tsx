@@ -25,6 +25,9 @@ export function Reviews({ productId }: { productId: string }) {
       setRating(mine.rating);
       setBody(mine.body);
     }
+    // Скидаємо форму лише при зміні самого відгуку (id), а не на кожен рефетч —
+    // інакше правки користувача затиратимуться.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mine?.id]);
 
   const refresh = () => {
@@ -52,14 +55,18 @@ export function Reviews({ productId }: { productId: string }) {
 
   return (
     <section className="reviews">
-      <h2 className="reviews-title">Відгуки {data.count > 0 && <span className="muted">· {data.count}</span>}</h2>
+      <h2 className="reviews-title">
+        Відгуки {data.count > 0 && <span className="muted">· {data.count}</span>}
+      </h2>
 
       {data.count > 0 && (
         <div className="reviews-summary card">
           <div className="rs-score">
             <div className="rs-avg">{data.average.toFixed(1)}</div>
             <Stars value={data.average} size="md" />
-            <div className="muted" style={{ fontSize: '0.82rem' }}>{data.count} оцінок</div>
+            <div className="muted" style={{ fontSize: '0.82rem' }}>
+              {data.count} оцінок
+            </div>
           </div>
           <div className="rs-bars">
             {[5, 4, 3, 2, 1].map((star) => {
@@ -67,7 +74,9 @@ export function Reviews({ productId }: { productId: string }) {
               return (
                 <div className="rs-bar-row" key={star}>
                   <span className="rs-star">{star} ★</span>
-                  <div className="rs-bar"><div className="rs-fill" style={{ width: `${(n / max) * 100}%` }} /></div>
+                  <div className="rs-bar">
+                    <div className="rs-fill" style={{ width: `${(n / max) * 100}%` }} />
+                  </div>
                   <span className="rs-count">{n}</span>
                 </div>
               );
@@ -91,11 +100,19 @@ export function Reviews({ productId }: { productId: string }) {
           />
           <div className="rf-actions">
             {mine && (
-              <button className="btn btn-ghost btn-sm" disabled={remove.isPending} onClick={() => remove.mutate()}>
+              <button
+                className="btn btn-ghost btn-sm"
+                disabled={remove.isPending}
+                onClick={() => remove.mutate()}
+              >
                 Видалити
               </button>
             )}
-            <button className="btn btn-primary btn-sm" disabled={submit.isPending} onClick={() => submit.mutate()}>
+            <button
+              className="btn btn-primary btn-sm"
+              disabled={submit.isPending}
+              onClick={() => submit.mutate()}
+            >
               {submit.isPending ? 'Збереження...' : mine ? 'Оновити відгук' : 'Опублікувати'}
             </button>
           </div>
@@ -113,7 +130,9 @@ export function Reviews({ productId }: { productId: string }) {
                   <strong>{r.author_name}</strong>
                   {r.verified && <span className="verified">✓ підтверджена покупка</span>}
                 </div>
-                <span className="muted" style={{ fontSize: '0.78rem' }}>{formatDate(r.created_at)}</span>
+                <span className="muted" style={{ fontSize: '0.78rem' }}>
+                  {formatDate(r.created_at)}
+                </span>
               </div>
               <Stars value={r.rating} />
               {r.body && <p className="review-body">{r.body}</p>}

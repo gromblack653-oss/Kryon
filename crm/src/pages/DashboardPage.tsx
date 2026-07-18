@@ -51,7 +51,13 @@ export function DashboardPage() {
           <div className="table-wrap">
             <table className="table">
               <thead>
-                <tr><th>Клієнт</th><th>Номер</th><th>Результат</th><th>Трив.</th><th>Коли</th></tr>
+                <tr>
+                  <th>Клієнт</th>
+                  <th>Номер</th>
+                  <th>Результат</th>
+                  <th>Трив.</th>
+                  <th>Коли</th>
+                </tr>
               </thead>
               <tbody>
                 {calls?.slice(0, 8).map((c) => (
@@ -62,15 +68,25 @@ export function DashboardPage() {
                           <Avatar name={c.customer_name ?? '?'} size={28} />
                           <span>{c.customer_name ?? '—'}</span>
                         </Link>
-                      ) : <span className="muted">— невідомий —</span>}
+                      ) : (
+                        <span className="muted">— невідомий —</span>
+                      )}
                     </td>
                     <td className="mono">{c.phone}</td>
-                    <td><span className={`pill pill-${c.outcome}`}>{CALL_OUTCOME_LABELS[c.outcome]}</span></td>
+                    <td>
+                      <span className={`pill pill-${c.outcome}`}>{CALL_OUTCOME_LABELS[c.outcome]}</span>
+                    </td>
                     <td className="muted">{formatDuration(c.duration_seconds)}</td>
                     <td className="muted">{formatDate(c.created_at)}</td>
                   </tr>
                 ))}
-                {calls && calls.length === 0 && <tr><td colSpan={5} className="empty">Дзвінків ще немає.</td></tr>}
+                {calls && calls.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="empty">
+                      Дзвінків ще немає.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -82,7 +98,9 @@ export function DashboardPage() {
             <tbody>
               {outcomes.map((o) => (
                 <tr key={o}>
-                  <td><span className={`pill pill-${o}`}>{CALL_OUTCOME_LABELS[o]}</span></td>
+                  <td>
+                    <span className={`pill pill-${o}`}>{CALL_OUTCOME_LABELS[o]}</span>
+                  </td>
                   <td style={{ textAlign: 'right', fontWeight: 700 }}>{stats?.callsByOutcome[o] ?? 0}</td>
                 </tr>
               ))}
@@ -90,16 +108,22 @@ export function DashboardPage() {
           </table>
 
           {/* Черга на обдзвін — головна причина, чому оператор відкриває дашборд. */}
-          <div className="card-title" style={{ marginTop: 22 }}>🎯 Черга на обдзвін</div>
+          <div className="card-title" style={{ marginTop: 22 }}>
+            🎯 Черга на обдзвін
+          </div>
           {!stats?.needsCall.length ? (
-            <p className="muted">Черга порожня — усім клієнтам з активними замовленнями вже дзвонили сьогодні.</p>
+            <p className="muted">
+              Черга порожня — усім клієнтам з активними замовленнями вже дзвонили сьогодні.
+            </p>
           ) : (
             <table className="table">
               <tbody>
                 {stats.needsCall.map((c) => (
                   <tr key={c.id}>
                     <td>
-                      <Link to={`/customers/${c.id}`} className="cust-name">{c.name}</Link>
+                      <Link to={`/customers/${c.id}`} className="cust-name">
+                        {c.name}
+                      </Link>
                       <div className="muted small">
                         {c.orders_count} активн. замовл. · {formatPrice(c.total_spent_cents)}
                       </div>

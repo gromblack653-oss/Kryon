@@ -45,7 +45,11 @@ export function OrderDetailPage() {
     }
   }
 
-  const { data: order, isLoading, isError } = useQuery({
+  const {
+    data: order,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ['order', id],
     queryFn: () => ordersApi.get(id!),
     enabled: !!id,
@@ -65,11 +69,15 @@ export function OrderDetailPage() {
 
   return (
     <div>
-      <Link to="/orders" className="back-link">← До замовлень</Link>
+      <Link to="/orders" className="back-link">
+        ← До замовлень
+      </Link>
       <div className="page-head">
         <h1 className="page-title">Замовлення #{order.id.slice(0, 8)}</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <span className={`pill pill-${order.status}`}>{orderStatusLabel(order.status, order.payment_method)}</span>
+          <span className={`pill pill-${order.status}`}>
+            {orderStatusLabel(order.status, order.payment_method)}
+          </span>
           <button className="btn btn-primary" disabled={downloading} onClick={invoice}>
             {downloading ? 'Формуємо...' : '📄 Накладна PDF'}
           </button>
@@ -85,14 +93,18 @@ export function OrderDetailPage() {
                 <tr key={i.id}>
                   <td>{i.title}</td>
                   <td className="muted">× {i.quantity}</td>
-                  <td style={{ textAlign: 'right', fontWeight: 600 }}>{formatPrice(i.price_cents * i.quantity)}</td>
+                  <td style={{ textAlign: 'right', fontWeight: 600 }}>
+                    {formatPrice(i.price_cents * i.quantity)}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
           <div className="summary-row" style={{ marginTop: '0.5rem', borderBottom: 'none' }}>
             <strong>Разом</strong>
-            <strong className="stat-value accent" style={{ fontSize: '1.2rem' }}>{formatPrice(order.total_cents)}</strong>
+            <strong className="stat-value accent" style={{ fontSize: '1.2rem' }}>
+              {formatPrice(order.total_cents)}
+            </strong>
           </div>
         </div>
 
@@ -113,7 +125,10 @@ export function OrderDetailPage() {
           {order.recipient_name && (
             <div className="summary-row">
               <span className="muted">Отримувач</span>
-              <span>{order.recipient_name}{order.recipient_phone ? `, ${order.recipient_phone}` : ''}</span>
+              <span>
+                {order.recipient_name}
+                {order.recipient_phone ? `, ${order.recipient_phone}` : ''}
+              </span>
             </div>
           )}
           {order.ttn && (
@@ -137,7 +152,12 @@ export function OrderDetailPage() {
               <h3 style={{ marginTop: '1.5rem' }}>Змінити статус</h3>
               <div className="btn-row">
                 {nextStatuses(order.status, order.payment_method).map((s) => (
-                  <button key={s} className="btn btn-primary btn-sm" disabled={updateStatus.isPending} onClick={() => updateStatus.mutate(s)}>
+                  <button
+                    key={s}
+                    className="btn btn-primary btn-sm"
+                    disabled={updateStatus.isPending}
+                    onClick={() => updateStatus.mutate(s)}
+                  >
                     → {orderStatusLabel(s, order.payment_method)}
                   </button>
                 ))}
@@ -145,7 +165,9 @@ export function OrderDetailPage() {
               {updateStatus.isError && <p className="error">{apiError(updateStatus.error)}</p>}
             </>
           ) : (
-            <p className="muted" style={{ marginTop: '1rem' }}>Статус фінальний — змін немає.</p>
+            <p className="muted" style={{ marginTop: '1rem' }}>
+              Статус фінальний — змін немає.
+            </p>
           )}
         </div>
       </div>

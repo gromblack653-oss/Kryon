@@ -30,21 +30,21 @@ export function formatDate(iso: string): string {
  * оплати» — воно вже прийняте в роботу.
  */
 export function orderStatusLabel(status: string, paymentMethod?: string): string {
-  if (status === "pending" && paymentMethod === "cod") return "Прийнято";
+  if (status === 'pending' && paymentMethod === 'cod') return 'Прийнято';
   return ORDER_STATUS_LABELS[status] ?? status;
 }
 
 /** Підпис стану оплати: для накладеного платежу «не оплачено» = «при отриманні». */
 export function paymentStatusLabel(paymentStatus: string, paymentMethod?: string): string {
-  if (paymentMethod === "cod" && (paymentStatus === "unpaid" || paymentStatus === "pending")) {
-    return "при отриманні";
+  if (paymentMethod === 'cod' && (paymentStatus === 'unpaid' || paymentStatus === 'pending')) {
+    return 'при отриманні';
   }
   const labels: Record<string, string> = {
-    unpaid: "не оплачено",
-    pending: "очікує оплати",
-    paid: "оплачено",
-    failed: "оплата не пройшла",
-    refunded: "повернено",
+    unpaid: 'не оплачено',
+    pending: 'очікує оплати',
+    paid: 'оплачено',
+    failed: 'оплата не пройшла',
+    refunded: 'повернено',
   };
   return labels[paymentStatus] ?? paymentStatus;
 }

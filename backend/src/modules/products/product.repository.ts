@@ -163,7 +163,10 @@ function parseAttrs(attrs?: string): Array<{ key: string; values: string[] }> {
     .split(';')
     .map((group) => {
       const [key, raw] = group.split(':');
-      const values = (raw ?? '').split(',').map((v) => v.trim()).filter(Boolean);
+      const values = (raw ?? '')
+        .split(',')
+        .map((v) => v.trim())
+        .filter(Boolean);
       return { key: (key ?? '').trim(), values };
     })
     .filter((g) => g.key && g.values.length)
@@ -249,8 +252,14 @@ export const productRepository = {
     const where = baseFilters(q, params);
 
     const rows = await query<{
-      key: string; label: string; unit: string | null; data_type: string;
-      position: number; value: string; sort_num: number | null; count: number;
+      key: string;
+      label: string;
+      unit: string | null;
+      data_type: string;
+      position: number;
+      value: string;
+      sort_num: number | null;
+      count: number;
     }>(
       `SELECT a.key, a.label, a.unit, a.data_type, a.position,
               COALESCE(pav.value_text, pav.value_num::text) AS value,

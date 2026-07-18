@@ -19,7 +19,9 @@ export function WishlistPage() {
       <div className="empty-state">
         <h1 className="page-title">Обране</h1>
         <p className="muted">Тут порожньо. Натисніть ♡ на картці товару, щоб зберегти його.</p>
-        <Link to="/" className="btn btn-primary">До каталогу</Link>
+        <Link to="/" className="btn btn-primary">
+          До каталогу
+        </Link>
       </div>
     );
   }
@@ -35,8 +37,12 @@ export function WishlistPage() {
               <ProductImage product={item} compact />
             </div>
             <div className="cart-info">
-              <Link to={`/products/${item.id}`} className="cart-title">{item.title}</Link>
-              <span className="muted" style={{ fontSize: '0.82rem' }}>{item.category_name}</span>
+              <Link to={`/products/${item.id}`} className="cart-title">
+                {item.title}
+              </Link>
+              <span className="muted" style={{ fontSize: '0.82rem' }}>
+                {item.category_name}
+              </span>
             </div>
             <div className="cart-line-total">{formatPrice(item.price_cents)}</div>
             <button
@@ -46,7 +52,11 @@ export function WishlistPage() {
             >
               {item.stock > 0 ? 'У кошик' : 'Немає'}
             </button>
-            <button className="btn btn-ghost btn-sm" title="Прибрати" onClick={() => wishlist.toggle(item.id)}>
+            <button
+              className="btn btn-ghost btn-sm"
+              title="Прибрати"
+              onClick={() => wishlist.toggle(item.id)}
+            >
               ✕
             </button>
           </div>

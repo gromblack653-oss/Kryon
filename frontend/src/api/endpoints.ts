@@ -49,8 +49,7 @@ export const authApi = {
     api.post<AuthResponse>('/api/auth/register', body).then((r) => r.data),
   login: (body: { email: string; password: string }) =>
     api.post<AuthResponse>('/api/auth/login', body).then((r) => r.data),
-  logout: (refreshToken: string) =>
-    api.post('/api/auth/logout', { refreshToken }).then((r) => r.data),
+  logout: (refreshToken: string) => api.post('/api/auth/logout', { refreshToken }).then((r) => r.data),
 };
 
 export const productsApi = {
@@ -84,13 +83,11 @@ export const reviewsApi = {
     api.get<ReviewsResponse>(`/api/products/${productId}/reviews`).then((r) => r.data),
   submit: (productId: string, body: { rating: number; body: string }) =>
     api.post(`/api/products/${productId}/reviews`, body).then((r) => r.data),
-  remove: (productId: string) =>
-    api.delete(`/api/products/${productId}/reviews`).then((r) => r.data),
+  remove: (productId: string) => api.delete(`/api/products/${productId}/reviews`).then((r) => r.data),
 };
 
 export const wishlistApi = {
-  list: () =>
-    api.get<{ items: WishlistItem[]; ids: string[] }>('/api/wishlist').then((r) => r.data),
+  list: () => api.get<{ items: WishlistItem[]; ids: string[] }>('/api/wishlist').then((r) => r.data),
   add: (productId: string) => api.post(`/api/wishlist/${productId}`).then((r) => r.data),
   remove: (productId: string) => api.delete(`/api/wishlist/${productId}`).then((r) => r.data),
 };
@@ -101,8 +98,7 @@ export const cartApi = {
     api.post<Cart>('/api/cart/items', { productId, quantity }).then((r) => r.data),
   setQty: (productId: string, quantity: number) =>
     api.patch<Cart>(`/api/cart/items/${productId}`, { quantity }).then((r) => r.data),
-  removeItem: (productId: string) =>
-    api.delete<Cart>(`/api/cart/items/${productId}`).then((r) => r.data),
+  removeItem: (productId: string) => api.delete<Cart>(`/api/cart/items/${productId}`).then((r) => r.data),
 };
 
 export const ordersApi = {
@@ -129,7 +125,9 @@ export const builderApi = {
 
 export const deliveryApi = {
   cities: (q: string) =>
-    api.get<{ items: NpCity[]; live: boolean }>('/api/delivery/cities', { params: { q } }).then((r) => r.data),
+    api
+      .get<{ items: NpCity[]; live: boolean }>('/api/delivery/cities', { params: { q } })
+      .then((r) => r.data),
   warehouses: (cityRef: string, q = '') =>
     api
       .get<{ items: NpWarehouse[] }>('/api/delivery/warehouses', { params: { cityRef, q } })

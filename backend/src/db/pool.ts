@@ -26,9 +26,7 @@ export async function query<T = unknown>(text: string, params?: unknown[]): Prom
  * Виконує callback усередині транзакції.
  * BEGIN → callback → COMMIT (або ROLLBACK при помилці).
  */
-export async function withTransaction<T>(
-  fn: (client: PoolClient) => Promise<T>,
-): Promise<T> {
+export async function withTransaction<T>(fn: (client: PoolClient) => Promise<T>): Promise<T> {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');

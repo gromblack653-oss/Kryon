@@ -65,7 +65,16 @@ async function search(query: string): Promise<Candidate[]> {
   if (!res || !res.ok) throw new Error(`HTTP ${res?.status ?? 'no-response'}`);
 
   const data = (await res.json()) as {
-    query?: { pages?: Record<string, { index: number; title: string; imageinfo?: Array<{ thumburl?: string; url: string; mime?: string; mediatype?: string }> }> };
+    query?: {
+      pages?: Record<
+        string,
+        {
+          index: number;
+          title: string;
+          imageinfo?: Array<{ thumburl?: string; url: string; mime?: string; mediatype?: string }>;
+        }
+      >;
+    };
   };
   const pages = data.query?.pages ?? {};
   const candidates: Candidate[] = [];

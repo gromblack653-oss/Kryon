@@ -9,9 +9,23 @@ import { componentProducts } from '../../src/db/seed.components';
 const API = 'https://commons.wikimedia.org/w/api.php';
 const UA = 'ShopCoreDemo/1.0 (fullstack portfolio project; educational use)';
 const VENDORS = [
-  'be quiet!', 'Cooler Master', 'Fractal Design', 'Lian Li', 'G.Skill',
-  'Corsair', 'Seasonic', 'Deepcool', 'Chieftec', 'Kingston', 'Crucial',
-  'Patriot', 'ASUS', 'NZXT', 'MSI', 'AMD', 'Intel',
+  'be quiet!',
+  'Cooler Master',
+  'Fractal Design',
+  'Lian Li',
+  'G.Skill',
+  'Corsair',
+  'Seasonic',
+  'Deepcool',
+  'Chieftec',
+  'Kingston',
+  'Crucial',
+  'Patriot',
+  'ASUS',
+  'NZXT',
+  'MSI',
+  'AMD',
+  'Intel',
 ];
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -24,7 +38,13 @@ function modelToken(title: string): string {
   return glue(model);
 }
 
-interface Cand { index: number; title: string; url: string; mediatype?: string; mime?: string }
+interface Cand {
+  index: number;
+  title: string;
+  url: string;
+  mediatype?: string;
+  mime?: string;
+}
 
 async function search(query: string): Promise<Cand[]> {
   const url =
@@ -38,12 +58,28 @@ async function search(query: string): Promise<Cand[]> {
   }
   if (!res || !res.ok) throw new Error(`HTTP ${res?.status ?? 'no-response'}`);
   const data = (await res.json()) as {
-    query?: { pages?: Record<string, { index: number; title: string; imageinfo?: Array<{ thumburl?: string; url: string; mime?: string; mediatype?: string }> }> };
+    query?: {
+      pages?: Record<
+        string,
+        {
+          index: number;
+          title: string;
+          imageinfo?: Array<{ thumburl?: string; url: string; mime?: string; mediatype?: string }>;
+        }
+      >;
+    };
   };
   const out: Cand[] = [];
   for (const p of Object.values(data.query?.pages ?? {})) {
     const info = p.imageinfo?.[0];
-    if (info) out.push({ index: p.index, title: p.title, url: info.thumburl ?? info.url, mediatype: info.mediatype, mime: info.mime });
+    if (info)
+      out.push({
+        index: p.index,
+        title: p.title,
+        url: info.thumburl ?? info.url,
+        mediatype: info.mediatype,
+        mime: info.mime,
+      });
   }
   return out.sort((a, b) => a.index - b.index);
 }
@@ -62,7 +98,9 @@ function pick(cands: Cand[], token: string): Cand | null {
 async function run(): Promise<void> {
   const outPath = process.argv[2];
   if (!outPath) throw new Error('Вкажіть шлях до JSON');
-  const result: Record<string, string> = fs.existsSync(outPath) ? JSON.parse(fs.readFileSync(outPath, 'utf8')) : {};
+  const result: Record<string, string> = fs.existsSync(outPath)
+    ? JSON.parse(fs.readFileSync(outPath, 'utf8'))
+    : {};
 
   const pending = componentProducts.filter((p) => !result[p.slug]);
   process.stderr.write(`Зібрано: ${Object.keys(result).length}, залишилось: ${pending.length}\n`);

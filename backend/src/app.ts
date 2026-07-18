@@ -38,10 +38,7 @@ export function createApp(): Express {
   if (!env.isTest) app.use(morgan('dev'));
 
   // Статика для завантажених зображень товарів.
-  app.use(
-    `/${env.upload.dir}`,
-    express.static(path.resolve(process.cwd(), env.upload.dir)),
-  );
+  app.use(`/${env.upload.dir}`, express.static(path.resolve(process.cwd(), env.upload.dir)));
 
   app.get('/health', (_req, res) => res.json({ status: 'ok', ts: new Date().toISOString() }));
 

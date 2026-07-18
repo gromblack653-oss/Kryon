@@ -44,7 +44,13 @@ export function CallsPage() {
             value={number}
             onChange={(e) => setNumber(e.target.value)}
           />
-          <CallButton phone={number || null} onLogged={() => { refresh(); setNumber(''); }} />
+          <CallButton
+            phone={number || null}
+            onLogged={() => {
+              refresh();
+              setNumber('');
+            }}
+          />
         </div>
         <p className="muted" style={{ marginTop: '0.75rem', fontSize: '0.82rem' }}>
           Натисніть «Подзвонити» — відкриється MicroSIP (протокол sip:), а після — форма запису результату.
@@ -53,10 +59,18 @@ export function CallsPage() {
 
       <div className="toolbar">
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span className="muted" style={{ fontSize: '0.85rem' }}>Сортування:</span>
-          <select value={sort} onChange={(e) => setSort(e.target.value as CallSort)} style={{ width: 'auto' }}>
+          <span className="muted" style={{ fontSize: '0.85rem' }}>
+            Сортування:
+          </span>
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value as CallSort)}
+            style={{ width: 'auto' }}
+          >
             {SORTS.map((s) => (
-              <option key={s.value} value={s.value}>{s.label}</option>
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
             ))}
           </select>
         </div>
@@ -67,8 +81,14 @@ export function CallsPage() {
           <table className="table">
             <thead>
               <tr>
-                <th>Клієнт</th><th>Номер</th><th>Напрям</th><th>Результат</th>
-                <th>Трив.</th><th>Запис</th><th>Оператор</th><th>Коли</th>
+                <th>Клієнт</th>
+                <th>Номер</th>
+                <th>Напрям</th>
+                <th>Результат</th>
+                <th>Трив.</th>
+                <th>Запис</th>
+                <th>Оператор</th>
+                <th>Коли</th>
               </tr>
             </thead>
             <tbody>
@@ -80,18 +100,34 @@ export function CallsPage() {
                         <Avatar name={c.customer_name ?? '?'} size={28} />
                         <span>{c.customer_name}</span>
                       </Link>
-                    ) : <span className="muted">—</span>}
+                    ) : (
+                      <span className="muted">—</span>
+                    )}
                   </td>
                   <td className="mono">{c.phone}</td>
-                  <td><span className={`dir ${c.direction === 'outbound' ? 'out' : 'in'}`}>{c.direction === 'outbound' ? '↗ вих.' : '↙ вх.'}</span></td>
-                  <td><span className={`pill pill-${c.outcome}`}>{CALL_OUTCOME_LABELS[c.outcome]}</span></td>
+                  <td>
+                    <span className={`dir ${c.direction === 'outbound' ? 'out' : 'in'}`}>
+                      {c.direction === 'outbound' ? '↗ вих.' : '↙ вх.'}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={`pill pill-${c.outcome}`}>{CALL_OUTCOME_LABELS[c.outcome]}</span>
+                  </td>
                   <td className="muted">{formatDuration(c.duration_seconds)}</td>
-                  <td><CallRecording callId={c.id} recordingUrl={c.recording_url} onUploaded={refresh} /></td>
+                  <td>
+                    <CallRecording callId={c.id} recordingUrl={c.recording_url} onUploaded={refresh} />
+                  </td>
                   <td className="muted">{c.agent_name ?? '—'}</td>
                   <td className="muted">{formatDate(c.created_at)}</td>
                 </tr>
               ))}
-              {calls && calls.length === 0 && <tr><td colSpan={8} className="empty">Дзвінків ще немає.</td></tr>}
+              {calls && calls.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="empty">
+                    Дзвінків ще немає.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

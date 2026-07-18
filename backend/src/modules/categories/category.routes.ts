@@ -59,10 +59,10 @@ router.post(
   validate(createCategorySchema),
   asyncHandler(async (req, res) => {
     const { name, slug } = req.body;
-    const rows = await query<Category>(
-      'INSERT INTO categories (name, slug) VALUES ($1, $2) RETURNING *',
-      [name, slug],
-    );
+    const rows = await query<Category>('INSERT INTO categories (name, slug) VALUES ($1, $2) RETURNING *', [
+      name,
+      slug,
+    ]);
     await invalidate('products:list:*');
     res.status(201).json(rows[0]);
   }),

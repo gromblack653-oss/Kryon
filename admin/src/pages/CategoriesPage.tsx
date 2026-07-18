@@ -30,7 +30,10 @@ export function CategoriesPage() {
           <h3>Список</h3>
           <table className="table">
             <thead>
-              <tr><th>Назва</th><th>Slug</th></tr>
+              <tr>
+                <th>Назва</th>
+                <th>Slug</th>
+              </tr>
             </thead>
             <tbody>
               {categories?.map((c) => (
@@ -54,11 +57,22 @@ export function CategoriesPage() {
           >
             <label>
               Назва
-              <input required minLength={2} value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
+              <input
+                required
+                minLength={2}
+                value={form.name}
+                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+              />
             </label>
             <label>
               Slug (латиниця)
-              <input required pattern="[a-z0-9-]+" value={form.slug} onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))} placeholder="rtx-50" />
+              <input
+                required
+                pattern="[a-z0-9-]+"
+                value={form.slug}
+                onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
+                placeholder="rtx-50"
+              />
             </label>
             {error && <p className="error">{error}</p>}
             <button className="btn btn-primary" disabled={create.isPending}>

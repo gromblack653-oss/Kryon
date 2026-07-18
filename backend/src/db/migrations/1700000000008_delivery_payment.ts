@@ -48,8 +48,16 @@ export function down(pgm: MigrationBuilder): void {
   pgm.dropTable('payments');
   pgm.dropIndex('orders', 'payment_status');
   pgm.dropColumns('orders', [
-    'delivery_method', 'np_city_ref', 'np_city_name', 'np_warehouse_ref', 'np_warehouse_name',
-    'recipient_name', 'recipient_phone', 'ttn', 'payment_method', 'payment_status',
+    'delivery_method',
+    'np_city_ref',
+    'np_city_name',
+    'np_warehouse_ref',
+    'np_warehouse_name',
+    'recipient_name',
+    'recipient_phone',
+    'ttn',
+    'payment_method',
+    'payment_status',
   ]);
   pgm.dropType('payment_status');
   pgm.dropType('payment_method');

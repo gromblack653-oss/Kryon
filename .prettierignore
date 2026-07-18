@@ -1,0 +1,6 @@
+**/dist
+**/node_modules
+pnpm-lock.yaml
+backend/uploads
+*.md
+frontend/src/lib/brandLogos.ts

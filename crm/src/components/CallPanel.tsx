@@ -90,9 +90,7 @@ export function CallPanel({ call: initial, customerName, onDone }: Props) {
           )}
           {done && (
             <>
-              <span className={`outcome-badge ${call.outcome}`}>
-                {CALL_OUTCOME_LABELS[call.outcome]}
-              </span>
+              <span className={`outcome-badge ${call.outcome}`}>{CALL_OUTCOME_LABELS[call.outcome]}</span>
               <span className="call-timer">{fmt(call.duration_seconds)}</span>
               <span className="muted small">
                 {call.direction === 'outbound' ? '↗ Вихідний' : '↙ Вхідний'} · тривалість зафіксована АТС

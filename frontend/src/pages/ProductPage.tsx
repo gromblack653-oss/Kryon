@@ -18,7 +18,11 @@ export function ProductPage() {
   const wishlist = useWishlist();
   const [activeImage, setActiveImage] = useState(0);
 
-  const { data: product, isLoading, isError } = useQuery({
+  const {
+    data: product,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ['product', id],
     queryFn: () => productsApi.get(id!),
     enabled: !!id,
@@ -46,7 +50,11 @@ export function ProductPage() {
       <div className="detail-grid">
         <div className="gallery">
           <div className="detail-image">
-            {mainUrl ? <img src={assetUrl(mainUrl)} alt={product.title} /> : <ProductImage product={product} />}
+            {mainUrl ? (
+              <img src={assetUrl(mainUrl)} alt={product.title} />
+            ) : (
+              <ProductImage product={product} />
+            )}
           </div>
           {images.length > 1 && (
             <div className="thumbs">
@@ -82,7 +90,10 @@ export function ProductPage() {
               {product.attributes.map((a) => (
                 <div className="spec-row" key={a.key}>
                   <span className="k">{a.label}</span>
-                  <span className="v">{a.value}{a.unit ? ` ${a.unit}` : ''}</span>
+                  <span className="v">
+                    {a.value}
+                    {a.unit ? ` ${a.unit}` : ''}
+                  </span>
                 </div>
               ))}
             </div>

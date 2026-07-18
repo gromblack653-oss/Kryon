@@ -6,16 +6,43 @@ const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
 
 // Виробники чипів відеокарт — власні фірмові кольори градієнта.
 const CHIP_BRANDS: Array<{ test: RegExp; key: string; name: string; gradient: string }> = [
-  { test: /nvidia|geforce|rtx|gtx/i, key: 'nvidia', name: 'NVIDIA', gradient: 'linear-gradient(135deg,#0f1a0a,#2d4a10)' },
-  { test: /radeon|\bamd\b|\brx\b/i, key: 'amd', name: 'AMD', gradient: 'linear-gradient(135deg,#1a0a0b,#5a0f14)' },
-  { test: /\bintel\b|\barc\b/i, key: 'intel', name: 'Intel', gradient: 'linear-gradient(135deg,#0a1420,#00396b)' },
+  {
+    test: /nvidia|geforce|rtx|gtx/i,
+    key: 'nvidia',
+    name: 'NVIDIA',
+    gradient: 'linear-gradient(135deg,#0f1a0a,#2d4a10)',
+  },
+  {
+    test: /radeon|\bamd\b|\brx\b/i,
+    key: 'amd',
+    name: 'AMD',
+    gradient: 'linear-gradient(135deg,#1a0a0b,#5a0f14)',
+  },
+  {
+    test: /\bintel\b|\barc\b/i,
+    key: 'intel',
+    name: 'Intel',
+    gradient: 'linear-gradient(135deg,#0a1420,#00396b)',
+  },
 ];
 
 // Виробники комплектуючих — впізнаємо за початком назви.
 const VENDORS = [
-  'be quiet!', 'Cooler Master', 'Fractal Design', 'Lian Li', 'G.Skill',
-  'Corsair', 'Seasonic', 'Deepcool', 'Chieftec', 'Kingston', 'Crucial',
-  'Patriot', 'ASUS', 'NZXT', 'MSI',
+  'be quiet!',
+  'Cooler Master',
+  'Fractal Design',
+  'Lian Li',
+  'G.Skill',
+  'Corsair',
+  'Seasonic',
+  'Deepcool',
+  'Chieftec',
+  'Kingston',
+  'Crucial',
+  'Patriot',
+  'ASUS',
+  'NZXT',
+  'MSI',
 ];
 
 /** Детермінований відтінок за назвою (для брендів без фіксованого кольору). */
@@ -49,7 +76,10 @@ function resolveBrand(title: string): Brand {
       key: chip.key,
       name: chip.name,
       gradient: chip.gradient,
-      model: title.replace(/\b(nvidia|geforce|amd|radeon|intel)\b/gi, '').replace(/\s+/g, ' ').trim(),
+      model: title
+        .replace(/\b(nvidia|geforce|amd|radeon|intel)\b/gi, '')
+        .replace(/\s+/g, ' ')
+        .trim(),
     };
   }
   return { key: '', name: 'Kryon', gradient: 'linear-gradient(135deg,#1e293b,#334155)', model: title };
@@ -70,7 +100,11 @@ export function ProductImage({ product, compact }: Props) {
   const logo = brandLogos[brand.key];
 
   return (
-    <div className={`media-ph ${compact ? 'compact' : ''}`} style={{ background: brand.gradient }} aria-label={product.title}>
+    <div
+      className={`media-ph ${compact ? 'compact' : ''}`}
+      style={{ background: brand.gradient }}
+      aria-label={product.title}
+    >
       {logo ? (
         <svg className="media-ph-logo" viewBox="0 0 24 24" role="img" aria-label={brand.name}>
           <path d={logo.path} fill="rgba(255,255,255,0.92)" />

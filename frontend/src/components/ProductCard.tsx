@@ -62,7 +62,8 @@ export function ProductCard({ product }: { product: Product }) {
           <div className="spec-chips">
             {product.specs.map((s) => (
               <span key={s.key} className="spec-chip" title={s.label}>
-                {s.value}{s.unit ? ` ${s.unit}` : ''}
+                {s.value}
+                {s.unit ? ` ${s.unit}` : ''}
               </span>
             ))}
           </div>

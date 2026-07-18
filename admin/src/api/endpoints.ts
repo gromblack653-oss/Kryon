@@ -1,13 +1,5 @@
 import { api } from './client';
-import type {
-  AuthResponse,
-  Category,
-  Order,
-  OrderDetail,
-  Paged,
-  Product,
-  Stats,
-} from '../types';
+import type { AuthResponse, Category, Order, OrderDetail, Paged, Product, Stats } from '../types';
 
 export interface ProductQuery {
   page?: number;
@@ -20,8 +12,7 @@ export interface ProductQuery {
 export const authApi = {
   login: (body: { email: string; password: string }) =>
     api.post<AuthResponse>('/api/auth/login', body).then((r) => r.data),
-  logout: (refreshToken: string) =>
-    api.post('/api/auth/logout', { refreshToken }).then((r) => r.data),
+  logout: (refreshToken: string) => api.post('/api/auth/logout', { refreshToken }).then((r) => r.data),
 };
 
 export const statsApi = {
@@ -29,10 +20,8 @@ export const statsApi = {
 };
 
 export const productsApi = {
-  list: (q: ProductQuery) =>
-    api.get<Paged<Product>>('/api/products', { params: q }).then((r) => r.data),
-  create: (body: Record<string, unknown>) =>
-    api.post<Product>('/api/products', body).then((r) => r.data),
+  list: (q: ProductQuery) => api.get<Paged<Product>>('/api/products', { params: q }).then((r) => r.data),
+  create: (body: Record<string, unknown>) => api.post<Product>('/api/products', body).then((r) => r.data),
   update: (id: string, body: Record<string, unknown>) =>
     api.patch<Product>(`/api/products/${id}`, body).then((r) => r.data),
   remove: (id: string) => api.delete(`/api/products/${id}`).then((r) => r.data),

@@ -7,8 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "gen:logos": "node scripts/gen-brand-logos.mjs",
-    "preview": "vite preview",
-    "lint": "eslint \"src/**/*.{ts,tsx}\""
+    "preview": "vite preview"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.51.0",

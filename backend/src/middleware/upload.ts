@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, uploadDir),
   filename: (_req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, `${crypto.randomUUID()}${ext}`);
+    cb(null, `${randomUUID()}${ext}`);
   },
 });
 
@@ -31,8 +31,15 @@ export const uploadImage = multer({
 });
 
 const ALLOWED_AUDIO = new Set([
-  'audio/wav', 'audio/x-wav', 'audio/wave', 'audio/mpeg', 'audio/mp3',
-  'audio/ogg', 'audio/webm', 'audio/mp4', 'audio/aac',
+  'audio/wav',
+  'audio/x-wav',
+  'audio/wave',
+  'audio/mpeg',
+  'audio/mp3',
+  'audio/ogg',
+  'audio/webm',
+  'audio/mp4',
+  'audio/aac',
 ]);
 
 /** Завантаження аудіозаписів дзвінків (MicroSIP пише WAV/MP3). */

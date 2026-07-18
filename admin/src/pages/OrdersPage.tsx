@@ -54,15 +54,37 @@ export function OrdersPage() {
               {data?.items.map((o) => (
                 <tr key={o.id}>
                   <td className="mono">#{o.id.slice(0, 8)}</td>
-                  <td><span className={`pill pill-${o.status}`}>{orderStatusLabel(o.status, o.payment_method)}</span></td>
+                  <td>
+                    <span className={`pill pill-${o.status}`}>
+                      {orderStatusLabel(o.status, o.payment_method)}
+                    </span>
+                  </td>
                   <td style={{ fontWeight: 600 }}>{formatPrice(o.total_cents)}</td>
-                  <td className="muted" style={{ maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.shipping_address}</td>
+                  <td
+                    className="muted"
+                    style={{
+                      maxWidth: 240,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {o.shipping_address}
+                  </td>
                   <td className="muted">{formatDate(o.created_at)}</td>
-                  <td><Link to={`/orders/${o.id}`} className="btn btn-ghost btn-sm">Деталі</Link></td>
+                  <td>
+                    <Link to={`/orders/${o.id}`} className="btn btn-ghost btn-sm">
+                      Деталі
+                    </Link>
+                  </td>
                 </tr>
               ))}
               {data && data.items.length === 0 && (
-                <tr><td colSpan={6} className="muted">Замовлень немає.</td></tr>
+                <tr>
+                  <td colSpan={6} className="muted">
+                    Замовлень немає.
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>
@@ -70,9 +92,23 @@ export function OrdersPage() {
 
         {pages > 1 && (
           <div className="pagination">
-            <button className="btn btn-ghost btn-sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>← Назад</button>
-            <span className="muted">{page} / {pages}</span>
-            <button className="btn btn-ghost btn-sm" disabled={page >= pages} onClick={() => setPage((p) => p + 1)}>Далі →</button>
+            <button
+              className="btn btn-ghost btn-sm"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => p - 1)}
+            >
+              ← Назад
+            </button>
+            <span className="muted">
+              {page} / {pages}
+            </span>
+            <button
+              className="btn btn-ghost btn-sm"
+              disabled={page >= pages}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Далі →
+            </button>
           </div>
         )}
       </div>

@@ -16,7 +16,9 @@ export const env = {
   isTest: process.env.NODE_ENV === 'test',
   port: Number(process.env.PORT ?? 4000),
   // Кілька дозволених origin через кому (клієнт + адмінка).
-  corsOrigins: (process.env.CORS_ORIGIN ?? 'http://localhost:5173,http://localhost:5174,http://localhost:5175')
+  corsOrigins: (
+    process.env.CORS_ORIGIN ?? 'http://localhost:5173,http://localhost:5174,http://localhost:5175'
+  )
     .split(',')
     .map((o) => o.trim())
     .filter(Boolean),

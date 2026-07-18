@@ -22,7 +22,14 @@ export const productService = {
 
   async compare(idsCsv: string): Promise<Product[]> {
     // Дедуплікація: один товар не має двічі потрапляти в порівняння.
-    const ids = [...new Set(idsCsv.split(',').map((s) => s.trim()).filter(Boolean))];
+    const ids = [
+      ...new Set(
+        idsCsv
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean),
+      ),
+    ];
     return productRepository.compareByIds(ids);
   },
 
@@ -81,5 +88,7 @@ export const productService = {
 };
 
 function isUniqueViolation(err: unknown): boolean {
-  return typeof err === 'object' && err !== null && 'code' in err && (err as { code: string }).code === '23505';
+  return (
+    typeof err === 'object' && err !== null && 'code' in err && (err as { code: string }).code === '23505'
+  );
 }

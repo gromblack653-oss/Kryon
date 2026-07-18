@@ -80,13 +80,7 @@ router.get('/:id', productController.getById);
  *     summary: Створити товар (admin)
  *     security: [{ bearerAuth: [] }]
  */
-router.post(
-  '/',
-  authenticate,
-  authorize('admin'),
-  validate(createProductSchema),
-  productController.create,
-);
+router.post('/', authenticate, authorize('admin'), validate(createProductSchema), productController.create);
 
 /**
  * @openapi
@@ -161,11 +155,6 @@ router.post(
  *     summary: Видалити фото з галереї (admin)
  *     security: [{ bearerAuth: [] }]
  */
-router.delete(
-  '/:id/images/:imageId',
-  authenticate,
-  authorize('admin'),
-  productController.removeGalleryImage,
-);
+router.delete('/:id/images/:imageId', authenticate, authorize('admin'), productController.removeGalleryImage);
 
 export default router;

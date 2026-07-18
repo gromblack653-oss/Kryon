@@ -11,10 +11,16 @@ export function CompareBar() {
 
   return (
     <div className="compare-bar">
-      <span className="cb-count">До порівняння: <b>{ids.length}</b> / 4</span>
+      <span className="cb-count">
+        До порівняння: <b>{ids.length}</b> / 4
+      </span>
       <div className="cb-actions">
-        <button className="btn btn-ghost btn-sm" onClick={clear}>Очистити</button>
-        <Link to="/compare" className="btn btn-primary btn-sm">Порівняти →</Link>
+        <button className="btn btn-ghost btn-sm" onClick={clear}>
+          Очистити
+        </button>
+        <Link to="/compare" className="btn btn-primary btn-sm">
+          Порівняти →
+        </Link>
       </div>
     </div>
   );

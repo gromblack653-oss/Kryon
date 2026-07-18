@@ -2,7 +2,7 @@
   "name": "shopcore",
   "version": "1.0.0",
   "private": true,
-  "description": "ShopCore — fullstack e-commerce (React + Node + PostgreSQL) monorepo",
+  "description": "ShopCore вЂ” fullstack e-commerce (React + Node + PostgreSQL) monorepo",
   "scripts": {
     "dev": "pnpm -r --parallel run dev",
     "dev:backend": "pnpm --filter shopcore-backend run dev",
@@ -12,7 +12,11 @@
     "build": "pnpm -r run build",
     "test": "pnpm --filter shopcore-backend run test",
     "migrate": "pnpm --filter shopcore-backend run migrate up",
-    "seed": "pnpm --filter shopcore-backend run seed"
+    "seed": "pnpm --filter shopcore-backend run seed",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "engines": {
     "node": ">=20",
@@ -23,5 +27,16 @@
       "esbuild"
     ]
   },
-  "packageManager": "pnpm@10.33.0"
+  "packageManager": "pnpm@10.33.0",
+  "devDependencies": {
+    "eslint": "^9.13.0",
+    "@eslint/js": "^9.13.0",
+    "typescript-eslint": "^8.11.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.14",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.3.3",
+    "globals": "^15.11.0"
+  },
+  "type": "module"
 }

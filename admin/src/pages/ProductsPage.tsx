@@ -69,8 +69,10 @@ export function ProductsPage() {
     onSuccess: refresh,
   });
 
-  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
-    setForm((f) => ({ ...f, [k]: e.target.value }));
+  const set =
+    (k: keyof typeof form) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+      setForm((f) => ({ ...f, [k]: e.target.value }));
 
   function startEdit(p: Product) {
     setEditId(p.id);
@@ -97,21 +99,45 @@ export function ProductsPage() {
             }}
           >
             <div className="form-grid">
-              <label>Назва<input required value={form.title} onChange={set('title')} /></label>
-              <label>Slug<input required value={form.slug} onChange={set('slug')} placeholder="rtx-4090" /></label>
-              <label>Ціна, грн<input type="number" min={0} step="0.01" required value={form.price} onChange={set('price')} /></label>
-              <label>Кількість<input type="number" min={0} required value={form.stock} onChange={set('stock')} /></label>
+              <label>
+                Назва
+                <input required value={form.title} onChange={set('title')} />
+              </label>
+              <label>
+                Slug
+                <input required value={form.slug} onChange={set('slug')} placeholder="rtx-4090" />
+              </label>
+              <label>
+                Ціна, грн
+                <input
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  required
+                  value={form.price}
+                  onChange={set('price')}
+                />
+              </label>
+              <label>
+                Кількість
+                <input type="number" min={0} required value={form.stock} onChange={set('stock')} />
+              </label>
               <label>
                 Категорія
                 <select value={form.categoryId} onChange={set('categoryId')}>
                   <option value="">— без категорії —</option>
                   {categories?.map((c) => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
                   ))}
                 </select>
               </label>
             </div>
-            <label>Опис<textarea rows={2} value={form.description} onChange={set('description')} /></label>
+            <label>
+              Опис
+              <textarea rows={2} value={form.description} onChange={set('description')} />
+            </label>
             {error && <p className="error">{error}</p>}
             <button className="btn btn-primary" disabled={create.isPending}>
               {create.isPending ? 'Створення...' : 'Створити'}
@@ -136,7 +162,9 @@ export function ProductsPage() {
         >
           <option value="">Усі категорії</option>
           {categories?.map((c) => (
-            <option key={c.id} value={c.slug}>{c.name}</option>
+            <option key={c.id} value={c.slug}>
+              {c.name}
+            </option>
           ))}
         </select>
       </div>
@@ -170,17 +198,43 @@ export function ProductsPage() {
                   <td className="muted">{p.category_name ?? '—'}</td>
                   {editId === p.id ? (
                     <>
-                      <td><input type="number" step="0.01" value={edit.price} onChange={(e) => setEdit((s) => ({ ...s, price: e.target.value }))} /></td>
-                      <td><input type="number" value={edit.stock} onChange={(e) => setEdit((s) => ({ ...s, stock: e.target.value }))} /></td>
+                      <td>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={edit.price}
+                          onChange={(e) => setEdit((s) => ({ ...s, price: e.target.value }))}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          value={edit.stock}
+                          onChange={(e) => setEdit((s) => ({ ...s, stock: e.target.value }))}
+                        />
+                      </td>
                       <td>
                         <label style={{ margin: 0, display: 'flex', gap: '0.3rem', alignItems: 'center' }}>
-                          <input type="checkbox" style={{ width: 'auto' }} checked={edit.is_active} onChange={(e) => setEdit((s) => ({ ...s, is_active: e.target.checked }))} />
+                          <input
+                            type="checkbox"
+                            style={{ width: 'auto' }}
+                            checked={edit.is_active}
+                            onChange={(e) => setEdit((s) => ({ ...s, is_active: e.target.checked }))}
+                          />
                           активний
                         </label>
                       </td>
                       <td className="row-actions">
-                        <button className="btn btn-primary btn-sm" disabled={update.isPending} onClick={() => update.mutate(p.id)}>Зберегти</button>
-                        <button className="btn btn-ghost btn-sm" onClick={() => setEditId(null)}>✕</button>
+                        <button
+                          className="btn btn-primary btn-sm"
+                          disabled={update.isPending}
+                          onClick={() => update.mutate(p.id)}
+                        >
+                          Зберегти
+                        </button>
+                        <button className="btn btn-ghost btn-sm" onClick={() => setEditId(null)}>
+                          ✕
+                        </button>
                       </td>
                     </>
                   ) : (
@@ -188,14 +242,39 @@ export function ProductsPage() {
                       <td>{formatPrice(p.price_cents)}</td>
                       <td>{p.stock}</td>
                       <td>
-                        {p.is_active ? <span className="pill pill-delivered">активний</span> : <span className="pill pill-cancelled">прихований</span>}
+                        {p.is_active ? (
+                          <span className="pill pill-delivered">активний</span>
+                        ) : (
+                          <span className="pill pill-cancelled">прихований</span>
+                        )}
                       </td>
                       <td className="row-actions">
-                        <input type="file" accept="image/*" hidden ref={(el) => (fileRefs.current[p.id] = el)}
-                          onChange={(e) => { const f = e.target.files?.[0]; if (f) upload.mutate({ id: p.id, file: f }); }} />
-                        <button className="btn btn-ghost btn-sm" onClick={() => fileRefs.current[p.id]?.click()}>Фото</button>
-                        <button className="btn btn-ghost btn-sm" onClick={() => startEdit(p)}>Редагувати</button>
-                        <button className="btn btn-danger btn-sm" disabled={remove.isPending} onClick={() => remove.mutate(p.id)}>✕</button>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          hidden
+                          ref={(el) => (fileRefs.current[p.id] = el)}
+                          onChange={(e) => {
+                            const f = e.target.files?.[0];
+                            if (f) upload.mutate({ id: p.id, file: f });
+                          }}
+                        />
+                        <button
+                          className="btn btn-ghost btn-sm"
+                          onClick={() => fileRefs.current[p.id]?.click()}
+                        >
+                          Фото
+                        </button>
+                        <button className="btn btn-ghost btn-sm" onClick={() => startEdit(p)}>
+                          Редагувати
+                        </button>
+                        <button
+                          className="btn btn-danger btn-sm"
+                          disabled={remove.isPending}
+                          onClick={() => remove.mutate(p.id)}
+                        >
+                          ✕
+                        </button>
                       </td>
                     </>
                   )}
@@ -207,9 +286,23 @@ export function ProductsPage() {
 
         {data && data.pages > 1 && (
           <div className="pagination">
-            <button className="btn btn-ghost btn-sm" disabled={data.page <= 1} onClick={() => setQuery((q) => ({ ...q, page: (q.page ?? 1) - 1 }))}>← Назад</button>
-            <span className="muted">{data.page} / {data.pages}</span>
-            <button className="btn btn-ghost btn-sm" disabled={data.page >= data.pages} onClick={() => setQuery((q) => ({ ...q, page: (q.page ?? 1) + 1 }))}>Далі →</button>
+            <button
+              className="btn btn-ghost btn-sm"
+              disabled={data.page <= 1}
+              onClick={() => setQuery((q) => ({ ...q, page: (q.page ?? 1) - 1 }))}
+            >
+              ← Назад
+            </button>
+            <span className="muted">
+              {data.page} / {data.pages}
+            </span>
+            <button
+              className="btn btn-ghost btn-sm"
+              disabled={data.page >= data.pages}
+              onClick={() => setQuery((q) => ({ ...q, page: (q.page ?? 1) + 1 }))}
+            >
+              Далі →
+            </button>
           </div>
         )}
       </div>
