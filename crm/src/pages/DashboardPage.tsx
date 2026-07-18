@@ -107,7 +107,7 @@ export function DashboardPage() {
             </tbody>
           </table>
 
-          {/* Черга на обдзвін — головна причина, чому оператор відкриває дашборд. */}
+          {}
           <div className="card-title" style={{ marginTop: 22 }}>
             🎯 Черга на обдзвін
           </div>

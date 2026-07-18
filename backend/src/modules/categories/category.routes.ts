@@ -30,7 +30,6 @@ const createCategorySchema = z.object({
 router.get(
   '/',
   asyncHandler(async (req, res) => {
-    // ?type=gpu — лише категорії (серії) обраного типу компонента.
     const type = typeof req.query.type === 'string' ? req.query.type : undefined;
     const rows = type
       ? await query<Category>(

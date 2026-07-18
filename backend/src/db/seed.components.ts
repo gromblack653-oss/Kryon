@@ -1,8 +1,3 @@
-/**
- * Типи компонентів (окрім відеокарт) із власними схемами характеристик.
- * Демонструє мультикатегорійність: у кожного типу — свої faceted-фільтри.
- */
-
 export interface AttrDef {
   key: string;
   label: string;
@@ -25,7 +20,7 @@ export interface ComponentProduct {
   type: string;
   title: string;
   slug: string;
-  price: number; // копійки
+  price: number;
   stock: number;
   desc: string;
   attrs: Record<string, string | number>;
@@ -177,7 +172,6 @@ export const componentTypes: TypeDef[] = [
 ];
 
 export const componentProducts: ComponentProduct[] = [
-  // ===== Процесори =====
   {
     type: 'cpu',
     title: 'AMD Ryzen 9 9950X',
@@ -269,7 +263,6 @@ export const componentProducts: ComponentProduct[] = [
     attrs: { brand: 'Intel', socket: 'LGA1700', cores: 10, threads: 16, base_clock: 2.5, tdp: 65 },
   },
 
-  // ===== Оперативна пам'ять =====
   {
     type: 'ram',
     title: 'Kingston Fury Beast 32GB DDR5-6000',
@@ -343,7 +336,6 @@ export const componentProducts: ComponentProduct[] = [
     attrs: { brand: 'Patriot', capacity_gb: 16, mem_type: 'DDR5', speed_mhz: 6000, modules: 2 },
   },
 
-  // ===== Блоки живлення =====
   {
     type: 'psu',
     title: 'Corsair RM850e',
@@ -495,7 +487,6 @@ export const componentProducts: ComponentProduct[] = [
     },
   },
 
-  // ===== Материнські плати =====
   {
     type: 'mobo',
     title: 'ASUS ROG Strix X870E-E Gaming',
@@ -667,7 +658,6 @@ export const componentProducts: ComponentProduct[] = [
     },
   },
 
-  // ===== Корпуси =====
   {
     type: 'case',
     title: 'Lian Li O11 Dynamic EVO',

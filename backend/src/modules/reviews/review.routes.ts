@@ -7,7 +7,6 @@ import { validate } from '../../middleware/validate';
 import { authenticate, authorize } from '../../middleware/auth';
 import { NotFoundError } from '../../utils/errors';
 
-// mergeParams — щоб дістати :productId з батьківського маршруту.
 const router = Router({ mergeParams: true });
 
 interface ReviewRow {
@@ -25,7 +24,6 @@ const reviewSchema = z.object({
   body: z.string().max(2000).default(''),
 });
 
-/** Перевіряє існування товару, інакше 404. */
 async function ensureProduct(productId: string): Promise<void> {
   const rows = await query('SELECT 1 FROM products WHERE id = $1', [productId]);
   if (!rows.length) throw new NotFoundError('Product not found');
@@ -59,7 +57,6 @@ router.get(
       [productId],
     );
 
-    // Розподіл оцінок 5→1 для гістограми.
     const dist = await query<{ rating: number; count: number }>(
       `SELECT rating, COUNT(*)::int AS count FROM reviews WHERE product_id = $1 GROUP BY rating`,
       [productId],
@@ -99,7 +96,6 @@ router.post(
        RETURNING id`,
       [productId, req.user!.id, req.body.rating, req.body.body],
     );
-    // Рейтинг показується на картках — скидаємо кеш каталогу.
     await invalidate('products:list:*');
     res.status(201).json({ id: rows[0].id });
   }),

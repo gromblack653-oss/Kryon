@@ -3,14 +3,8 @@ import { env } from '../../config/env';
 import { logger } from '../../utils/logger';
 import { npCities, npWarehouses, type NpCity, type NpWarehouse } from './np.fixtures';
 
-/**
- * Клієнт Нової Пошти.
- * Якщо задано NP_API_KEY — ходимо в реальний API (api.novaposhta.ua).
- * Інакше працюємо на локальному довіднику: магазин піднімається без ключа,
- * а контракт (Ref/Description) однаковий, тож код вище не змінюється.
- */
 const API_URL = 'https://api.novaposhta.ua/v2.0/json/';
-const CACHE_TTL = 60 * 60 * 24; // довідник змінюється рідко
+const CACHE_TTL = 60 * 60 * 24;
 
 export const isLiveNp = (): boolean => Boolean(env.novaPoshta.apiKey);
 
@@ -35,7 +29,6 @@ async function call<T>(modelName: string, calledMethod: string, methodProperties
 const matches = (haystack: string, q: string): boolean =>
   haystack.toLowerCase().includes(q.trim().toLowerCase());
 
-/** Міста за пошуковим рядком (порожній рядок — найбільші міста). */
 export async function searchCities(q: string): Promise<NpCity[]> {
   const key = `np:cities:${q.toLowerCase()}`;
 
@@ -52,7 +45,6 @@ export async function searchCities(q: string): Promise<NpCity[]> {
       );
       return raw.map((c) => ({ ref: c.Ref, name: c.Description, area: c.AreaDescription ?? '' }));
     } catch (err) {
-      // Недоступність НП не має валити оформлення — падаємо на локальний довідник.
       logger.warn('Nova Poshta недоступна, використовуємо локальний довідник', {
         error: err instanceof Error ? err.message : String(err),
       });
@@ -61,7 +53,6 @@ export async function searchCities(q: string): Promise<NpCity[]> {
   });
 }
 
-/** Відділення міста (з необовʼязковим фільтром за номером/адресою). */
 export async function listWarehouses(cityRef: string, q = ''): Promise<NpWarehouse[]> {
   const key = `np:wh:${cityRef}:${q.toLowerCase()}`;
 
@@ -99,7 +90,6 @@ export async function listWarehouses(cityRef: string, q = ''): Promise<NpWarehou
   });
 }
 
-/** Пошук міста/відділення за ref — щоб зберегти назву в замовленні. */
 export async function findCity(ref: string): Promise<NpCity | undefined> {
   if (!isLiveNp()) return npCities.find((c) => c.ref === ref);
   const all = await searchCities('');
@@ -111,10 +101,6 @@ export async function findWarehouse(cityRef: string, ref: string): Promise<NpWar
   return list.find((w) => w.ref === ref);
 }
 
-/**
- * Номер ТТН. У живому режимі його видає НП при створенні накладної;
- * у демо генеруємо детерміновано з id замовлення (14 цифр, як у справжньої).
- */
 export function generateTtn(orderId: string): string {
   const digits = orderId.replace(/\D/g, '').padEnd(12, '0').slice(0, 12);
   return `205${digits}`.slice(0, 14);

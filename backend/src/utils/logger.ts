@@ -1,4 +1,3 @@
-/* Мінімалістичний логер зі структурованим виводом. */
 type Level = 'info' | 'warn' | 'error' | 'debug';
 
 function log(level: Level, message: string, meta?: Record<string, unknown>) {

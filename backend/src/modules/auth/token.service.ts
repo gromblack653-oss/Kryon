@@ -12,10 +12,6 @@ export const tokenService = {
     return jwt.sign(payload, env.jwt.accessSecret, { expiresIn: env.jwt.accessTtl });
   },
 
-  /**
-   * Створює refresh-токен і зберігає його id у Redis із TTL.
-   * Зберігання в Redis дозволяє відкликати сесію (logout / зміна пароля).
-   */
   async issueRefreshToken(user: AuthUser): Promise<string> {
     const tokenId = randomUUID();
     const token = jwt.sign({ sub: user.id, jti: tokenId }, env.jwt.refreshSecret, {
@@ -25,7 +21,6 @@ export const tokenService = {
     return token;
   },
 
-  /** Перевіряє refresh-токен і те, що він досі активний у Redis. */
   async verifyRefreshToken(token: string): Promise<{ userId: string; tokenId: string }> {
     const decoded = jwt.verify(token, env.jwt.refreshSecret) as { sub: string; jti: string };
     const exists = await redis.get(refreshKey(decoded.sub, decoded.jti));

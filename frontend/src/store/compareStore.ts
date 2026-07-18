@@ -12,7 +12,6 @@ interface CompareState {
   isFull: () => boolean;
 }
 
-/** Список товарів для порівняння (до 4), зберігається в localStorage. */
 export const useCompareStore = create<CompareState>()(
   persist(
     (set, get) => ({

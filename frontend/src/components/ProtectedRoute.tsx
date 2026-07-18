@@ -7,7 +7,6 @@ interface Props {
   role?: UserRole;
 }
 
-/** Захищає маршрут: вимагає логін, опційно — конкретну роль. */
 export function ProtectedRoute({ children, role }: Props) {
   const user = useAuthStore((s) => s.user);
   const location = useLocation();

@@ -16,22 +16,16 @@ export interface Payment {
   created_at: string;
 }
 
-/** Подія від шлюзу. Реальний PSP надсилає щось дуже схоже. */
 export interface WebhookEvent {
   externalId: string;
   status: 'paid' | 'failed';
   amountCents: number;
 }
 
-/**
- * Підпис вебхука: HMAC-SHA256 від сирого тіла запиту.
- * Так само роблять Stripe/LiqPay — перевіряємо, що подія справді від шлюзу.
- */
 export function signPayload(rawBody: string): string {
   return crypto.createHmac('sha256', env.payments.webhookSecret).update(rawBody).digest('hex');
 }
 
-/** Порівняння підписів у сталому часі — щоб не текла інформація через таймінг. */
 export function verifySignature(rawBody: string, signature: string): boolean {
   const expected = signPayload(rawBody);
   const a = Buffer.from(expected, 'utf8');
@@ -39,10 +33,6 @@ export function verifySignature(rawBody: string, signature: string): boolean {
   return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
-/**
- * Створює платіжну сесію для замовлення.
- * Повертає посилання, куди вести покупця (у демо — наша сторінка-емулятор шлюзу).
- */
 export async function createSession(
   orderId: string,
   userId: string,
@@ -58,7 +48,6 @@ export async function createSession(
   if (order.user_id !== userId) throw new NotFoundError('Order not found');
   if (order.payment_status === 'paid') throw new BadRequestError('Замовлення вже оплачене');
 
-  // Ідентифікатор транзакції на боці шлюзу.
   const externalId = `${env.payments.provider}_${crypto.randomUUID()}`;
 
   const rows = await query<Payment>(
@@ -72,25 +61,18 @@ export async function createSession(
     paymentId: rows[0].id,
     externalId,
     amountCents: order.total_cents,
-    // Сторінка-емулятор платіжної форми (у проді сюди підставляється URL PSP).
     redirectUrl: `/payment/${externalId}`,
   };
 }
 
-/**
- * Обробка події від шлюзу. Ідемпотентна: повторний вебхук з тим самим
- * externalId і статусом нічого не змінює (PSP шлють ретраї, доки не отримають 200).
- */
 export async function handleWebhook(event: WebhookEvent): Promise<{ applied: boolean }> {
   return withTransaction(async (client) => {
-    // Блокуємо рядок платежу — паралельні ретраї не переженуть один одного.
     const { rows } = await client.query<Payment>('SELECT * FROM payments WHERE external_id = $1 FOR UPDATE', [
       event.externalId,
     ]);
     const payment = rows[0];
     if (!payment) throw new NotFoundError('Payment not found');
 
-    // Уже в терминальному стані — нічого не робимо (ідемпотентність).
     if (payment.status === 'paid' || payment.status === 'failed') {
       logger.info('Payment webhook ignored (already final)', {
         externalId: event.externalId,
@@ -99,7 +81,6 @@ export async function handleWebhook(event: WebhookEvent): Promise<{ applied: boo
       return { applied: false };
     }
 
-    // Сума мусить збігатися — захист від підміненої/застарілої події.
     if (payment.amount_cents !== event.amountCents) {
       throw new BadRequestError('Сума платежу не збігається із замовленням');
     }
@@ -111,7 +92,6 @@ export async function handleWebhook(event: WebhookEvent): Promise<{ applied: boo
     ]);
 
     if (event.status === 'paid') {
-      // Оплата підтверджена — замовлення переходить у «оплачено».
       await client.query(
         `UPDATE orders SET payment_status = 'paid', status = 'paid', updated_at = now() WHERE id = $1`,
         [payment.order_id],
@@ -127,11 +107,6 @@ export async function handleWebhook(event: WebhookEvent): Promise<{ applied: boo
   });
 }
 
-/**
- * Емуляція платіжного шлюзу: покупець на «сторінці банку» тисне «Сплатити»
- * або «Скасувати». Шлюз формує підписану подію і б'є нам у вебхук —
- * тобто той самий шлях, яким піде справжній PSP.
- */
 export async function mockGatewayComplete(
   externalId: string,
   outcome: 'paid' | 'failed',
@@ -142,14 +117,12 @@ export async function mockGatewayComplete(
 
   const event: WebhookEvent = { externalId, status: outcome, amountCents: payment.amount_cents };
   const rawBody = JSON.stringify(event);
-  const signature = signPayload(rawBody); // шлюз підписує своїм секретом
+  const signature = signPayload(rawBody);
 
-  // Проходимо ту саму перевірку, що й для зовнішнього виклику.
   if (!verifySignature(rawBody, signature)) throw new BadRequestError('Invalid signature');
   return handleWebhook(JSON.parse(rawBody) as WebhookEvent);
 }
 
-/** Платіж за зовнішнім id — для сторінки оплати. */
 export async function findByExternalId(externalId: string): Promise<Payment | undefined> {
   const rows = await query<Payment>('SELECT * FROM payments WHERE external_id = $1', [externalId]);
   return rows[0];

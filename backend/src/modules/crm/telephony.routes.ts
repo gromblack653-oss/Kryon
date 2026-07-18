@@ -31,7 +31,6 @@ const router = Router();
 router.post(
   '/webhook',
   asyncHandler(async (req, res) => {
-    // Підпис рахується від СИРОГО тіла (raw-парсер підключено в app.ts).
     const rawBody = (req.body as Buffer).toString('utf8');
     const signature = String(req.header('X-Signature') ?? '');
     if (!verifySignature(rawBody, signature)) throw new BadRequestError('Invalid signature');
@@ -41,7 +40,6 @@ router.post(
   }),
 );
 
-// --- Далі — лише для операторів CRM ---
 router.use(authenticate, authorize('agent', 'admin'));
 
 const startSchema = z.object({
@@ -68,8 +66,6 @@ router.post(
       phone: req.body.phone,
     });
 
-    // Демо без реальної АТС: емулятор сам «піднімає слухавку» — оператор бачить
-    // перехід у розмову й лічильник, нічого не вводячи руками.
     if (env.telephony.provider === 'mock') {
       setTimeout(() => {
         mockPbxEvent(call.external_id!, 'answered').catch((err) =>
@@ -100,7 +96,6 @@ router.get(
 );
 
 const hangupSchema = z.object({
-  // Що сталося: розмова завершена, або абонент не підняв / зайнято.
   event: z.enum(['completed', 'no_answer', 'busy', 'failed']),
 });
 

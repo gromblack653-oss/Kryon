@@ -3,7 +3,6 @@ import { MigrationBuilder, ColumnDefinitions } from 'node-pg-migrate';
 export const shorthands: ColumnDefinitions | undefined = undefined;
 
 export function up(pgm: MigrationBuilder): void {
-  // --- Типи компонентів (GPU, БЖ, корпуси…) ---
   pgm.createTable('product_types', {
     id: { type: 'uuid', primaryKey: true, default: pgm.func('gen_random_uuid()') },
     key: { type: 'text', notNull: true, unique: true },
@@ -13,13 +12,11 @@ export function up(pgm: MigrationBuilder): void {
     created_at: { type: 'timestamptz', notNull: true, default: pgm.func('now()') },
   });
 
-  // Прив'язка товару до типу (спочатку всі — GPU, беклфіл у сідері).
   pgm.addColumn('products', {
     type_id: { type: 'uuid', references: 'product_types', onDelete: 'SET NULL' },
   });
   pgm.createIndex('products', 'type_id');
 
-  // --- Визначення атрибутів (схема характеристик на тип) ---
   pgm.createType('attr_data_type', ['text', 'number', 'enum', 'bool']);
   pgm.createTable('attributes', {
     id: { type: 'uuid', primaryKey: true, default: pgm.func('gen_random_uuid()') },
@@ -34,7 +31,6 @@ export function up(pgm: MigrationBuilder): void {
   });
   pgm.addConstraint('attributes', 'attributes_type_key_unique', { unique: ['type_id', 'key'] });
 
-  // --- Значення атрибутів товару (EAV з типізованими колонками) ---
   pgm.createTable('product_attribute_values', {
     id: { type: 'uuid', primaryKey: true, default: pgm.func('gen_random_uuid()') },
     product_id: { type: 'uuid', notNull: true, references: 'products', onDelete: 'CASCADE' },
@@ -46,7 +42,6 @@ export function up(pgm: MigrationBuilder): void {
   pgm.addConstraint('product_attribute_values', 'pav_product_attr_unique', {
     unique: ['product_id', 'attribute_id'],
   });
-  // Індекси під faceted-фільтри (attribute + значення).
   pgm.createIndex('product_attribute_values', ['attribute_id', 'value_num']);
   pgm.createIndex('product_attribute_values', ['attribute_id', 'value_text']);
   pgm.createIndex('product_attribute_values', 'product_id');

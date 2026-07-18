@@ -12,7 +12,6 @@ export function up(pgm: MigrationBuilder): void {
     created_at: { type: 'timestamptz', notNull: true, default: pgm.func('now()') },
     updated_at: { type: 'timestamptz', notNull: true, default: pgm.func('now()') },
   });
-  // Один відгук на товар від користувача (повторний — оновлює наявний).
   pgm.addConstraint('reviews', 'reviews_product_user_unique', { unique: ['product_id', 'user_id'] });
   pgm.createIndex('reviews', 'product_id');
 }

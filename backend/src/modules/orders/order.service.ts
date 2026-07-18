@@ -39,7 +39,6 @@ export interface OrderItem {
   quantity: number;
 }
 
-// Дозволені переходи статусів (спрощена стейт-машина).
 const TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   pending: ['paid', 'cancelled'],
   paid: ['shipped', 'cancelled'],
@@ -48,10 +47,6 @@ const TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   cancelled: [],
 };
 
-/**
- * Накладений платіж — це оплата при отриманні, тож замовлення не «чекає оплати»:
- * його можна відправляти одразу, а гроші приходять при врученні.
- */
 function allowedNext(order: Pick<Order, 'status' | 'payment_method'>): OrderStatus[] {
   const base = TRANSITIONS[order.status];
   if (order.payment_method === 'cod' && order.status === 'pending') {
@@ -61,13 +56,6 @@ function allowedNext(order: Pick<Order, 'status' | 'payment_method'>): OrderStat
 }
 
 export const orderService = {
-  /**
-   * Оформлення замовлення з кошика в одній транзакції:
-   *  - блокуємо рядки товарів (FOR UPDATE), щоб уникнути гонок за залишками;
-   *  - перевіряємо наявність, списуємо stock;
-   *  - створюємо order + order_items зі знімком цін;
-   *  - очищаємо кошик.
-   */
   async checkout(userId: string, input: CreateOrderInput): Promise<Order> {
     const order = await withTransaction(async (client) => {
       const cartId = await ensureCart(userId, client);
@@ -99,8 +87,6 @@ export const orderService = {
 
       const total = items.reduce((sum, i) => sum + i.price_cents * i.quantity, 0);
 
-      // Назви міста/відділення зберігаємо в замовленні: довідник НП змінюється,
-      // а історична адреса доставки має лишатися такою, якою її обрав покупець.
       const city = input.npCityRef ? await findCity(input.npCityRef) : undefined;
       const warehouse =
         input.npCityRef && input.npWarehouseRef
@@ -144,7 +130,6 @@ export const orderService = {
       return created;
     });
 
-    // Залишки змінились — інвалідовуємо кеш каталогу і сповіщаємо адмінів.
     await invalidate('products:list:*');
     emitToAdmins('order:created', { orderId: order.id, total_cents: order.total_cents });
     return order;
@@ -183,7 +168,6 @@ export const orderService = {
     return { items, total: Number(countRows[0]?.count ?? 0) };
   },
 
-  /** Зміна статусу адміном з перевіркою дозволених переходів + WS-сповіщення. */
   async updateStatus(orderId: string, next: OrderStatus): Promise<Order> {
     const rows = await query<Order>('SELECT * FROM orders WHERE id = $1', [orderId]);
     const order = rows[0];
@@ -193,11 +177,8 @@ export const orderService = {
       throw new BadRequestError(`Неможливий перехід статусу: ${order.status} → ${next}`);
     }
 
-    // При відправленні зʼявляється ТТН — покупець може відстежувати посилку.
-    // (У живому режимі номер повертає API НП при створенні накладної.)
     const ttn = next === 'shipped' && !order.ttn ? generateTtn(orderId) : order.ttn;
 
-    // Накладений платіж: гроші отримані у момент вручення.
     const paymentStatus =
       next === 'delivered' && order.payment_method === 'cod' ? 'paid' : order.payment_status;
 
@@ -207,7 +188,6 @@ export const orderService = {
       [next, ttn, paymentStatus, orderId],
     );
 
-    // Real-time: власник замовлення миттєво бачить новий статус.
     emitToUser(order.user_id, 'order:status', { orderId, status: next, ttn });
     return updated[0];
   },

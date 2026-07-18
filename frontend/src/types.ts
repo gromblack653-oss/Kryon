@@ -206,7 +206,6 @@ export interface OrderDetail extends Order {
   items: OrderItem[];
 }
 
-// ===== PC Builder =====
 export type PartType = 'cpu' | 'mobo' | 'ram' | 'gpu' | 'psu' | 'case';
 
 export interface BuildSlot {

@@ -16,7 +16,6 @@ export function LoginPage() {
   const login = useMutation({
     mutationFn: () => authApi.login({ email, password }),
     onSuccess: (data) => {
-      // Доступ до адмінки лише для ролі admin.
       if (data.user.role !== 'admin') {
         setError('Доступ лише для адміністраторів.');
         return;

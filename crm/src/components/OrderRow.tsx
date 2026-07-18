@@ -5,7 +5,6 @@ import { downloadFile } from '../lib/download';
 import { formatPrice, formatDate, orderStatusLabel } from '@shopcore/shared';
 import type { CustomerOrder } from '../types';
 
-/** Рядок замовлення з розкриттям товарів та завантаженням накладної. */
 export function OrderRow({ order }: { order: CustomerOrder }) {
   const [open, setOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);

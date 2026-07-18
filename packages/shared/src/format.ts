@@ -1,7 +1,3 @@
-// Спільні утиліти форматування для всіх фронтендів (магазин, адмінка, CRM).
-// Єдине джерело правди — щоб підписи статусів/цін не розходились між застосунками.
-
-/** Форматує ціну з копійок у гривні. */
 export function formatPrice(cents: number): string {
   return new Intl.NumberFormat('uk-UA', {
     style: 'currency',
@@ -10,7 +6,6 @@ export function formatPrice(cents: number): string {
   }).format(cents / 100);
 }
 
-/** Дата + час: 15.07.2026, 21:19 */
 export function formatDate(iso: string): string {
   return new Date(iso).toLocaleString('uk-UA', {
     day: '2-digit',
@@ -21,13 +16,11 @@ export function formatDate(iso: string): string {
   });
 }
 
-/** Лише дата (або «—» для null): 15.07.2026 */
 export function formatDateShort(iso: string | null): string {
   if (!iso) return '—';
   return new Date(iso).toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
-/** 245 → "4 хв 05 с" */
 export function formatDuration(seconds: number): string {
   if (seconds <= 0) return '—';
   const m = Math.floor(seconds / 60);
@@ -65,17 +58,11 @@ export const NOTE_TYPE_ICONS: Record<string, string> = {
   email: '✉️',
 };
 
-/**
- * Підпис статусу з урахуванням способу оплати.
- * Накладений платіж оплачують при отриманні, тож таке замовлення не «очікує
- * оплати» — воно вже прийняте в роботу.
- */
 export function orderStatusLabel(status: string, paymentMethod?: string): string {
   if (status === 'pending' && paymentMethod === 'cod') return 'Прийнято';
   return ORDER_STATUS_LABELS[status] ?? status;
 }
 
-/** Підпис стану оплати: для накладеного платежу «не оплачено» = «при отриманні». */
 export function paymentStatusLabel(paymentStatus: string, paymentMethod?: string): string {
   if (paymentMethod === 'cod' && (paymentStatus === 'unpaid' || paymentStatus === 'pending')) {
     return 'при отриманні';
@@ -90,7 +77,6 @@ export function paymentStatusLabel(paymentStatus: string, paymentMethod?: string
   return labels[paymentStatus] ?? paymentStatus;
 }
 
-/** Детермінований колір аватара за рядком (ім'ям). */
 export function avatarColor(seed: string): string {
   let hash = 0;
   for (let i = 0; i < seed.length; i++) hash = seed.charCodeAt(i) + ((hash << 5) - hash);
@@ -98,7 +84,6 @@ export function avatarColor(seed: string): string {
   return `hsl(${hue} 65% 55%)`;
 }
 
-/** Ініціали (до двох літер) для аватара. */
 export function initials(name: string): string {
   return name
     .split(/\s+/)

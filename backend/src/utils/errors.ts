@@ -1,4 +1,3 @@
-/** Базовий клас для очікуваних (операційних) помилок застосунку. */
 export class AppError extends Error {
   constructor(
     public statusCode: number,

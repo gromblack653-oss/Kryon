@@ -19,14 +19,11 @@ export function Reviews({ productId }: { productId: string }) {
   const [rating, setRating] = useState(5);
   const [body, setBody] = useState('');
 
-  // Підставляємо власний відгук у форму для редагування.
   useEffect(() => {
     if (mine) {
       setRating(mine.rating);
       setBody(mine.body);
     }
-    // Скидаємо форму лише при зміні самого відгуку (id), а не на кожен рефетч —
-    // інакше правки користувача затиратимуться.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mine?.id]);
 

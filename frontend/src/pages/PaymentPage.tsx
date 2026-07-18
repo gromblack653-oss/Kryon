@@ -5,11 +5,6 @@ import { paymentsApi } from '../api/endpoints';
 import { formatPrice } from '@shopcore/shared';
 import { apiError } from '../api/client';
 
-/**
- * Емулятор платіжної форми шлюзу.
- * У продакшені сюди редіректить справжній PSP; результат у будь-якому разі
- * приїжджає на бекенд підписаним вебхуком, а не з цієї сторінки.
- */
 export function PaymentPage() {
   const { externalId = '' } = useParams();
   const navigate = useNavigate();
@@ -24,7 +19,6 @@ export function PaymentPage() {
   const complete = useMutation({
     mutationFn: (outcome: 'paid' | 'failed') => paymentsApi.complete(externalId, outcome),
     onSuccess: async () => {
-      // Стан замовлення міг змінитись вебхуком — перечитуємо.
       await qc.invalidateQueries({ queryKey: ['orders'] });
       const fresh = await paymentsApi.get(externalId);
       if (fresh.status === 'paid') navigate(`/orders/${fresh.orderId}`);
@@ -67,7 +61,7 @@ export function PaymentPage() {
           <strong>{formatPrice(payment.amountCents)}</strong>
         </div>
 
-        {/* Поля картки — вітрина: реальні дані шлюзу не покидають його форму. */}
+        {}
         <label>
           Номер картки
           <input className="input" defaultValue="4242 4242 4242 4242" readOnly />

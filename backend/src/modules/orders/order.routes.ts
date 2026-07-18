@@ -27,7 +27,6 @@ router.get(
   asyncHandler(async (req, res) => {
     const role = req.user!.role;
     if (role !== 'admin' && role !== 'agent') {
-      // Звичайний користувач може завантажити накладну лише свого замовлення.
       const rows = await query<{ user_id: string }>('SELECT user_id FROM orders WHERE id = $1', [
         req.params.id,
       ]);

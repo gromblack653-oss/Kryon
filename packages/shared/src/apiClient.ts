@@ -1,6 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
-/** Доступ до токенів застосунку — щоб клієнт не залежав від конкретного стора. */
 export interface AuthAdapter {
   getAccessToken: () => string | null;
   getRefreshToken: () => string | null;
@@ -8,10 +7,6 @@ export interface AuthAdapter {
   logout: () => void;
 }
 
-/**
- * Axios-клієнт зі спільною логікою: додає Bearer-токен і автоматично оновлює
- * access при 401 (один спільний refresh на паралельні запити).
- */
 export function createApiClient(baseURL: string, auth: AuthAdapter) {
   const api = axios.create({ baseURL });
 
@@ -62,7 +57,6 @@ export function createApiClient(baseURL: string, auth: AuthAdapter) {
   return api;
 }
 
-/** Витягує людяне повідомлення з помилки axios. */
 export function apiError(err: unknown): string {
   if (axios.isAxiosError(err)) return err.response?.data?.error?.message ?? err.message;
   return 'Невідома помилка';

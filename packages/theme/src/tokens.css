@@ -1,11 +1,4 @@
-/**
- * Kryon — спільна дизайн-система (Neo-dark gaming-tech).
- * Один набір токенів і примітивів на магазин, адмінку та CRM.
- * Змінюємо тут — міняється скрізь.
- */
-
 :root {
-  /* --- Поверхні --- */
   --bg: #070a12;
   --bg-2: #0b0f1b;
   --surface: rgba(255, 255, 255, 0.035);
@@ -14,25 +7,21 @@
   --border: rgba(255, 255, 255, 0.09);
   --border-strong: rgba(255, 255, 255, 0.16);
 
-  /* --- Текст --- */
   --text: #e8ecf6;
   --muted: #8b93a9;
   --faint: #5a6178;
 
-  /* --- Акценти --- */
   --cyan: #22d3ee;
   --violet: #8b5cf6;
   --accent: #22d3ee;
   --grad: linear-gradient(120deg, #22d3ee, #8b5cf6);
   --grad-soft: linear-gradient(120deg, rgba(34, 211, 238, 0.16), rgba(139, 92, 246, 0.16));
 
-  /* --- Статуси --- */
   --success: #34d399;
   --danger: #fb7185;
   --warn: #fbbf24;
   --info: #60a5fa;
 
-  /* --- Форма --- */
   --radius: 16px;
   --radius-sm: 10px;
   --glow: 0 0 0 1px rgba(34, 211, 238, 0.35), 0 8px 40px -8px rgba(34, 211, 238, 0.45);
@@ -54,7 +43,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Розсіяне сяйво на тлі — глибина без важких зображень. */
 body::before {
   content: '';
   position: fixed;
@@ -97,7 +85,6 @@ h4 {
   color: var(--danger);
 }
 
-/* Тонкий скролбар у темі інтерфейсу. */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -116,7 +103,6 @@ h4 {
   background-clip: content-box;
 }
 
-/* ===================== Логотип ===================== */
 .sc-logo {
   display: inline-flex;
   align-items: center;
@@ -138,7 +124,7 @@ h4 {
   background-clip: text;
   color: transparent;
 }
-/* Теґ застосунку — те єдине, чим відрізняються магазин / адмінка / CRM. */
+
 .sc-logo-tag {
   font-size: 0.5em;
   font-weight: 700;
@@ -151,7 +137,6 @@ h4 {
   border: 1px solid rgba(34, 211, 238, 0.25);
 }
 
-/* ===================== Кнопки ===================== */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -233,9 +218,6 @@ h4 {
   border-color: var(--border-strong);
 }
 
-/* ===================== Поля вводу ===================== */
-/* Ловимо і <input> без атрибута type (за замовчуванням це text) —
-   інакше такі поля лишаються з білим системним стилем. */
 .input,
 input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']),
 select,
@@ -266,7 +248,7 @@ select option {
   background: var(--surface-solid);
   color: var(--text);
 }
-/* Автозаповнення браузера перебиває фон — повертаємо темний. */
+
 input:-webkit-autofill,
 input:-webkit-autofill:focus {
   -webkit-text-fill-color: var(--text);
@@ -278,7 +260,6 @@ input[type='radio'] {
   accent-color: var(--cyan);
 }
 
-/* ===================== Картки ===================== */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -287,7 +268,6 @@ input[type='radio'] {
   backdrop-filter: blur(8px);
 }
 
-/* ===================== Пігулки статусів ===================== */
 .pill {
   display: inline-flex;
   align-items: center;
@@ -325,7 +305,6 @@ input[type='radio'] {
   border-color: transparent;
 }
 
-/* ===================== Таблиці ===================== */
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -355,7 +334,6 @@ input[type='radio'] {
   border-bottom: 0;
 }
 
-/* ===================== Модалки ===================== */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -401,7 +379,6 @@ input[type='radio'] {
   color: var(--muted);
 }
 
-/* ===================== Бічна панель (адмінка + CRM) ===================== */
 .app-shell {
   display: grid;
   grid-template-columns: 250px 1fr;
@@ -439,7 +416,7 @@ input[type='radio'] {
   color: var(--text);
   background: var(--surface-hover);
 }
-/* Активний пункт — м'який градієнт і неонове ребро зліва. */
+
 .side-link.active {
   color: var(--text);
   background: var(--grad-soft);

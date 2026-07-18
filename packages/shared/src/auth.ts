@@ -10,10 +10,6 @@ export interface AuthState<User> {
   logout: () => void;
 }
 
-/**
- * Фабрика стора автентифікації (zustand + persist у localStorage).
- * Кожен застосунок створює свій із власним ключем персисту та типом User.
- */
 export function createAuthStore<User>(persistKey: string) {
   return create<AuthState<User>>()(
     persist(

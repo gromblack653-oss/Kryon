@@ -6,7 +6,7 @@ import { initIO } from './realtime/io';
 import { logger } from './utils/logger';
 
 async function bootstrap(): Promise<void> {
-  connectRedis(); // фоново, не блокує старт сервера
+  connectRedis();
 
   const app = createApp();
   const server = http.createServer(app);

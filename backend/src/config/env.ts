@@ -15,7 +15,6 @@ export const env = {
   isProd: process.env.NODE_ENV === 'production',
   isTest: process.env.NODE_ENV === 'test',
   port: Number(process.env.PORT ?? 4000),
-  // Кілька дозволених origin через кому (клієнт + адмінка).
   corsOrigins: (
     process.env.CORS_ORIGIN ?? 'http://localhost:5173,http://localhost:5174,http://localhost:5175'
   )
@@ -38,27 +37,20 @@ export const env = {
     maxMb: Number(process.env.MAX_UPLOAD_MB ?? 5),
   },
 
-  // Нова Пошта: без ключа працюємо на локальному довіднику (див. np.client.ts).
   novaPoshta: {
     apiKey: process.env.NP_API_KEY ?? '',
     senderCityRef: process.env.NP_SENDER_CITY_REF ?? '',
   },
 
-  // Телефонія. mock — вбудований емулятор АТС; для реальної (Asterisk, Binotel,
-  // Zadarma) міняється лише провайдер — вебхук той самий.
   telephony: {
     provider: process.env.TELEPHONY_PROVIDER ?? 'mock',
     webhookSecret: required('TELEPHONY_WEBHOOK_SECRET', 'dev-telephony-secret'),
-    // Через скільки секунд емулятор «піднімає слухавку» (лише для mock).
     mockAnswerAfterMs: Number(process.env.TELEPHONY_MOCK_ANSWER_MS ?? 2500),
   },
 
-  // Платіжний шлюз. У демо — вбудований мок, що підписує вебхуки тим самим
-  // секретом (справжній PSP підставляється заміною провайдера).
   payments: {
     provider: process.env.PAYMENT_PROVIDER ?? 'mock',
     webhookSecret: required('PAYMENT_WEBHOOK_SECRET', 'dev-webhook-secret'),
-    // Куди шлюз повертає покупця після оплати.
     returnUrl: process.env.PAYMENT_RETURN_URL ?? 'http://localhost:5173/orders',
   },
 } as const;

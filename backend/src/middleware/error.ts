@@ -3,12 +3,10 @@ import { AppError } from '../utils/errors';
 import { logger } from '../utils/logger';
 import { env } from '../config/env';
 
-/** 404 для невідомих маршрутів. */
 export function notFound(req: Request, res: Response): void {
   res.status(404).json({ error: { message: `Route not found: ${req.method} ${req.path}` } });
 }
 
-/** Централізований обробник помилок. */
 export function errorHandler(err: unknown, _req: Request, res: Response, _next: NextFunction): void {
   if (err instanceof AppError) {
     res.status(err.statusCode).json({

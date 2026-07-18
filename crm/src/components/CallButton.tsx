@@ -15,11 +15,6 @@ interface Props {
   onLogged?: () => void;
 }
 
-/**
- * Click-to-call: піднімає MicroSIP через sip:-URI і одночасно стартує дзвінок
- * на сервері. Далі результат і тривалість проставляє АТС своїми подіями —
- * оператор нічого не вводить, крім нотатки.
- */
 export function CallButton({
   phone,
   customerId,
@@ -35,7 +30,7 @@ export function CallButton({
     mutationFn: () => telephonyApi.start(phone!, customerId ?? null),
     onSuccess: (created) => {
       setCall(created);
-      initiateCall(phone!, protocol); // піднімаємо softphone
+      initiateCall(phone!, protocol);
     },
   });
 

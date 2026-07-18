@@ -13,7 +13,6 @@ export const createOrderSchema = z
     npCityRef: z.string().optional(),
     npWarehouseRef: z.string().optional(),
   })
-  // Для доставки у відділення місто й відділення обовʼязкові.
   .refine((v) => v.deliveryMethod !== 'np_warehouse' || (v.npCityRef && v.npWarehouseRef), {
     message: 'Для доставки у відділення оберіть місто та відділення',
     path: ['npWarehouseRef'],

@@ -18,7 +18,6 @@ export interface CartView {
   total_cents: number;
 }
 
-/** Повертає id кошика користувача, створюючи його за потреби. */
 export async function ensureCart(userId: string, client: PoolClient | null = null): Promise<string> {
   const runner = client ?? pool;
   const res = await runner.query<{ id: string }>(

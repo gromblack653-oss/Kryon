@@ -8,7 +8,6 @@ interface Props {
   onUploaded?: () => void;
 }
 
-/** Плеєр аудіозапису дзвінка або кнопка завантаження запису. */
 export function CallRecording({ callId, recordingUrl, onUploaded }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
 

@@ -7,7 +7,6 @@ import { assetUrl } from '@shopcore/shared';
 import { useAuthStore } from '../store/authStore';
 import type { BuildPart, PartType } from '../types';
 
-/** Знахідний відмінок для кнопки «Обрати …». */
 const ACC: Record<PartType, string> = {
   cpu: 'процесор',
   mobo: 'материнську плату',
@@ -17,7 +16,6 @@ const ACC: Record<PartType, string> = {
   case: 'корпус',
 };
 
-/** Характеристики, які показуємо в рядку слота — по одній «головній» на тип. */
 const KEY_SPEC: Record<PartType, (a: Record<string, string>) => string> = {
   cpu: (a) => `${a.socket} · ${a.cores} ядер · ${a.tdp} Вт`,
   mobo: (a) => `${a.socket} · ${a.chipset} · ${a.form_factor} · ${a.mem_type}`,
@@ -33,7 +31,6 @@ export function BuilderPage() {
   const user = useAuthStore((s) => s.user);
   const [openSlot, setOpenSlot] = useState<PartType | null>(null);
 
-  // Збірка живе в URL — посиланням можна поділитися й повернутись до неї.
   const [searchParams, setSearchParams] = useSearchParams();
   const picked = useMemo(() => {
     const sel: Partial<Record<PartType, string>> = {};
@@ -61,7 +58,6 @@ export function BuilderPage() {
 
   const { data, isLoading } = useQuery({ queryKey: ['builder-parts'], queryFn: builderApi.parts });
 
-  // Перевірку робить бекенд — той самий движок, що й у тестах.
   const { data: report } = useQuery({
     queryKey: ['builder-check', picked],
     queryFn: () => builderApi.check(picked),
@@ -86,7 +82,6 @@ export function BuilderPage() {
     return m;
   }, [data]);
 
-  // Слоти з помилками/попередженнями підсвічуємо.
   const slotLevel = useMemo(() => {
     const m: Partial<Record<PartType, 'error' | 'warning'>> = {};
     for (const issue of report?.issues ?? []) {
@@ -103,7 +98,6 @@ export function BuilderPage() {
   const requiredMissing = data.slots.filter((s) => s.required && !picked[s.type]);
   const canBuy = chosenCount > 0 && !requiredMissing.length && !report?.hasErrors;
 
-  // Заповнення шкали живлення: скільки з потужності БЖ з'їдає збірка.
   const psuPart = picked.psu ? partById.get(picked.psu) : undefined;
   const psuWatts = psuPart ? Number(psuPart.attrs.wattage) : 0;
   const watts = report?.estimatedWatts ?? 0;
@@ -251,7 +245,6 @@ interface PickerProps {
   onClose: () => void;
 }
 
-/** Модалка вибору комплектуючої з пошуком. */
 function PartPicker({ slot, label, parts, onPick, onClose }: PickerProps) {
   const [q, setQ] = useState('');
   const filtered = parts.filter((p) => p.title.toLowerCase().includes(q.toLowerCase()));

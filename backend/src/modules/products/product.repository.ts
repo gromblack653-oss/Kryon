@@ -24,11 +24,11 @@ export interface Product {
   updated_at: string;
   type_key?: string | null;
   type_name?: string | null;
-  rating_avg?: number | null; // середня оцінка (null, якщо відгуків немає)
+  rating_avg?: number | null;
   rating_count?: number;
-  specs?: ProductSpec[]; // короткі характеристики для карток
-  attributes?: ProductAttribute[]; // повний набір для сторінки товару
-  images?: ProductImage[]; // галерея (для сторінки товару)
+  specs?: ProductSpec[];
+  attributes?: ProductAttribute[];
+  images?: ProductImage[];
 }
 
 export interface ProductSpec {
@@ -75,12 +75,10 @@ const SORT_SQL: Record<ListProductsQuery['sort'], string> = {
   rating: 'rating_avg DESC NULLS LAST, rating_count DESC',
 };
 
-// Агрегати рейтингу (float8, щоб pg повертав число, а не рядок).
 const RATING_COLS = `
   (SELECT ROUND(AVG(r.rating)::numeric, 1)::float8 FROM reviews r WHERE r.product_id = p.id) AS rating_avg,
   (SELECT COUNT(*) FROM reviews r WHERE r.product_id = p.id)::int AS rating_count`;
 
-/** Догружає короткі specs (атрибути з show_on_card) для списку товарів. */
 async function attachSpecs(items: Product[]): Promise<void> {
   if (!items.length) return;
   const ids = items.map((i) => i.id);
@@ -100,7 +98,6 @@ async function attachSpecs(items: Product[]): Promise<void> {
   for (const item of items) item.specs = byProduct[item.id] ?? [];
 }
 
-/** Повний набір характеристик товару (для сторінки товару). */
 async function getAttributes(productId: string): Promise<ProductAttribute[]> {
   return query<ProductAttribute>(
     `SELECT a.key, a.label, a.unit, a.data_type,
@@ -113,7 +110,6 @@ async function getAttributes(productId: string): Promise<ProductAttribute[]> {
   );
 }
 
-/** Галерея товару (обкладинка першою). */
 async function getImages(productId: string): Promise<ProductImage[]> {
   return query<ProductImage>(
     `SELECT id, url, position FROM product_images
@@ -127,7 +123,6 @@ type FilterInput = Pick<
   'search' | 'type' | 'category' | 'minPrice' | 'maxPrice' | 'inStock' | 'attrs'
 >;
 
-/** Базові фільтри (пошук, тип, категорія, ціна, наявність). Мутує params. */
 function baseFilters(q: FilterInput, params: unknown[]): string[] {
   const where = ['p.is_active = true'];
   if (q.search) {
@@ -156,7 +151,6 @@ function baseFilters(q: FilterInput, params: unknown[]): string[] {
   return where;
 }
 
-/** Розбирає "vram_gb:8,16;memory_type:GDDR7" → [{ key, values }]. */
 function parseAttrs(attrs?: string): Array<{ key: string; values: string[] }> {
   if (!attrs) return [];
   return attrs
@@ -173,10 +167,6 @@ function parseAttrs(attrs?: string): Array<{ key: string; values: string[] }> {
     .slice(0, 10);
 }
 
-/**
- * Генеричні faceted-фільтри: для кожного атрибута — EXISTS зі значеннями через OR,
- * між різними атрибутами — AND. Числові й текстові значення порівнюються за типом.
- */
 function attrFilters(q: FilterInput, params: unknown[]): string[] {
   const where: string[] = [];
   for (const { key, values } of parseAttrs(q.attrs)) {
@@ -196,7 +186,6 @@ function attrFilters(q: FilterInput, params: unknown[]): string[] {
   return where;
 }
 
-// JOIN, спільний для списку та facets (типи + категорії).
 const PRODUCT_JOINS = `
   FROM products p
   LEFT JOIN categories c ON c.id = p.category_id
@@ -231,7 +220,6 @@ export const productRepository = {
     return { items, total, page: q.page, limit: q.limit, pages: Math.ceil(total / q.limit) };
   },
 
-  /** Типи компонентів із кількістю активних товарів. */
   async listTypes(): Promise<ProductType[]> {
     return query<ProductType>(
       `SELECT t.key, t.name, t.icon, COUNT(p.id) FILTER (WHERE p.is_active)::int AS count
@@ -242,11 +230,6 @@ export const productRepository = {
     );
   },
 
-  /**
-   * Динамічні facets: усі фільтровані атрибути обраного типу з їхніми
-   * значеннями та лічильниками. Не залежать від уже обраних attr-фільтрів,
-   * тому опції не «зникають» під час вибору.
-   */
   async facets(q: FilterInput): Promise<Facet[]> {
     const params: unknown[] = [];
     const where = baseFilters(q, params);
@@ -284,7 +267,6 @@ export const productRepository = {
     return [...byKey.values()];
   },
 
-  /** Додає фото в галерею (у кінець). Якщо обкладинки немає — ставить її. */
   async addImage(productId: string, url: string): Promise<ProductImage[]> {
     await query(
       `INSERT INTO product_images (product_id, url, position)
@@ -295,7 +277,6 @@ export const productRepository = {
     return getImages(productId);
   },
 
-  /** Видаляє фото з галереї; якщо це була обкладинка — призначає наступне. */
   async removeImage(productId: string, imageId: string): Promise<ProductImage[]> {
     await query(`DELETE FROM product_images WHERE id = $1 AND product_id = $2`, [imageId, productId]);
     const rest = await getImages(productId);
@@ -303,7 +284,6 @@ export const productRepository = {
     return rest;
   },
 
-  /** Товари для порівняння (з повним набором атрибутів), до 4 шт. */
   async compareByIds(ids: string[]): Promise<Product[]> {
     const out: Product[] = [];
     for (const id of ids.slice(0, 4)) {

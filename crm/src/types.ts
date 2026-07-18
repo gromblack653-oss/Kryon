@@ -73,7 +73,6 @@ export interface CallLog {
   note: string;
   recording_url: string | null;
   created_at: string;
-  // Життєвий цикл: дзвінок ведеться на сервері, події проставляє АТС.
   external_id: string | null;
   state: CallState;
   started_at: string | null;
@@ -107,7 +106,6 @@ export interface CrmStats {
   callsToday: number;
   myCallsToday: number;
   callsByOutcome: Partial<Record<CallOutcome, number>>;
-  /** Клієнти із замовленнями, яким ще жодного разу не дзвонили. */
   needsCall: Array<{
     id: string;
     name: string;

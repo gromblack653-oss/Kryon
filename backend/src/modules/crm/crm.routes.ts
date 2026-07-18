@@ -10,7 +10,6 @@ import { env } from '../../config/env';
 
 const router = Router();
 
-// CRM доступна працівникам: admin та agent.
 router.use(authenticate, authorize('admin', 'agent'));
 
 const listQuerySchema = z.object({

@@ -44,7 +44,6 @@ export const productController = {
     res.status(204).send();
   }),
 
-  /** Завантажує фото: додає в галерею та робить обкладинкою. */
   uploadImage: asyncHandler(async (req: Request, res: Response) => {
     if (!req.file) throw new BadRequestError('Файл зображення обовʼязковий (поле "image")');
     const imageUrl = `/${env.upload.dir}/${req.file.filename}`;
@@ -53,7 +52,6 @@ export const productController = {
     res.json(product);
   }),
 
-  /** Додає фото лише в галерею (без зміни обкладинки). */
   addGalleryImage: asyncHandler(async (req: Request, res: Response) => {
     if (!req.file) throw new BadRequestError('Файл зображення обовʼязковий (поле "image")');
     const imageUrl = `/${env.upload.dir}/${req.file.filename}`;

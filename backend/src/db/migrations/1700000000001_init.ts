@@ -6,7 +6,6 @@ export function up(pgm: MigrationBuilder): void {
   pgm.createExtension('pgcrypto', { ifNotExists: true });
   pgm.createExtension('citext', { ifNotExists: true });
 
-  // --- users ---
   pgm.createType('user_role', ['admin', 'customer']);
   pgm.createTable('users', {
     id: { type: 'uuid', primaryKey: true, default: pgm.func('gen_random_uuid()') },
@@ -18,7 +17,6 @@ export function up(pgm: MigrationBuilder): void {
     updated_at: { type: 'timestamptz', notNull: true, default: pgm.func('now()') },
   });
 
-  // --- categories ---
   pgm.createTable('categories', {
     id: { type: 'uuid', primaryKey: true, default: pgm.func('gen_random_uuid()') },
     name: { type: 'text', notNull: true },
@@ -26,7 +24,6 @@ export function up(pgm: MigrationBuilder): void {
     created_at: { type: 'timestamptz', notNull: true, default: pgm.func('now()') },
   });
 
-  // --- products ---
   pgm.createTable('products', {
     id: { type: 'uuid', primaryKey: true, default: pgm.func('gen_random_uuid()') },
     title: { type: 'text', notNull: true },
@@ -48,7 +45,6 @@ export function up(pgm: MigrationBuilder): void {
   pgm.createIndex('products', 'is_active');
   pgm.sql(`CREATE INDEX products_title_trgm ON products USING gin (to_tsvector('simple', title))`);
 
-  // --- carts (один активний кошик на користувача) ---
   pgm.createTable('carts', {
     id: { type: 'uuid', primaryKey: true, default: pgm.func('gen_random_uuid()') },
     user_id: {
@@ -71,7 +67,6 @@ export function up(pgm: MigrationBuilder): void {
     unique: ['cart_id', 'product_id'],
   });
 
-  // --- orders ---
   pgm.createType('order_status', ['pending', 'paid', 'shipped', 'delivered', 'cancelled']);
   pgm.createTable('orders', {
     id: { type: 'uuid', primaryKey: true, default: pgm.func('gen_random_uuid()') },
@@ -85,7 +80,6 @@ export function up(pgm: MigrationBuilder): void {
   pgm.createIndex('orders', 'user_id');
   pgm.createIndex('orders', 'status');
 
-  // Знімок ціни/назви на момент замовлення (історична цілісність).
   pgm.createTable('order_items', {
     id: { type: 'uuid', primaryKey: true, default: pgm.func('gen_random_uuid()') },
     order_id: { type: 'uuid', notNull: true, references: 'orders', onDelete: 'CASCADE' },

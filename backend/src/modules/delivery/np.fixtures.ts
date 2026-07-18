@@ -1,12 +1,7 @@
-/**
- * Локальний довідник Нової Пошти — щоб магазин працював без API-ключа.
- * Структура повторює відповідь реального API (Ref/Description), тож перехід
- * на живий API не змінює нічого вище по стеку.
- */
 export interface NpCity {
   ref: string;
   name: string;
-  area: string; // область
+  area: string;
 }
 
 export interface NpWarehouse {
@@ -41,7 +36,6 @@ export const npCities: NpCity[] = [
   { ref: 'db5c89e6-391c-11dd-90d9-001a92567626', name: 'Кропивницький', area: 'Кіровоградська' },
 ];
 
-/** Вулиці для генерації адрес відділень — по кілька на місто. */
 const STREETS = [
   'вул. Соборна',
   'вул. Незалежності',
@@ -53,12 +47,8 @@ const STREETS = [
   'вул. Сагайдачного',
 ];
 
-/**
- * Відділення генеруємо детерміновано (той самий ref для того самого номера),
- * щоб посилання на замовлення лишалися валідними між перезапусками.
- */
 export const npWarehouses: NpWarehouse[] = npCities.flatMap((city, ci) => {
-  const count = ci === 0 ? 12 : ci < 5 ? 8 : 4; // у великих містах більше відділень
+  const count = ci === 0 ? 12 : ci < 5 ? 8 : 4;
   return Array.from({ length: count }, (_, i) => {
     const number = i + 1;
     const street = STREETS[(ci + i) % STREETS.length];

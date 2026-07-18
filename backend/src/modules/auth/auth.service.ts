@@ -56,7 +56,6 @@ export const authService = {
     const user = await userRepository.findById(userId);
     if (!user) throw new UnauthorizedError();
 
-    // Ротація: старий refresh відкликаємо, видаємо нову пару.
     await tokenService.revokeRefreshToken(userId, tokenId);
     return issueTokens({ id: user.id, role: user.role, email: user.email });
   },
@@ -65,8 +64,6 @@ export const authService = {
     try {
       const { userId, tokenId } = await tokenService.verifyRefreshToken(refreshToken);
       await tokenService.revokeRefreshToken(userId, tokenId);
-    } catch {
-      // токен уже недійсний — вважаємо logout успішним
-    }
+    } catch {}
   },
 };

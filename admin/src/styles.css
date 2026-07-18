@@ -1,11 +1,5 @@
-/**
- * Адмінка Kryon.
- * Токени, кнопки, поля, таблиці, пігулки й модалки — зі спільної дизайн-системи.
- * Тут лишається тільки те, що властиве саме адмінці.
- */
 @import '@shopcore/theme/tokens.css';
 
-/* ---- Каркас ---- */
 .admin-shell {
   display: grid;
   grid-template-columns: 250px 1fr;
@@ -92,7 +86,6 @@ label textarea {
   flex-wrap: wrap;
 }
 
-/* ---- Плитки статистики ---- */
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -106,7 +99,7 @@ label textarea {
   position: relative;
   overflow: hidden;
 }
-/* Тонка градієнтна смуга зверху — плитки читаються як «живі» показники. */
+
 .stat-tile::before {
   content: '';
   position: absolute;
@@ -147,12 +140,10 @@ label textarea {
   gap: 16px;
 }
 
-/* ---- Таблиці ---- */
 .table-wrap {
   overflow-x: auto;
 }
 
-/* ---- Пігулки статусів замовлення ---- */
 .pill-pending {
   background: rgba(251, 191, 36, 0.12);
   color: #ffe7ab;
@@ -179,7 +170,6 @@ label textarea {
   border-color: transparent;
 }
 
-/* ---- Зображення товарів ---- */
 .media-img {
   width: 100%;
   height: 100%;
@@ -220,7 +210,6 @@ label textarea {
   flex-shrink: 0;
 }
 
-/* ---- Панель інструментів ---- */
 .toolbar {
   display: flex;
   gap: 8px;
@@ -236,7 +225,6 @@ label textarea {
   min-width: 200px;
 }
 
-/* ---- Вхід ---- */
 .login-wrap {
   min-height: 100vh;
   display: grid;
@@ -266,7 +254,6 @@ label textarea {
   border-radius: 6px;
 }
 
-/* ---- Дрібниці ---- */
 .pagination {
   display: flex;
   align-items: center;
@@ -318,7 +305,6 @@ label textarea {
   }
 }
 
-/* ---- Графік доходу ---- */
 .chart-head {
   display: flex;
   align-items: baseline;

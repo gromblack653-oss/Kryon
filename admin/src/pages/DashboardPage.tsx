@@ -136,7 +136,6 @@ export function DashboardPage() {
   );
 }
 
-/** Дохід за тиждень. Стовпчики рахуємо від максимуму — без сторонніх бібліотек. */
 function RevenueChart({ data }: { data: Array<{ day: string; cents: number }> }) {
   const max = Math.max(1, ...data.map((d) => d.cents));
   const total = data.reduce((s, d) => s + d.cents, 0);
@@ -153,7 +152,7 @@ function RevenueChart({ data }: { data: Array<{ day: string; cents: number }> })
         {data.map((d) => (
           <div key={d.day} className="chart-col" title={`${d.day}: ${formatPrice(d.cents)}`}>
             <div className="chart-bar-wrap">
-              {/* Мінімум 2% — щоб порожній день лишався видимим слідом, а не зникав. */}
+              {}
               <div className="chart-bar" style={{ height: `${Math.max(2, (d.cents / max) * 100)}%` }} />
             </div>
             <span className="chart-x">

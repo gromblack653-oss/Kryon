@@ -30,7 +30,6 @@ export function ComparePage() {
 
   if (isLoading || !products) return <p className="muted">Завантаження...</p>;
 
-  // Об'єднаний упорядкований список характеристик.
   const labelByKey = new Map<string, { label: string; unit: string | null }>();
   for (const p of products) {
     for (const a of p.attributes ?? []) {

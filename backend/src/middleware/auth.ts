@@ -4,7 +4,6 @@ import { env } from '../config/env';
 import { ForbiddenError, UnauthorizedError } from '../utils/errors';
 import { JwtPayload, UserRole } from '../types';
 
-/** Вимагає валідний access-токен у заголовку Authorization: Bearer <token>. */
 export function authenticate(req: Request, _res: Response, next: NextFunction): void {
   const header = req.headers.authorization;
   if (!header?.startsWith('Bearer ')) {
@@ -20,7 +19,6 @@ export function authenticate(req: Request, _res: Response, next: NextFunction): 
   }
 }
 
-/** Дозволяє доступ лише вказаним ролям. Використовувати після authenticate. */
 export function authorize(...roles: UserRole[]) {
   return (req: Request, _res: Response, next: NextFunction): void => {
     if (!req.user) throw new UnauthorizedError();

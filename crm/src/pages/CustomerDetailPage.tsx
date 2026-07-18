@@ -100,7 +100,7 @@ export function CustomerDetailPage() {
       </Link>
 
       <div className="grid-detail">
-        {/* --- Profile --- */}
+        {}
         <div className="card profile">
           <Avatar name={customer.name} size={72} />
           <h2>{customer.name}</h2>
@@ -146,9 +146,9 @@ export function CustomerDetailPage() {
           </div>
         </div>
 
-        {/* --- Right column --- */}
+        {}
         <div className="stack">
-          {/* Shared orders */}
+          {}
           <div className="card">
             <div className="card-title">
               🛒 Замовлення{' '}
@@ -183,7 +183,7 @@ export function CustomerDetailPage() {
             </div>
           </div>
 
-          {/* Activity + composer */}
+          {}
           <div className="card">
             <div className="card-title">🕑 Активність</div>
 

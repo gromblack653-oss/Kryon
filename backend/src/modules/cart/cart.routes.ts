@@ -7,7 +7,6 @@ import { authenticate, authorize } from '../../middleware/auth';
 
 const router = Router();
 
-// Усі маршрути кошика — лише для авторизованих покупців.
 router.use(authenticate, authorize('customer'));
 
 const addItemSchema = z.object({

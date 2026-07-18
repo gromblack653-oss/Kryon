@@ -44,10 +44,8 @@ export const crmApi = {
 };
 
 export const telephonyApi = {
-  /** Оператор натиснув «Подзвонити» — дзвінок починає жити на сервері. */
   start: (phone: string, customerId: string | null) =>
     api.post<CallLog>('/api/telephony/calls', { phone, customerId }).then((r) => r.data),
-  /** Завершення. З реальною АТС приходить вебхуком і ця ручка не потрібна. */
   hangup: (callId: string, event: 'completed' | 'no_answer' | 'busy') =>
     api.post<CallLog>(`/api/telephony/calls/${callId}/hangup`, { event }).then((r) => r.data),
   saveNote: (callId: string, note: string) =>

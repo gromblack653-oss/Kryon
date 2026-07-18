@@ -14,7 +14,6 @@ const SORTS: Array<{ value: NonNullable<ProductFilters['sort']>; label: string }
 ];
 
 export function CatalogPage() {
-  // Тип компонента живе в URL — посиланням «/?type=psu» можна поділитися.
   const [searchParams, setSearchParams] = useSearchParams();
   const type = searchParams.get('type') ?? undefined;
 
@@ -39,7 +38,6 @@ export function CatalogPage() {
     queryFn: () => categoriesApi.list(type),
   });
 
-  // Базовий контекст для facets (без обраних характеристик — щоб опції не зникали).
   const baseFilters = {
     search: debSearch.trim() || undefined,
     type,
@@ -79,7 +77,6 @@ export function CatalogPage() {
     });
   }
 
-  /** Зміна типу скидає фільтри, специфічні для попереднього типу. */
   function changeType(next?: string) {
     setSearchParams(next ? { type: next } : {}, { replace: true });
     setCategory(undefined);
@@ -103,7 +100,7 @@ export function CatalogPage() {
     <div>
       <h1 className="page-title">{activeType ? activeType.name : 'Каталог комплектуючих'}</h1>
 
-      {/* Вкладки типів компонентів */}
+      {}
       <div className="type-tabs">
         <button className={`type-tab ${!type ? 'active' : ''}`} onClick={() => changeType(undefined)}>
           <span className="tt-icon">🧱</span> Усі
@@ -181,7 +178,7 @@ export function CatalogPage() {
             </div>
           </div>
 
-          {/* Динамічні фільтри характеристик — залежать від обраного типу */}
+          {}
           {facets?.map((f) => (
             <div className="filter-group" key={f.key}>
               <h4>

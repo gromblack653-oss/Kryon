@@ -1,7 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useCompareStore } from '../store/compareStore';
 
-/** Плаваюча панель порівняння — з'являється, коли обрано товари. */
 export function CompareBar() {
   const ids = useCompareStore((s) => s.ids);
   const clear = useCompareStore((s) => s.clear);

@@ -29,21 +29,17 @@ export function createApp(): Express {
 
   app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
   app.use(cors({ origin: env.corsOrigins, credentials: true }));
-  // Вебхук шлюзу підписується від СИРОГО тіла — тому raw-парсер тут, до express.json().
-  // (body-parser позначає тіло як розібране, тож json() цей шлях пропустить.)
   app.use('/api/payments/webhook', express.raw({ type: 'application/json' }));
   app.use('/api/telephony/webhook', express.raw({ type: 'application/json' }));
   app.use(express.json());
   app.use(cookieParser());
   if (!env.isTest) app.use(morgan('dev'));
 
-  // Статика для завантажених зображень товарів.
   app.use(`/${env.upload.dir}`, express.static(path.resolve(process.cwd(), env.upload.dir)));
 
   app.get('/health', (_req, res) => res.json({ status: 'ok', ts: new Date().toISOString() }));
 
   app.use('/api/auth', authRoutes);
-  // Відгуки — до /api/products, щоб вкладений шлях не перехопився роутом товару.
   app.use('/api/products/:productId/reviews', reviewRoutes);
   app.use('/api/products', productRoutes);
   app.use('/api/categories', categoryRoutes);

@@ -3,7 +3,6 @@ import { MigrationBuilder, ColumnDefinitions } from 'node-pg-migrate';
 export const shorthands: ColumnDefinitions | undefined = undefined;
 
 export function up(pgm: MigrationBuilder): void {
-  // --- Галерея зображень товару ---
   pgm.createTable('product_images', {
     id: { type: 'uuid', primaryKey: true, default: pgm.func('gen_random_uuid()') },
     product_id: { type: 'uuid', notNull: true, references: 'products', onDelete: 'CASCADE' },
@@ -13,13 +12,11 @@ export function up(pgm: MigrationBuilder): void {
   });
   pgm.createIndex('product_images', ['product_id', 'position']);
 
-  // Беклфіл: наявна обкладинка стає першим фото галереї.
   pgm.sql(`
     INSERT INTO product_images (product_id, url, position)
     SELECT id, image_url, 0 FROM products WHERE image_url IS NOT NULL
   `);
 
-  // --- Обране (wishlist) ---
   pgm.createTable('wishlist_items', {
     id: { type: 'uuid', primaryKey: true, default: pgm.func('gen_random_uuid()') },
     user_id: { type: 'uuid', notNull: true, references: 'users', onDelete: 'CASCADE' },

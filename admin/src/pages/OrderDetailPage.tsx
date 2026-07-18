@@ -25,7 +25,6 @@ const PAYMENT_LABELS: Record<PaymentMethod, string> = {
   cod: 'Накладений платіж',
 };
 
-/** Накладений платіж можна відправляти одразу — гроші беруть при врученні. */
 function nextStatuses(status: OrderStatus, paymentMethod: PaymentMethod): OrderStatus[] {
   const base = NEXT[status];
   return paymentMethod === 'cod' && status === 'pending' ? [...base, 'shipped'] : base;

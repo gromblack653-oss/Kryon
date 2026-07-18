@@ -13,7 +13,6 @@ export function Layout() {
   const wishlist = useWishlist();
   useSocket();
 
-  // Лічильник товарів у кошику (тільки для покупця).
   const { data: cart } = useQuery({
     queryKey: ['cart'],
     queryFn: cartApi.get,

@@ -5,7 +5,6 @@ import { authenticate, authorize } from '../../middleware/auth';
 
 const router = Router();
 
-// Уся адмін-аналітика — лише для ролі admin.
 router.use(authenticate, authorize('admin'));
 
 const STATUS_LABELS: Record<string, string> = {
@@ -16,7 +15,6 @@ const STATUS_LABELS: Record<string, string> = {
   cancelled: 'Скасовано',
 };
 
-/** Екранує значення для CSV (лапки, коми, переноси рядків). */
 function csvCell(value: unknown): string {
   const s = String(value ?? '');
   return /[",\n;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
@@ -82,7 +80,6 @@ router.get(
         .map(csvCell)
         .join(','),
     );
-    // BOM, щоб Excel коректно розпізнав UTF-8.
     const csv = '﻿' + [header.map(csvCell).join(','), ...lines].join('\r\n');
 
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
@@ -144,8 +141,6 @@ router.get(
        ORDER BY sold DESC LIMIT 5`,
     );
 
-    // Дохід по днях за тиждень. generate_series дає й порожні дні —
-    // інакше графік «стискався» б і показував неправдиву динаміку.
     const revenueByDay = await query<{ day: string; cents: number }>(
       `SELECT to_char(d.day, 'YYYY-MM-DD') AS day,
               COALESCE(SUM(o.total_cents), 0)::bigint AS cents
@@ -157,7 +152,6 @@ router.get(
         ORDER BY d.day`,
     );
 
-    // Що скоро закінчиться — головна причина, чому адмін узагалі відкриває дашборд.
     const lowStock = await query(
       `SELECT id, title, stock, image_url
          FROM products

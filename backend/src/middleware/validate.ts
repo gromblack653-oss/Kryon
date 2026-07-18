@@ -4,10 +4,6 @@ import { BadRequestError } from '../utils/errors';
 
 type Target = 'body' | 'query' | 'params';
 
-/**
- * Middleware-фабрика для валідації через Zod.
- * Замінює req[target] на розпарсені (типізовані) дані.
- */
 export const validate =
   (schema: ZodSchema, target: Target = 'body') =>
   (req: Request, _res: Response, next: NextFunction) => {
@@ -19,7 +15,6 @@ export const validate =
       }));
       throw new BadRequestError('Validation failed', details);
     }
-    // query/params у Express — read-only getter, тож мутуємо обережно.
     if (target === 'body') req.body = result.data;
     else Object.assign(req[target], result.data);
     next();

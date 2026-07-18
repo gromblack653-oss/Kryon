@@ -3,7 +3,7 @@ import { cached, invalidate } from '../../db/redis';
 import { NotFoundError, ConflictError } from '../../utils/errors';
 import { ListProductsQuery, CreateProductInput, UpdateProductInput } from './product.schemas';
 
-const LIST_TTL = 60; // секунд
+const LIST_TTL = 60;
 const listKey = (q: ListProductsQuery) => `products:list:${JSON.stringify(q)}`;
 
 export const productService = {
@@ -15,13 +15,11 @@ export const productService = {
     return cached(`products:list:facets:${JSON.stringify(q)}`, LIST_TTL, () => productRepository.facets(q));
   },
 
-  /** Типи компонентів для навігації каталогу. */
   async listTypes() {
     return cached('products:list:types', LIST_TTL, () => productRepository.listTypes());
   },
 
   async compare(idsCsv: string): Promise<Product[]> {
-    // Дедуплікація: один товар не має двічі потрапляти в порівняння.
     const ids = [
       ...new Set(
         idsCsv
@@ -39,15 +37,13 @@ export const productService = {
     return product;
   },
 
-  /** Додає фото в галерею товару. */
   async addGalleryImage(id: string, url: string) {
-    await this.getById(id); // 404, якщо товару немає
+    await this.getById(id);
     const images = await productRepository.addImage(id, url);
     await invalidate('products:list:*');
     return images;
   },
 
-  /** Прибирає фото з галереї. */
   async removeGalleryImage(id: string, imageId: string) {
     await this.getById(id);
     const images = await productRepository.removeImage(id, imageId);

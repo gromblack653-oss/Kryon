@@ -1,8 +1,3 @@
-/**
- * Зображення відеокарт — самохостинг у backend/uploads/products.
- * Джерела: офіційні сайти виробників / Amazon / Wikimedia (curated), завантажені локально.
- * АВТОГЕНЕРовано скриптом scripts/images/gen-maps.ts за вмістом теки. Не редагувати вручну.
- */
 export const extraProductImages: Record<string, string[]> = {
   'rtx-5090': ['/uploads/products/rtx-5090__g1.png'],
 };

@@ -55,7 +55,6 @@ const STATUS_LABELS: Record<OrderStatus, string> = {
   cancelled: 'Скасовано',
 };
 
-/** Знаходить кириличний шрифт у кількох можливих локаціях (dev/prod). */
 function resolveFont(): string {
   const candidates = [
     path.resolve(__dirname, '../../assets/fonts/DejaVuSans.ttf'),
@@ -90,10 +89,6 @@ async function loadOrder(orderId: string): Promise<{ order: InvoiceOrder; items:
   return { order, items };
 }
 
-/**
- * Генерує PDF-накладну для замовлення й повертає готовий документ (stream).
- * Викликач пайпить його у res.
- */
 export async function buildInvoicePdf(orderId: string): Promise<PDFKit.PDFDocument> {
   const { order, items } = await loadOrder(orderId);
   const font = resolveFont();
@@ -109,7 +104,6 @@ export async function buildInvoicePdf(orderId: string): Promise<PDFKit.PDFDocume
     year: 'numeric',
   });
 
-  // --- Шапка ---
   doc.fontSize(20).fillColor('#4f46e5').text('Kryon', { continued: false });
   doc.fontSize(9).fillColor('#666').text('Інтернет-магазин відеокарт · kryon.ua', { paragraphGap: 2 });
   doc.moveDown(1.2);
@@ -119,7 +113,6 @@ export async function buildInvoicePdf(orderId: string): Promise<PDFKit.PDFDocume
   doc.fontSize(10).fillColor('#444').text(`Статус: ${STATUS_LABELS[order.status]}`);
   doc.moveDown(1);
 
-  // --- Покупець ---
   doc.fontSize(11).fillColor('#111').text('Отримувач:');
   doc
     .fontSize(10)
@@ -129,7 +122,6 @@ export async function buildInvoicePdf(orderId: string): Promise<PDFKit.PDFDocume
     .text(`Телефон: ${order.recipient_phone ?? order.customer_phone ?? '—'}`);
   doc.moveDown(0.6);
 
-  // --- Доставка й оплата ---
   doc.fontSize(11).fillColor('#111').text('Доставка та оплата:');
   doc
     .fontSize(10)
@@ -142,7 +134,6 @@ export async function buildInvoicePdf(orderId: string): Promise<PDFKit.PDFDocume
   );
   doc.moveDown(1);
 
-  // --- Таблиця позицій ---
   const startX = 50;
   const colNum = startX;
   const colTitle = startX + 30;
@@ -187,7 +178,6 @@ export async function buildInvoicePdf(orderId: string): Promise<PDFKit.PDFDocume
       .stroke();
   });
 
-  // --- Разом ---
   y += 6;
   doc
     .fontSize(12)
@@ -198,7 +188,6 @@ export async function buildInvoicePdf(orderId: string): Promise<PDFKit.PDFDocume
     .fillColor('#4f46e5')
     .text(uah(order.total_cents), colSum - 40, y, { width: 105, align: 'right' });
 
-  // --- Підпис ---
   doc.moveDown(4);
   doc
     .fontSize(9)
@@ -207,11 +196,9 @@ export async function buildInvoicePdf(orderId: string): Promise<PDFKit.PDFDocume
     .moveDown(0.5)
     .text('Отримав(ла): ______________________');
 
-  // doc.end() викликає роут ПІСЛЯ pipe(res) — правильний порядок для pdfkit.
   return doc;
 }
 
-/** Короткий номер накладної для імені файлу. */
 export function invoiceNumber(orderId: string): string {
   return orderId.slice(0, 8).toUpperCase();
 }

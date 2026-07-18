@@ -21,7 +21,6 @@ router.get(
   }),
 );
 
-// Кожен слот — необов'язковий id товару: перевіряємо і часткові збірки.
 const selectionSchema = z.object({
   cpu: z.string().uuid().optional(),
   mobo: z.string().uuid().optional(),
@@ -48,7 +47,6 @@ router.post(
     const rows = await findParts(ids);
     const byId = new Map(rows.map((r) => [r.id, r]));
 
-    // Збираємо вибір за слотами; ігноруємо id, що не належать типу слота.
     const selection: BuildSelection = {};
     for (const [slot, id] of Object.entries(body) as Array<[PartType, string | undefined]>) {
       const part = id ? byId.get(id) : undefined;

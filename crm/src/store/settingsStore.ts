@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-/** Протокол для click-to-call. MicroSIP реєструє sip:, деякі системи — tel:/callto:. */
 export type DialProtocol = 'sip' | 'tel' | 'callto';
 
 interface SettingsState {
@@ -14,7 +13,7 @@ interface SettingsState {
 export const useSettingsStore = create<SettingsState>()(
   persist(
     (set) => ({
-      protocol: 'sip', // MicroSIP за замовчуванням реєструє sip:
+      protocol: 'sip',
       agentName: '',
       setProtocol: (protocol) => set({ protocol }),
       setAgentName: (agentName) => set({ agentName }),

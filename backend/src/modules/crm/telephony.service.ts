@@ -27,22 +27,15 @@ export interface CallLog {
   created_at: string;
 }
 
-/**
- * Подія від АТС. Такий самий набір дають Asterisk (AMI/ARI), Binotel, Zadarma:
- * дзвінок або підняли (answered), або він завершився з певної причини.
- */
 export interface TelephonyEvent {
   externalId: string;
   event: 'answered' | 'completed' | 'no_answer' | 'busy' | 'failed';
-  /** Тривалість розмови від АТС. Якщо не прийшла — рахуємо самі за мітками часу. */
   durationSeconds?: number;
   recordingUrl?: string;
-  /** Вхідний дзвінок АТС може створити сама (дзвонять нам). */
   phone?: string;
   direction?: CallDirection;
 }
 
-/** Підпис вебхука — HMAC-SHA256 від сирого тіла, як у платіжного шлюзу. */
 export function signPayload(rawBody: string): string {
   return crypto.createHmac('sha256', env.telephony.webhookSecret).update(rawBody).digest('hex');
 }
@@ -54,18 +47,12 @@ export function verifySignature(rawBody: string, signature: string): boolean {
   return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
-/** Подія завершення → результат дзвінка. Оператор більше нічого не обирає. */
 const OUTCOME_BY_EVENT: Record<string, CallOutcome> = {
   no_answer: 'no_answer',
   busy: 'busy',
   failed: 'failed',
 };
 
-/**
- * Оператор натиснув «Подзвонити»: створюємо дзвінок у стані «дзвонимо».
- * Напрямок — вихідний (ініціював оператор), тривалість і результат
- * проставить АТС своїми подіями.
- */
 export async function startCall(input: {
   agentId: string;
   customerId: string | null;
@@ -85,10 +72,6 @@ export async function startCall(input: {
   return call;
 }
 
-/**
- * Обробка події АТС. Ідемпотентна: завершений дзвінок повторна подія не змінює
- * (АТС ретраїть вебхуки, доки не отримає 200).
- */
 export async function handleEvent(event: TelephonyEvent): Promise<{ applied: boolean; call?: CallLog }> {
   return withTransaction(async (client) => {
     const { rows } = await client.query<CallLog>(
@@ -106,7 +89,6 @@ export async function handleEvent(event: TelephonyEvent): Promise<{ applied: boo
     let updated: CallLog;
 
     if (event.event === 'answered') {
-      // Абонент підняв слухавку — з цього моменту йде розмова.
       const res = await client.query<CallLog>(
         `UPDATE call_logs SET state = 'active', answered_at = now(), outcome = 'answered'
          WHERE id = $1 RETURNING *`,
@@ -114,8 +96,6 @@ export async function handleEvent(event: TelephonyEvent): Promise<{ applied: boo
       );
       updated = res.rows[0];
     } else {
-      // Дзвінок завершився. Тривалість: беремо від АТС, інакше рахуємо самі —
-      // від моменту відповіді до кінця (без розмови тривалість = 0).
       const outcome: CallOutcome =
         OUTCOME_BY_EVENT[event.event] ?? (call.answered_at ? 'answered' : 'no_answer');
 
@@ -137,24 +117,17 @@ export async function handleEvent(event: TelephonyEvent): Promise<{ applied: boo
       updated = res.rows[0];
     }
 
-    // Оператор бачить зміну наживо — без перезавантаження.
     if (updated.agent_id) emitToUser(updated.agent_id, 'call:update', updated);
     logger.info('Telephony event applied', { externalId: event.externalId, event: event.event });
     return { applied: true, call: updated };
   });
 }
 
-/**
- * Емулятор АТС для демо (TELEPHONY_PROVIDER=mock).
- * Формує підписану подію і проганяє її через ту саму перевірку, що й зовнішній
- * виклик, — тобто справжня АТС підставляється без змін у логіці вище.
- */
 export async function mockPbxEvent(
   externalId: string,
   event: TelephonyEvent['event'],
 ): Promise<{ applied: boolean; call?: CallLog }> {
   const payload: TelephonyEvent = { externalId, event };
-  // Демо-запис розмови додаємо лише до успішних дзвінків.
   if (event === 'completed') payload.recordingUrl = '/uploads/recordings/demo-call.mp3';
 
   const rawBody = JSON.stringify(payload);
@@ -162,13 +135,11 @@ export async function mockPbxEvent(
   return handleEvent(JSON.parse(rawBody) as TelephonyEvent);
 }
 
-/** Дзвінок за id — для панелі активного дзвінка. */
 export async function findCall(id: string): Promise<CallLog | undefined> {
   const rows = await query<CallLog>('SELECT * FROM call_logs WHERE id = $1', [id]);
   return rows[0];
 }
 
-/** Нотатка — єдине, що справді не автоматизується. */
 export async function saveNote(id: string, note: string): Promise<CallLog> {
   const rows = await query<CallLog>('UPDATE call_logs SET note = $2 WHERE id = $1 RETURNING *', [id, note]);
   if (!rows[0]) throw new NotFoundError('Call not found');

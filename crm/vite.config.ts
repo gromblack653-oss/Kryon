@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 5175, // окремий порт: 5173 магазин, 5174 адмінка, 5175 CRM
+    port: 5175,
     proxy: {
       '/api': 'http://localhost:4000',
       '/uploads': 'http://localhost:4000',

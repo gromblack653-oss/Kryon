@@ -5,9 +5,6 @@ import { useAuthStore } from '../store/authStore';
 
 let socket: Socket | null = null;
 
-/**
- * Real-time для адміна: нове замовлення → інвалідація списків/статистики.
- */
 export function useSocket() {
   const token = useAuthStore((s) => s.accessToken);
   const queryClient = useQueryClient();

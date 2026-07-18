@@ -2,10 +2,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { wishlistApi } from '../api/endpoints';
 import { useAuthStore } from '../store/authStore';
 
-/**
- * Обране користувача. Доступне лише покупцям —
- * для решти повертає порожній список і no-op перемикач.
- */
 export function useWishlist() {
   const user = useAuthStore((s) => s.user);
   const enabled = user?.role === 'customer';

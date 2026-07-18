@@ -1,9 +1,3 @@
-/**
- * Демо-дані магазину відеокарт Kryon.
- * Реальні моделі, випущені починаючи з 2019 року (NVIDIA, AMD, Intel).
- * Ціни — у копійках (грн × 100), орієнтовні для українського ринку.
- */
-
 export interface SeedCategory {
   name: string;
   slug: string;
@@ -12,13 +6,12 @@ export interface SeedCategory {
 export interface SeedProduct {
   title: string;
   slug: string;
-  price: number; // копійки
+  price: number;
   stock: number;
-  cat: string; // slug категорії
+  cat: string;
   desc: string;
 }
 
-// Категорії = покоління/серії GPU для зручної фільтрації.
 export const categories: SeedCategory[] = [
   { name: 'GeForce RTX 50', slug: 'rtx-50' },
   { name: 'GeForce RTX 40', slug: 'rtx-40' },
@@ -32,7 +25,6 @@ export const categories: SeedCategory[] = [
 ];
 
 export const products: SeedProduct[] = [
-  // ===== NVIDIA GeForce RTX 50 (Blackwell, 2025) =====
   {
     title: 'NVIDIA GeForce RTX 5090',
     slug: 'rtx-5090',
@@ -90,7 +82,6 @@ export const products: SeedProduct[] = [
     desc: '8 ГБ GDDR6, 128-біт. Бюджетний вхід у RTX 50 для Full HD-геймінгу.',
   },
 
-  // ===== NVIDIA GeForce RTX 40 (Ada Lovelace, 2022–2024) =====
   {
     title: 'NVIDIA GeForce RTX 4090',
     slug: 'rtx-4090',
@@ -172,7 +163,6 @@ export const products: SeedProduct[] = [
     desc: '8 ГБ GDDR6, 128-біт. Найпопулярніша бюджетна RTX 40 для Full HD.',
   },
 
-  // ===== NVIDIA GeForce RTX 30 (Ampere, 2020–2022) =====
   {
     title: 'NVIDIA GeForce RTX 3090 Ti',
     slug: 'rtx-3090-ti',
@@ -246,7 +236,6 @@ export const products: SeedProduct[] = [
     desc: '8 ГБ GDDR6, 128-біт. Бюджетна RTX для Full HD, 2022 рік.',
   },
 
-  // ===== NVIDIA RTX 20 / GTX 16 (Turing, 2019) =====
   {
     title: 'NVIDIA GeForce RTX 2080 SUPER',
     slug: 'rtx-2080-super',
@@ -320,7 +309,6 @@ export const products: SeedProduct[] = [
     desc: '4 ГБ GDDR5, 128-біт. Енергоефективна карта без додаткового живлення, 2019 рік.',
   },
 
-  // ===== AMD Radeon RX 9000 (RDNA 4, 2025) =====
   {
     title: 'AMD Radeon RX 9070 XT',
     slug: 'rx-9070-xt',
@@ -354,7 +342,6 @@ export const products: SeedProduct[] = [
     desc: '8 ГБ GDDR6, 128-біт. Доступна версія RDNA 4 для Full HD, 2025 рік.',
   },
 
-  // ===== AMD Radeon RX 7000 (RDNA 3, 2022–2024) =====
   {
     title: 'AMD Radeon RX 7900 XTX',
     slug: 'rx-7900-xtx',
@@ -412,7 +399,6 @@ export const products: SeedProduct[] = [
     desc: '8 ГБ GDDR6, 128-біт. Доступна карта для Full HD, травень 2023 року.',
   },
 
-  // ===== AMD Radeon RX 6000 (RDNA 2, 2020–2022) =====
   {
     title: 'AMD Radeon RX 6950 XT',
     slug: 'rx-6950-xt',
@@ -494,7 +480,6 @@ export const products: SeedProduct[] = [
     desc: '4 ГБ GDDR6, 64-біт. Бюджетна карта для кіберспорту, 2022 рік.',
   },
 
-  // ===== AMD Radeon RX 5000 (RDNA, 2019–2020) =====
   {
     title: 'AMD Radeon RX 5700 XT',
     slug: 'rx-5700-xt',
@@ -536,7 +521,6 @@ export const products: SeedProduct[] = [
     desc: '4 ГБ GDDR6, 128-біт. Бюджетний варіант RDNA, 2019 рік.',
   },
 
-  // ===== Intel Arc (Alchemist 2022 + Battlemage 2024–2025) =====
   {
     title: 'Intel Arc B580',
     slug: 'arc-b580',
@@ -587,13 +571,10 @@ export const products: SeedProduct[] = [
   },
 ];
 
-/** Телефон стандартного покупця user@kryon.ua. */
 export const defaultCustomerPhone = '+380501112233';
 
-/** Тип компонента (поки один — відеокарти; фундамент під БЖ/корпуси/CPU). */
 export const gpuType = { key: 'gpu', name: 'Відеокарти', icon: '🎮', position: 1 };
 
-/** Схема характеристик відеокарти (для spec-таблиць і faceted-фільтрів). */
 export const gpuAttributes: Array<{
   key: string;
   label: string;
@@ -623,29 +604,25 @@ export const gpuAttributes: Array<{
   },
   { key: 'bus_bits', label: 'Шина пам’яті', unit: 'біт', dataType: 'number', filterable: true, position: 4 },
   { key: 'release_year', label: 'Рік випуску', dataType: 'number', filterable: true, position: 5 },
-  // Потрібні PC Builder: розрахунок БЖ і перевірка габаритів корпуса.
   { key: 'tdp', label: 'Споживання (TDP)', unit: 'Вт', dataType: 'number', filterable: true, position: 6 },
   { key: 'length_mm', label: 'Довжина', unit: 'мм', dataType: 'number', filterable: false, position: 7 },
 ];
 
-/** Додаткові тестові покупці (пароль у всіх — User123!). */
 export const extraCustomers = [
   { email: 'olena@kryon.ua', name: 'Олена Коваль', phone: '+380671234567' },
   { email: 'ihor@kryon.ua', name: 'Ігор Мельник', phone: '+380931112244' },
   { email: 'maria@kryon.ua', name: 'Марія Шевченко', phone: '+380637778899' },
 ];
 
-/** Працівник CRM (роль agent). Пароль — Agent123!. */
 export const agentUser = { email: 'agent@kryon.ua', name: 'Андрій Оператор' };
 
-/** Демо-дзвінки (customerIdx — індекс серед покупців у порядку створення). */
 export const demoCalls: Array<{
   customerIdx: number;
   direction: 'outbound' | 'inbound';
   outcome: 'answered' | 'no_answer' | 'busy' | 'voicemail' | 'failed';
   durationSeconds: number;
   note: string;
-  recording?: boolean; // прикріпити демо-аудіозапис
+  recording?: boolean;
 }> = [
   {
     customerIdx: 0,
@@ -687,7 +664,6 @@ export const demoCalls: Array<{
   },
 ];
 
-/** Демо-відгуки: slug товару, індекс покупця, оцінка, текст. */
 export const demoReviews: Array<{
   slug: string;
   customerIdx: number;
@@ -786,7 +762,6 @@ export const demoReviews: Array<{
   },
 ];
 
-/** Демо-нотатки / активності по клієнтах. */
 export const demoNotes: Array<{
   customerIdx: number;
   type: 'note' | 'task' | 'meeting' | 'email';
@@ -798,9 +773,8 @@ export const demoNotes: Array<{
   { customerIdx: 3, type: 'email', body: 'Надіслано інструкцію з повернення коштів.' },
 ];
 
-/** Демо-замовлення (за slug товарів) для наповнення історії покупок. */
 export const demoOrders: Array<{
-  customerIdx: number; // індекс серед усіх покупців
+  customerIdx: number;
   status: 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled';
   lines: Array<{ slug: string; qty: number }>;
 }> = [

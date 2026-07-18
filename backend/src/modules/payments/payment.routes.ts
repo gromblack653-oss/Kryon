@@ -25,7 +25,6 @@ const router = Router();
  */
 router.post(
   '/webhook',
-  // Підпис рахується від СИРОГО тіла — тому окремий raw-парсер, а не express.json().
   raw({ type: 'application/json' }),
   asyncHandler(async (req, res) => {
     const rawBody = (req.body as Buffer).toString('utf8');
@@ -35,7 +34,6 @@ router.post(
 
     const event = JSON.parse(rawBody) as WebhookEvent;
     const result = await handleWebhook(event);
-    // Шлюзу завжди 200, інакше він ретраїтиме нескінченно.
     res.json({ ok: true, ...result });
   }),
 );

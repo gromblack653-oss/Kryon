@@ -6,7 +6,6 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      // Проксі на бекенд у dev-режимі, щоб уникнути CORS та відносних URL.
       '/api': 'http://localhost:4000',
       '/uploads': 'http://localhost:4000',
       '/socket.io': { target: 'http://localhost:4000', ws: true },

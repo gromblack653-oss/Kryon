@@ -109,7 +109,6 @@ export const crmRepository = {
     );
   },
 
-  /** Позиції замовлення (товари) — для перегляду складу замовлення в CRM. */
   async orderItems(orderId: string) {
     return query<{ id: string; title: string; price_cents: number; quantity: number }>(
       `SELECT id, title, price_cents, quantity FROM order_items WHERE order_id = $1 ORDER BY title`,
@@ -121,7 +120,6 @@ export const crmRepository = {
     await query(`UPDATE users SET phone = $1, updated_at = now() WHERE id = $2`, [phone, customerId]);
   },
 
-  // --- Дзвінки ---
   async logCall(input: {
     customerId: string | null;
     agentId: string;
@@ -175,7 +173,6 @@ export const crmRepository = {
     return rows[0] ?? null;
   },
 
-  // --- Нотатки ---
   async addNote(input: {
     customerId: string;
     agentId: string;
@@ -199,7 +196,6 @@ export const crmRepository = {
     );
   },
 
-  // --- Статистика дашборду ---
   async stats(agentId: string) {
     const [totals] = await query<{ customers: number; calls_today: number; my_calls_today: number }>(
       `SELECT
@@ -212,9 +208,6 @@ export const crmRepository = {
       `SELECT outcome, COUNT(*)::int AS count FROM call_logs GROUP BY outcome`,
     );
 
-    // Черга на обдзвін: клієнти з незакритими замовленнями (очікують оплати або
-    // оплачені, але ще не відправлені), яким сьогодні ще не дзвонили.
-    // Спершу найдорожчі замовлення — оператор бачить, з кого починати день.
     const needsCall = await query<{
       id: string;
       name: string;

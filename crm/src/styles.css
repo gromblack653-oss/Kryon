@@ -1,11 +1,5 @@
-/**
- * CRM Kryon.
- * Токени, кнопки, поля, таблиці, пігулки й модалки — зі спільної дизайн-системи.
- * Тут лишається тільки те, що властиве саме CRM: таймлайн, панель дзвінка, профіль.
- */
 @import '@shopcore/theme/tokens.css';
 
-/* ---- Каркас ---- */
 .crm-shell {
   display: grid;
   grid-template-columns: 260px 1fr;
@@ -51,7 +45,7 @@
   color: var(--text);
   background: var(--surface-hover);
 }
-/* Активний пункт — м'який градієнт і неонове ребро зліва. */
+
 .nav-link.active {
   color: var(--text);
   background: var(--grad-soft);
@@ -101,7 +95,6 @@
   min-width: 0;
 }
 
-/* ---- Аватар ---- */
 .avatar {
   display: inline-flex;
   align-items: center;
@@ -113,7 +106,6 @@
   background: var(--grad);
 }
 
-/* ---- Кнопка дзвінка: єдиний «зелений» акцент — дія найпомітніша ---- */
 .btn-call {
   background: linear-gradient(135deg, #10b981, #34d399);
   border-color: transparent;
@@ -129,7 +121,6 @@
   font-size: 15px;
 }
 
-/* ---- Шапка сторінки ---- */
 .page-head {
   display: flex;
   align-items: flex-end;
@@ -163,7 +154,6 @@ label textarea {
   margin-top: 6px;
 }
 
-/* ---- Плитки статистики ---- */
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -179,7 +169,7 @@ label textarea {
   border: 1px solid var(--border);
   backdrop-filter: blur(8px);
 }
-/* Колір смуги зверху розрізняє показники, не ламаючи темну тему. */
+
 .stat::before {
   content: '';
   position: absolute;
@@ -230,7 +220,6 @@ label textarea {
   margin-top: 2px;
 }
 
-/* ---- Сітки ---- */
 .grid-2 {
   display: grid;
   grid-template-columns: 1.5fr 1fr;
@@ -243,7 +232,6 @@ label textarea {
   align-items: start;
 }
 
-/* ---- Таблиці ---- */
 .table-wrap {
   overflow-x: auto;
 }
@@ -256,7 +244,6 @@ label textarea {
   font-weight: 600;
 }
 
-/* ---- Пігулки: статуси замовлень і результати дзвінків ---- */
 .pill-pending {
   background: rgba(251, 191, 36, 0.12);
   color: #ffe7ab;
@@ -317,7 +304,6 @@ label textarea {
   color: var(--success);
 }
 
-/* ---- Розгортання замовлень ---- */
 .chevron {
   color: var(--faint);
   font-size: 12px;
@@ -343,7 +329,6 @@ label textarea {
   padding: 8px 10px;
 }
 
-/* ---- Запис розмови ---- */
 .rec-audio {
   height: 34px;
   max-width: 220px;
@@ -357,7 +342,6 @@ label textarea {
   width: 100%;
 }
 
-/* ---- Таймлайн клієнта ---- */
 .timeline {
   display: flex;
   flex-direction: column;
@@ -398,7 +382,6 @@ label textarea {
   font-size: 14px;
 }
 
-/* ---- Панель інструментів ---- */
 .toolbar {
   display: flex;
   gap: 10px;
@@ -429,7 +412,6 @@ label textarea {
   z-index: 1;
 }
 
-/* ---- Картка клієнта ---- */
 .profile {
   text-align: center;
 }
@@ -485,7 +467,6 @@ label textarea {
   color: var(--faint);
 }
 
-/* ---- Додавання нотатки ---- */
 .composer {
   display: flex;
   flex-direction: column;
@@ -497,7 +478,6 @@ label textarea {
   overflow-x: auto;
 }
 
-/* ---- Сегментований перемикач ---- */
 .seg {
   display: inline-flex;
   gap: 3px;
@@ -530,7 +510,6 @@ label textarea {
   color: var(--cyan);
 }
 
-/* ---- Модалка: анімація появи ---- */
 .modal-backdrop {
   animation: fade 0.15s ease;
 }
@@ -556,7 +535,6 @@ label textarea {
   }
 }
 
-/* ===================== Панель активного дзвінка ===================== */
 .call-panel {
   gap: 16px;
 }
@@ -572,7 +550,7 @@ label textarea {
   background: var(--surface);
   border: 1px solid var(--border);
 }
-/* Розмова — зелене «живе» підсвічування. */
+
 .call-state.active {
   background: rgba(52, 211, 153, 0.07);
   border-color: rgba(52, 211, 153, 0.28);
@@ -644,7 +622,6 @@ label textarea {
   flex: 1;
 }
 
-/* ---- Вхід ---- */
 .login-wrap {
   min-height: 100vh;
   display: grid;

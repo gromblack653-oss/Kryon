@@ -48,7 +48,6 @@ export function CheckoutPage() {
     enabled: Boolean(cityRef) && delivery === 'np_warehouse',
   });
 
-  // Зміна міста скидає обране відділення — інакше лишиться чуже.
   useEffect(() => setWarehouseRef(''), [cityRef]);
 
   const checkout = useMutation({
@@ -71,7 +70,6 @@ export function CheckoutPage() {
         npWarehouseRef: delivery === 'np_warehouse' ? warehouseRef || undefined : undefined,
       });
 
-      // Картка — ведемо на сторінку платіжного шлюзу; накладений платіж оплати не потребує.
       if (payment === 'card') {
         const session = await paymentsApi.createSession(order.id);
         return { order, redirectUrl: session.redirectUrl };
@@ -163,7 +161,7 @@ export function CheckoutPage() {
                   }}
                   placeholder="Почніть вводити назву..."
                 />
-                {/* Підказки показуємо, доки місто не обране. */}
+                {}
                 {!cityRef && cityQuery && cities?.items.length ? (
                   <ul className="suggest">
                     {cities.items.slice(0, 8).map((c) => (

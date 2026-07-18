@@ -1,11 +1,9 @@
 interface Props {
-  value: number; // 0..5
+  value: number;
   size?: 'sm' | 'md' | 'lg';
-  /** Робить зірки клікабельними (режим вибору оцінки). */
   onChange?: (rating: number) => void;
 }
 
-/** Показ рейтингу зірками. З onChange — інтерактивний вибір оцінки. */
 export function Stars({ value, size = 'sm', onChange }: Props) {
   const rounded = Math.round(value);
   const interactive = !!onChange;

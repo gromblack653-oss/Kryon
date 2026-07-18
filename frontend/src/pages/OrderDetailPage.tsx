@@ -5,7 +5,6 @@ import { formatPrice, formatDate, orderStatusLabel, paymentStatusLabel } from '@
 import { useAuthStore } from '../store/authStore';
 import type { OrderStatus, DeliveryMethod, PaymentMethod } from '../types';
 
-// Накладений платіж можна відправляти одразу — гроші беруть при врученні.
 function nextStatuses(status: OrderStatus, paymentMethod: PaymentMethod): OrderStatus[] {
   const base = NEXT_STATUSES[status];
   return paymentMethod === 'cod' && status === 'pending' ? [...base, 'shipped'] : base;
@@ -54,7 +53,6 @@ export function OrderDetailPage() {
     },
   });
 
-  // Повторна спроба оплати: створюємо нову сесію і ведемо на шлюз.
   const payNow = useMutation({
     mutationFn: () => paymentsApi.createSession(id!),
     onSuccess: (session) => navigate(session.redirectUrl),
@@ -111,7 +109,7 @@ export function OrderDetailPage() {
         </div>
       </div>
 
-      {/* Незавершену онлайн-оплату можна доплатити з картки замовлення. */}
+      {}
       {order.payment_method === 'card' &&
         (order.payment_status === 'unpaid' || order.payment_status === 'failed') && (
           <button className="btn btn-primary" disabled={payNow.isPending} onClick={() => payNow.mutate()}>

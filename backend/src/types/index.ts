@@ -12,12 +12,11 @@ export interface User {
 }
 
 export interface JwtPayload {
-  sub: string; // user id
+  sub: string;
   role: UserRole;
   email: string;
 }
 
-/** Дані авторизованого користувача, які кладемо в req.user. */
 export interface AuthUser {
   id: string;
   role: UserRole;

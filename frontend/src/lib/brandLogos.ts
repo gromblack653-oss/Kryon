@@ -1,9 +1,7 @@
-// АВТОЗГЕНЕРОВАНО (scripts/gen-brand-logos.mjs) з simple-icons (CC0).
-// Логотипи брендів для плейсхолдерів товарів без фото.
 
 export interface BrandLogo {
   title: string;
-  path: string; // SVG path (viewBox 0 0 24 24)
+  path: string;
   hex: string;
 }
 

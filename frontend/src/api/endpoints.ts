@@ -26,17 +26,15 @@ export interface ProductFilters {
   page?: number;
   limit?: number;
   search?: string;
-  type?: string; // ключ типу компонента
+  type?: string;
   category?: string;
   minPrice?: number;
   maxPrice?: number;
   inStock?: boolean;
-  /** Генеричні фільтри характеристик: "vram_gb:8,16;memory_type:GDDR7" */
   attrs?: string;
   sort?: 'newest' | 'rating' | 'price_asc' | 'price_desc' | 'title';
 }
 
-/** Кодує обрані характеристики у параметр `attrs`. */
 export function encodeAttrs(selected: Record<string, string[]>): string | undefined {
   const parts = Object.entries(selected)
     .filter(([, v]) => v.length > 0)
@@ -138,7 +136,6 @@ export const paymentsApi = {
   createSession: (orderId: string) =>
     api.post<PaymentSession>(`/api/payments/orders/${orderId}/session`).then((r) => r.data),
   get: (externalId: string) => api.get<PaymentState>(`/api/payments/${externalId}`).then((r) => r.data),
-  // Емуляція дії покупця на сторінці шлюзу.
   complete: (externalId: string, outcome: 'paid' | 'failed') =>
     api.post(`/api/payments/mock/${externalId}/complete`, { outcome }).then((r) => r.data),
 };

@@ -1,20 +1,8 @@
-/**
- * Логотип Kryon.
- *
- * Знак — ізометричний куб, вписаний у гексагон: читається одночасно як
- * коробка (комерція) і як чип/ядро (техніка). Три грані дають об'єм, неоновий
- * градієнт ціан→фіолет тримає єдність із рештою інтерфейсу.
- *
- * Один знак на всі три застосунки — відрізняє їх лише теґ (Admin / CRM).
- */
-
 export type LogoVariant = 'shop' | 'admin' | 'crm';
 
 interface Props {
   variant?: LogoVariant;
-  /** Розмір знака в пікселях (текст масштабується від нього). */
   size?: number;
-  /** Лише знак, без назви — для згорнутих панелей і favicon. */
   markOnly?: boolean;
 }
 
@@ -24,9 +12,7 @@ const TAG: Record<LogoVariant, string | null> = {
   crm: 'CRM',
 };
 
-/** Знак: гексагон + три грані куба. Координати в системі 32×32. */
 export function LogoMark({ size = 28 }: { size?: number }) {
-  // Унікальний id градієнта — щоб кілька логотипів на сторінці не конфліктували.
   const gid = 'sc-grad';
   return (
     <svg
@@ -45,13 +31,13 @@ export function LogoMark({ size = 28 }: { size?: number }) {
         </linearGradient>
       </defs>
 
-      {/* Верхня грань — найсвітліша */}
+      {}
       <path d="M16 3 L27.3 9.5 L16 16 L4.7 9.5 Z" fill={`url(#${gid})`} opacity="0.95" />
-      {/* Ліва грань — у тіні */}
+      {}
       <path d="M4.7 9.5 L16 16 L16 29 L4.7 22.5 Z" fill={`url(#${gid})`} opacity="0.45" />
-      {/* Права грань — середній тон */}
+      {}
       <path d="M27.3 9.5 L27.3 22.5 L16 29 L16 16 Z" fill={`url(#${gid})`} opacity="0.7" />
-      {/* Контур гексагона — «неонове» ребро */}
+      {}
       <path
         d="M16 3 L27.3 9.5 L27.3 22.5 L16 29 L4.7 22.5 L4.7 9.5 Z"
         stroke={`url(#${gid})`}
@@ -62,7 +48,6 @@ export function LogoMark({ size = 28 }: { size?: number }) {
   );
 }
 
-/** Повний логотип: знак + назва (+ теґ застосунку). */
 export function Logo({ variant = 'shop', size = 28, markOnly }: Props) {
   const tag = TAG[variant];
   if (markOnly) return <LogoMark size={size} />;

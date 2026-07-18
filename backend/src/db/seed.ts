@@ -24,13 +24,6 @@ import { componentImages } from './seed.components-images';
 import { productImages, extraProductImages } from './seed.images';
 import { gpuPower } from './seed.gpu-power';
 
-/**
- * Наповнює БД каталогом відеокарт Kryon.
- *
- * Сідер приводить каталог до відомого стану: очищає старі товари/категорії/замовлення
- * (користувачі зберігаються) і вставляє актуальний асортимент + демо-замовлення.
- * Безпечно запускати повторно — щоразу отримуєте однаковий чистий каталог.
- */
 async function seed(): Promise<void> {
   await withTransaction(async (client) => {
     await resetCatalog(client);
@@ -44,7 +37,6 @@ async function seed(): Promise<void> {
     await seedCrm(client);
   });
 
-  // Товари отримали нові id — інакше Redis віддаватиме застарілий каталог.
   await clearCatalogCache();
 
   logger.info('Seed completed', {
@@ -53,11 +45,9 @@ async function seed(): Promise<void> {
   });
 }
 
-/** Скидає кеш каталогу в Redis (без Redis — просто попереджає). */
 async function clearCatalogCache(): Promise<void> {
   try {
     await connectRedis();
-    // Даємо клієнту мить на встановлення зʼєднання.
     for (let i = 0; i < 20 && !redis.isReady; i++) await new Promise((r) => setTimeout(r, 100));
     if (!redis.isReady) throw new Error('Redis не готовий');
     await invalidate('products:list:*');
@@ -68,7 +58,6 @@ async function clearCatalogCache(): Promise<void> {
   }
 }
 
-/** Прибирає старий каталог, замовлення та CRM-дані (users лишаються). */
 async function resetCatalog(client: PoolClient): Promise<void> {
   await client.query('DELETE FROM call_logs');
   await client.query('DELETE FROM customer_notes');
@@ -77,11 +66,9 @@ async function resetCatalog(client: PoolClient): Promise<void> {
   await client.query('DELETE FROM orders');
   await client.query('DELETE FROM products');
   await client.query('DELETE FROM categories');
-  // product_types → CASCADE прибирає attributes та product_attribute_values.
   await client.query('DELETE FROM product_types');
 }
 
-/** Визначає бренд відеокарти за назвою. */
 function detectBrand(title: string): string | null {
   if (/nvidia|geforce|rtx|gtx/i.test(title)) return 'NVIDIA';
   if (/radeon|amd|\brx\b/i.test(title)) return 'AMD';
@@ -89,7 +76,6 @@ function detectBrand(title: string): string | null {
   return null;
 }
 
-/** Витягує характеристики відеокарти з назви та опису. */
 function parseGpuSpecs(title: string, desc: string): Record<string, string | number> {
   const specs: Record<string, string | number> = {};
   const brand = detectBrand(title);
@@ -114,7 +100,6 @@ async function seedUsers(client: PoolClient): Promise<void> {
   const userHash = await bcrypt.hash('User123!', 10);
   const agentHash = await bcrypt.hash('Agent123!', 10);
 
-  // admin + стандартний покупець (із телефоном) + працівник CRM.
   await client.query(
     `INSERT INTO users (email, password_hash, name, role, phone)
      VALUES ($1, $2, 'Адміністратор', 'admin', NULL),
@@ -142,13 +127,11 @@ async function seedUsers(client: PoolClient): Promise<void> {
   }
 }
 
-/** Мапа типів та їхніх атрибутів, зібрана під час сідування. */
 interface SeededTypes {
-  ids: Record<string, string>; // typeKey → type id
-  attrs: Record<string, Record<string, { id: string; dataType: string }>>; // typeKey → attrKey → def
+  ids: Record<string, string>;
+  attrs: Record<string, Record<string, { id: string; dataType: string }>>;
 }
 
-/** Створює всі типи компонентів та їхні схеми характеристик. */
 async function seedTypes(client: PoolClient): Promise<SeededTypes> {
   const ids: SeededTypes['ids'] = {};
   const attrs: SeededTypes['attrs'] = {};
@@ -185,7 +168,6 @@ async function seedTypes(client: PoolClient): Promise<SeededTypes> {
   return { ids, attrs };
 }
 
-/** Вставляє значення характеристик товару. */
 async function insertAttrValues(
   client: PoolClient,
   productId: string,
@@ -209,7 +191,6 @@ async function insertAttrValues(
 }
 
 async function seedCategories(client: PoolClient, gpuTypeId: string): Promise<Record<string, string>> {
-  // Серії відеокарт належать типу «Відеокарти».
   for (const c of categories) {
     await client.query('INSERT INTO categories (name, slug, type_id) VALUES ($1, $2, $3)', [
       c.name,
@@ -221,7 +202,6 @@ async function seedCategories(client: PoolClient, gpuTypeId: string): Promise<Re
   return Object.fromEntries(rows.map((r) => [r.slug, r.id]));
 }
 
-/** Товари інших типів компонентів (CPU, RAM, БЖ, корпуси) з явними характеристиками. */
 async function seedComponents(client: PoolClient, types: SeededTypes): Promise<void> {
   let values = 0;
   for (const p of componentProducts) {
@@ -258,15 +238,12 @@ async function seedProducts(
     );
     map[p.slug] = { id: rows[0].id, title: p.title, price: p.price };
 
-    // Характеристики відеокарти розпарсені з назви та опису.
-    // TDP і довжина — з довідника (потрібні PC Builder).
     const power = gpuPower[p.slug];
     attrValues += await insertAttrValues(client, rows[0].id, 'gpu', types, {
       ...parseGpuSpecs(p.title, p.desc),
       ...(power ? { tdp: power.tdp, length_mm: power.length } : {}),
     });
 
-    // Обкладинка стає першим фото галереї, далі — додаткові ракурси.
     if (image) {
       await client.query(`INSERT INTO product_images (product_id, url, position) VALUES ($1, $2, 0)`, [
         rows[0].id,
@@ -286,7 +263,6 @@ async function seedProducts(
   return map;
 }
 
-/** Демо-відгуки з оцінками (за slug товару та індексом покупця). */
 async function seedReviews(client: PoolClient): Promise<void> {
   const { rows: customers } = await client.query<{ id: string }>(
     `SELECT id FROM users WHERE role = 'customer' ORDER BY created_at`,
@@ -310,7 +286,6 @@ async function seedReviews(client: PoolClient): Promise<void> {
   logger.info('Reviews seeded', { reviews: count });
 }
 
-/** Створює демонстраційні замовлення різних статусів (за slug товарів). */
 async function seedDemoOrders(
   client: PoolClient,
   prodBySlug: Record<string, { id: string; title: string; price: number }>,
@@ -344,11 +319,6 @@ async function seedDemoOrders(
   logger.info('Demo orders seeded', { count: demoOrders.length });
 }
 
-/**
- * Створює короткий WAV-файл (тон) у теці uploads як демонстраційний
- * аудіозапис дзвінка, щоб функція прослуховування працювала «з коробки».
- * Повертає публічний URL або null у разі помилки запису.
- */
 function writeDemoRecording(): string | null {
   try {
     const uploadDir = path.resolve(process.cwd(), env.upload.dir);
@@ -361,7 +331,6 @@ function writeDemoRecording(): string | null {
     const data = Buffer.alloc(numSamples * 2);
     for (let i = 0; i < numSamples; i++) {
       const t = i / sampleRate;
-      // Легка мелодія з двох тонів + плавне затухання — «звучить» як запис.
       const tone = Math.sin(2 * Math.PI * 440 * t) * 0.3 + Math.sin(2 * Math.PI * 660 * t) * 0.2;
       const envelope = 0.5 + 0.5 * Math.sin(2 * Math.PI * 1.5 * t);
       data.writeInt16LE(Math.round(tone * envelope * 32767), i * 2);
@@ -372,13 +341,13 @@ function writeDemoRecording(): string | null {
     header.writeUInt32LE(36 + data.length, 4);
     header.write('WAVE', 8);
     header.write('fmt ', 12);
-    header.writeUInt32LE(16, 16); // PCM chunk size
-    header.writeUInt16LE(1, 20); // PCM format
-    header.writeUInt16LE(1, 22); // mono
+    header.writeUInt32LE(16, 16);
+    header.writeUInt16LE(1, 20);
+    header.writeUInt16LE(1, 22);
     header.writeUInt32LE(sampleRate, 24);
-    header.writeUInt32LE(sampleRate * 2, 28); // byte rate
-    header.writeUInt16LE(2, 32); // block align
-    header.writeUInt16LE(16, 34); // bits per sample
+    header.writeUInt32LE(sampleRate * 2, 28);
+    header.writeUInt16LE(2, 32);
+    header.writeUInt16LE(16, 34);
     header.write('data', 36);
     header.writeUInt32LE(data.length, 40);
 
@@ -390,7 +359,6 @@ function writeDemoRecording(): string | null {
   }
 }
 
-/** Демо-дані CRM: дзвінки та нотатки по клієнтах. */
 async function seedCrm(client: PoolClient): Promise<void> {
   const { rows: customers } = await client.query<{ id: string; phone: string | null }>(
     `SELECT id, phone FROM users WHERE role = 'customer' ORDER BY created_at`,

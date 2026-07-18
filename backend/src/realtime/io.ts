@@ -7,11 +7,6 @@ import { JwtPayload } from '../types';
 
 let io: IOServer | null = null;
 
-/**
- * Ініціалізує Socket.IO поверх HTTP-сервера.
- * Клієнти автентифікуються через access-токен у handshake.auth.token
- * і приєднуються до персональної кімнати `user:<id>`.
- */
 export function initIO(server: HttpServer): IOServer {
   io = new IOServer(server, {
     cors: { origin: env.corsOrigins, credentials: true },
@@ -47,12 +42,10 @@ export function getIO(): IOServer {
   return io;
 }
 
-/** Надсилає подію конкретному користувачу. */
 export function emitToUser(userId: string, event: string, payload: unknown): void {
   io?.to(`user:${userId}`).emit(event, payload);
 }
 
-/** Надсилає подію всім адміністраторам (напр., нове замовлення). */
 export function emitToAdmins(event: string, payload: unknown): void {
   io?.to('admins').emit(event, payload);
 }

@@ -3,15 +3,12 @@ import { MigrationBuilder, ColumnDefinitions } from 'node-pg-migrate';
 export const shorthands: ColumnDefinitions | undefined = undefined;
 
 export function up(pgm: MigrationBuilder): void {
-  // Телефон користувача (спільне поле для магазину/адмінки/CRM).
   pgm.addColumn('users', {
     phone: { type: 'text' },
   });
 
-  // Нова роль для працівників CRM (окрім admin/customer).
   pgm.addTypeValue('user_role', 'agent', { ifNotExists: true });
 
-  // --- Журнал дзвінків (MicroSIP та ін.) ---
   pgm.createType('call_direction', ['outbound', 'inbound']);
   pgm.createType('call_outcome', ['answered', 'no_answer', 'busy', 'voicemail', 'failed']);
   pgm.createTable('call_logs', {
@@ -29,7 +26,6 @@ export function up(pgm: MigrationBuilder): void {
   pgm.createIndex('call_logs', 'agent_id');
   pgm.createIndex('call_logs', 'created_at');
 
-  // --- Нотатки / активності по клієнту ---
   pgm.createType('note_type', ['note', 'task', 'meeting', 'email']);
   pgm.createTable('customer_notes', {
     id: { type: 'uuid', primaryKey: true, default: pgm.func('gen_random_uuid()') },
@@ -49,5 +45,4 @@ export function down(pgm: MigrationBuilder): void {
   pgm.dropType('call_outcome');
   pgm.dropType('call_direction');
   pgm.dropColumn('users', 'phone');
-  // Значення enum 'agent' лишаємо (ALTER TYPE ... DROP VALUE не підтримується Postgres).
 }

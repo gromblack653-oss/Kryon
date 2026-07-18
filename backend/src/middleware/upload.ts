@@ -42,10 +42,9 @@ const ALLOWED_AUDIO = new Set([
   'audio/aac',
 ]);
 
-/** Завантаження аудіозаписів дзвінків (MicroSIP пише WAV/MP3). */
 export const uploadAudio = multer({
   storage,
-  limits: { fileSize: 25 * 1024 * 1024 }, // до 25 МБ на запис
+  limits: { fileSize: 25 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
     if (!ALLOWED_AUDIO.has(file.mimetype)) {
       cb(new BadRequestError('Дозволені аудіоформати: wav, mp3, ogg, webm, m4a'));

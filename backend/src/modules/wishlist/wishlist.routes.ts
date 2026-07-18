@@ -6,7 +6,6 @@ import { NotFoundError } from '../../utils/errors';
 
 const router = Router();
 
-// Обране — лише для авторизованих покупців.
 router.use(authenticate, authorize('customer'));
 
 interface WishlistProduct {

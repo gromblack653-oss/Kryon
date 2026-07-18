@@ -4,7 +4,6 @@ import { assetUrl } from '@shopcore/shared';
 
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
 
-// Виробники чипів відеокарт — власні фірмові кольори градієнта.
 const CHIP_BRANDS: Array<{ test: RegExp; key: string; name: string; gradient: string }> = [
   {
     test: /nvidia|geforce|rtx|gtx/i,
@@ -26,7 +25,6 @@ const CHIP_BRANDS: Array<{ test: RegExp; key: string; name: string; gradient: st
   },
 ];
 
-// Виробники комплектуючих — впізнаємо за початком назви.
 const VENDORS = [
   'be quiet!',
   'Cooler Master',
@@ -45,7 +43,6 @@ const VENDORS = [
   'MSI',
 ];
 
-/** Детермінований відтінок за назвою (для брендів без фіксованого кольору). */
 function hue(seed: string): number {
   let h = 0;
   for (let i = 0; i < seed.length; i++) h = seed.charCodeAt(i) + ((h << 5) - h);
@@ -53,7 +50,7 @@ function hue(seed: string): number {
 }
 
 interface Brand {
-  key: string; // нормалізований ключ для пошуку логотипа
+  key: string;
   name: string;
   gradient: string;
   model: string;
@@ -90,7 +87,6 @@ interface Props {
   compact?: boolean;
 }
 
-/** Зображення товару: реальне фото, інакше — брендований плейсхолдер із логотипом. */
 export function ProductImage({ product, compact }: Props) {
   if (product.image_url) {
     return <img className="media-img" src={assetUrl(product.image_url)} alt={product.title} loading="lazy" />;

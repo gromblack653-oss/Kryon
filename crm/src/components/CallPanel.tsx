@@ -11,24 +11,17 @@ interface Props {
   onDone: () => void;
 }
 
-/** Секунди у вигляді 01:23. */
 function fmt(total: number): string {
   const m = Math.floor(total / 60);
   const s = total % 60;
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-/**
- * Панель активного дзвінка.
- * Напрямок, результат і тривалість приходять від АТС — оператор їх не вводить.
- * Вручну лишається тільки нотатка.
- */
 export function CallPanel({ call: initial, customerName, onDone }: Props) {
   const [call, setCall] = useState<CallLog>(initial);
   const [note, setNote] = useState(initial.note ?? '');
   const [elapsed, setElapsed] = useState(0);
 
-  // Оновлення від АТС стосуються саме цього дзвінка.
   const onUpdate = useCallback(
     (incoming: CallLog) => {
       if (incoming.id === initial.id) setCall(incoming);
@@ -37,7 +30,6 @@ export function CallPanel({ call: initial, customerName, onDone }: Props) {
   );
   useCallSocket(onUpdate);
 
-  // Лічильник розмови: рахуємо від моменту відповіді, який зафіксував сервер.
   useEffect(() => {
     if (call.state !== 'active' || !call.answered_at) return;
     const from = new Date(call.answered_at).getTime();
@@ -72,7 +64,7 @@ export function CallPanel({ call: initial, customerName, onDone }: Props) {
           </div>
         </div>
 
-        {/* --- Стан дзвінка: усе з АТС --- */}
+        {}
         <div className={`call-state ${call.state}`}>
           {call.state === 'ringing' && (
             <>
@@ -99,7 +91,7 @@ export function CallPanel({ call: initial, customerName, onDone }: Props) {
           )}
         </div>
 
-        {/* --- Кнопки завершення (з реальною АТС приходять вебхуком) --- */}
+        {}
         {!done && (
           <div className="call-actions">
             {call.state === 'active' ? (
@@ -131,7 +123,7 @@ export function CallPanel({ call: initial, customerName, onDone }: Props) {
           </div>
         )}
 
-        {/* --- Єдине, що вводить оператор --- */}
+        {}
         <label>
           Нотатка
           <textarea
