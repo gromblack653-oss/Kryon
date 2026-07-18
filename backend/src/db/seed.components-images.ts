@@ -1,6 +1,6 @@
 /**
  * Фото комплектуючих — самохостинг у backend/uploads/products.
- * АВТОГЕНЕРовано скриптом _genmaps.ts за вмістом теки. Не редагувати вручну.
+ * АВТОГЕНЕРовано скриптом scripts/images/gen-maps.ts за вмістом теки. Не редагувати вручну.
  */
 export const componentImages: Record<string, string> = {
   "asrock-b550m-pro4": "/uploads/products/asrock-b550m-pro4.jpg",

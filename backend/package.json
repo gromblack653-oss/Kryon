@@ -12,7 +12,8 @@
     "test": "jest --runInBand",
     "lint": "eslint \"src/**/*.ts\"",
     "migrate:prod": "node-pg-migrate --use-glob -m \"dist/db/migrations/*.js\" up",
-    "seed:prod": "node dist/db/seed.js"
+    "seed:prod": "node dist/db/seed.js",
+    "prebuild": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

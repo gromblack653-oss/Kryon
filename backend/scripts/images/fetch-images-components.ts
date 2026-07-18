@@ -4,7 +4,7 @@
  * Запуск:  tsx src/db/fetch-images-components.ts <out.json>
  */
 import fs from 'fs';
-import { componentProducts } from './seed.components';
+import { componentProducts } from '../../src/db/seed.components';
 
 const API = 'https://commons.wikimedia.org/w/api.php';
 const UA = 'ShopCoreDemo/1.0 (fullstack portfolio project; educational use)';

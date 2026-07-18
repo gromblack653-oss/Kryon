@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { products } from './seed.data';
-import { componentProducts } from './seed.components';
+import { products } from '../../src/db/seed.data';
+import { componentProducts } from '../../src/db/seed.components';
 
 const dir = process.argv[2];
 const files = fs.readdirSync(dir);

@@ -5,10 +5,10 @@
  * Відновлюваний. Запуск: tsx src/db/fetch-ddg.ts <out.json>
  */
 import fs from 'fs';
-import { products } from './seed.data';
-import { componentProducts } from './seed.components';
-import { productImages } from './seed.images';
-import { componentImages } from './seed.components-images';
+import { products } from '../../src/db/seed.data';
+import { componentProducts } from '../../src/db/seed.components';
+import { productImages } from '../../src/db/seed.images';
+import { componentImages } from '../../src/db/seed.components-images';
 
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36';
