@@ -25,6 +25,14 @@ import { productImages, extraProductImages } from './seed.images';
 import { gpuPower } from './seed.gpu-power';
 
 async function seed(): Promise<void> {
+  if (process.env.SEED_FORCE !== 'true') {
+    const { rows } = await pool.query<{ count: number }>('SELECT COUNT(*)::int AS count FROM products');
+    if (rows[0].count > 0) {
+      logger.info('Seed skipped — каталог уже заповнений', { products: rows[0].count });
+      return;
+    }
+  }
+
   await withTransaction(async (client) => {
     await resetCatalog(client);
     await seedUsers(client);

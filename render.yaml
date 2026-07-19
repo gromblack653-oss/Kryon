@@ -25,7 +25,7 @@ services:
     # Монорепо: ставимо й збираємо лише бекенд (фронти сюди не тягнемо).
     buildCommand: pnpm install --filter shopcore-backend... --frozen-lockfile && pnpm --filter shopcore-backend build
     # Міграції ідемпотентні — безпечно ганяти при кожному старті; далі — сервер.
-    startCommand: pnpm --filter shopcore-backend migrate:prod && pnpm --filter shopcore-backend start
+    startCommand: pnpm --filter shopcore-backend migrate:prod && pnpm --filter shopcore-backend seed:prod && pnpm --filter shopcore-backend start
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
