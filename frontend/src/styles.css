@@ -904,13 +904,17 @@ h3 {
 }
 .search-box .search-ico {
   position: absolute;
-  left: 0.95rem;
+  left: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.95rem;
+  line-height: 1;
   opacity: 0.5;
   pointer-events: none;
 }
 .search-box input {
-  padding-left: 2.5rem;
-  padding-right: 2.2rem;
+  padding-left: 3.1rem;
+  padding-right: 2.4rem;
   height: 46px;
   font-size: 1rem;
 }
@@ -1312,8 +1316,16 @@ small.muted {
     flex-wrap: wrap;
   }
   .filter-group {
+    flex: 1 1 160px;
+    min-width: 0;
+  }
+  .filter-group select,
+  .price-row input {
+    min-width: 0;
+  }
+  .price-row input {
     flex: 1;
-    min-width: 140px;
+    width: auto;
   }
 }
 @media (max-width: 720px) {

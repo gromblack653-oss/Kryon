@@ -219,7 +219,7 @@ h4 {
 }
 
 .input,
-input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']),
+input,
 select,
 textarea {
   width: 100%;
@@ -256,7 +256,14 @@ input:-webkit-autofill:focus {
   caret-color: var(--text);
 }
 input[type='checkbox'],
-input[type='radio'] {
+input[type='radio'],
+input[type='range'],
+input[type='file'] {
+  width: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
   accent-color: var(--cyan);
 }
 
