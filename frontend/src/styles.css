@@ -942,7 +942,7 @@ h3 {
 
 .catalog-layout {
   display: grid;
-  grid-template-columns: 250px 1fr;
+  grid-template-columns: 290px 1fr;
   gap: 1.5rem;
   align-items: start;
 }
@@ -950,12 +950,12 @@ h3 {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1.3rem;
+  padding: 1.6rem;
   position: sticky;
   top: 82px;
   display: flex;
   flex-direction: column;
-  gap: 1.4rem;
+  gap: 1.6rem;
   backdrop-filter: blur(8px);
 }
 .filter-group h4 {
