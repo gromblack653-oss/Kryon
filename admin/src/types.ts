@@ -45,6 +45,15 @@ export interface Category {
   slug: string;
 }
 
+export interface Operator {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  created_at: string;
+  calls: number;
+}
+
 export type DeliveryMethod = 'np_warehouse' | 'np_courier' | 'pickup';
 export type PaymentMethod = 'card' | 'cod';
 export type PaymentStatus = 'unpaid' | 'pending' | 'paid' | 'failed' | 'refunded';

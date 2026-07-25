@@ -1,5 +1,14 @@
 import { api } from './client';
-import type { AuthResponse, Category, Order, OrderDetail, Paged, Product, Stats } from '../types';
+import type {
+  AuthResponse,
+  Category,
+  Operator,
+  Order,
+  OrderDetail,
+  Paged,
+  Product,
+  Stats,
+} from '../types';
 
 export interface ProductQuery {
   page?: number;
@@ -36,6 +45,13 @@ export const categoriesApi = {
   list: () => api.get<Category[]>('/api/categories').then((r) => r.data),
   create: (body: { name: string; slug: string }) =>
     api.post<Category>('/api/categories', body).then((r) => r.data),
+};
+
+export const operatorsApi = {
+  list: () => api.get<Operator[]>('/api/admin/operators').then((r) => r.data),
+  create: (body: { name: string; email: string; password: string; phone?: string }) =>
+    api.post<Operator>('/api/admin/operators', body).then((r) => r.data),
+  remove: (id: string) => api.delete(`/api/admin/operators/${id}`).then((r) => r.data),
 };
 
 export const ordersApi = {

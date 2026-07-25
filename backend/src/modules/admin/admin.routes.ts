@@ -1,11 +1,28 @@
 import { Router } from 'express';
+import bcrypt from 'bcryptjs';
+import { z } from 'zod';
 import { query } from '../../db/pool';
 import { asyncHandler } from '../../utils/asyncHandler';
 import { authenticate, authorize } from '../../middleware/auth';
+import { validate } from '../../middleware/validate';
+import { ConflictError, NotFoundError } from '../../utils/errors';
 
 const router = Router();
 
 router.use(authenticate, authorize('admin'));
+
+const operatorSchema = z.object({
+  name: z.string().min(2, 'Мінімум 2 символи').max(80),
+  email: z.string().email('Некоректний email'),
+  password: z
+    .string()
+    .min(8, 'Пароль має містити щонайменше 8 символів')
+    .regex(/[A-Z]/, 'Потрібна велика літера')
+    .regex(/[0-9]/, 'Потрібна цифра'),
+  phone: z.string().max(30).optional(),
+});
+
+type OperatorInput = z.infer<typeof operatorSchema>;
 
 const STATUS_LABELS: Record<string, string> = {
   pending: 'Очікує оплати',
@@ -171,6 +188,89 @@ router.get(
       revenueByDay: revenueByDay.map((r) => ({ day: r.day, cents: Number(r.cents) })),
       lowStock,
     });
+  }),
+);
+
+/**
+ * @openapi
+ * /api/admin/operators:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Список операторів CRM (admin)
+ *     security: [{ bearerAuth: [] }]
+ *     responses:
+ *       200: { description: Масив операторів (role=agent) }
+ */
+router.get(
+  '/operators',
+  asyncHandler(async (_req, res) => {
+    const rows = await query(
+      `SELECT u.id, u.name, u.email, u.phone, u.created_at,
+              (SELECT COUNT(*) FROM call_logs c WHERE c.agent_id = u.id)::int AS calls
+         FROM users u
+        WHERE u.role = 'agent'
+        ORDER BY u.created_at DESC`,
+    );
+    res.json(rows);
+  }),
+);
+
+/**
+ * @openapi
+ * /api/admin/operators:
+ *   post:
+ *     tags: [Admin]
+ *     summary: Створити оператора CRM (admin)
+ *     security: [{ bearerAuth: [] }]
+ *     responses:
+ *       201: { description: Оператора створено }
+ *       409: { description: Email вже зареєстровано }
+ */
+router.post(
+  '/operators',
+  validate(operatorSchema),
+  asyncHandler(async (req, res) => {
+    const { name, email, password, phone } = req.body as OperatorInput;
+
+    const existing = await query('SELECT id FROM users WHERE email = $1', [email]);
+    if (existing.length) throw new ConflictError('Email вже зареєстровано');
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const [operator] = await query<{
+      id: string;
+      name: string;
+      email: string;
+      phone: string | null;
+      created_at: string;
+    }>(
+      `INSERT INTO users (email, password_hash, name, role, phone)
+       VALUES ($1, $2, $3, 'agent', $4)
+       RETURNING id, name, email, phone, created_at`,
+      [email, passwordHash, name, phone || null],
+    );
+    res.status(201).json({ ...operator, calls: 0 });
+  }),
+);
+
+/**
+ * @openapi
+ * /api/admin/operators/{id}:
+ *   delete:
+ *     tags: [Admin]
+ *     summary: Видалити оператора CRM (admin)
+ *     security: [{ bearerAuth: [] }]
+ *     responses:
+ *       204: { description: Видалено }
+ *       404: { description: Оператора не знайдено }
+ */
+router.delete(
+  '/operators/:id',
+  asyncHandler(async (req, res) => {
+    const rows = await query(`DELETE FROM users WHERE id = $1 AND role = 'agent' RETURNING id`, [
+      req.params.id,
+    ]);
+    if (!rows.length) throw new NotFoundError('Оператора не знайдено');
+    res.status(204).send();
   }),
 );
 

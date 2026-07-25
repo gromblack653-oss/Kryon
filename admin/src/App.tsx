@@ -7,6 +7,7 @@ import { ProductsPage } from './pages/ProductsPage';
 import { OrdersPage } from './pages/OrdersPage';
 import { OrderDetailPage } from './pages/OrderDetailPage';
 import { CategoriesPage } from './pages/CategoriesPage';
+import { OperatorsPage } from './pages/OperatorsPage';
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="orders" element={<OrdersPage />} />
         <Route path="orders/:id" element={<OrderDetailPage />} />
         <Route path="categories" element={<CategoriesPage />} />
+        <Route path="operators" element={<OperatorsPage />} />
       </Route>
     </Routes>
   );

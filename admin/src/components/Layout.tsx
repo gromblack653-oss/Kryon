@@ -9,6 +9,7 @@ const NAV = [
   { to: '/products', label: 'Товари', icon: '🎮' },
   { to: '/orders', label: 'Замовлення', icon: '📦' },
   { to: '/categories', label: 'Категорії', icon: '🗂️' },
+  { to: '/operators', label: 'Оператори', icon: '🎧' },
 ];
 
 export function Layout() {
