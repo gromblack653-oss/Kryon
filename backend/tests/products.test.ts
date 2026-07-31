@@ -30,6 +30,7 @@ describe('Products API', () => {
           slug: 'test-product',
           description: '',
           price_cents: 1000,
+          old_price_cents: null,
           stock: 5,
           image_url: null,
           category_id: null,

@@ -30,6 +30,7 @@ export interface Product {
   slug: string;
   description: string;
   price_cents: number;
+  old_price_cents: number | null;
   stock: number;
   image_url: string | null;
   category_id: string | null;
@@ -139,7 +140,7 @@ export type PaymentStatus = 'unpaid' | 'pending' | 'paid' | 'failed' | 'refunded
 
 export interface Order {
   id: string;
-  user_id: string;
+  user_id: string | null;
   status: OrderStatus;
   total_cents: number;
   shipping_address: string;
@@ -171,13 +172,33 @@ export interface NpWarehouse {
 }
 
 export interface CheckoutInput {
+  items: Array<{ productId: string; quantity: number }>;
   shippingAddress: string;
   deliveryMethod: DeliveryMethod;
   paymentMethod: PaymentMethod;
   recipientName?: string;
   recipientPhone?: string;
+  guestName?: string;
+  guestEmail?: string;
+  guestPhone?: string;
   npCityRef?: string;
   npWarehouseRef?: string;
+}
+
+export interface OrderConfirmation {
+  id: string;
+  status: OrderStatus;
+  total_cents: number;
+  shipping_address: string;
+  delivery_method: DeliveryMethod;
+  np_city_name: string | null;
+  np_warehouse_name: string | null;
+  recipient_name: string | null;
+  ttn: string | null;
+  payment_method: PaymentMethod;
+  payment_status: PaymentStatus;
+  created_at: string;
+  items: OrderItem[];
 }
 
 export interface PaymentSession {

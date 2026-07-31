@@ -6,7 +6,7 @@ import { apiError } from '../api/client';
 import { ProductImage } from '../components/ProductImage';
 import type { Product } from '../types';
 
-const EMPTY = { title: '', slug: '', description: '', price: '', stock: '', categoryId: '' };
+const EMPTY = { title: '', slug: '', description: '', price: '', oldPrice: '', stock: '', categoryId: '' };
 
 export function ProductsPage() {
   const queryClient = useQueryClient();
@@ -16,7 +16,7 @@ export function ProductsPage() {
   const [form, setForm] = useState({ ...EMPTY });
   const [error, setError] = useState('');
   const [editId, setEditId] = useState<string | null>(null);
-  const [edit, setEdit] = useState({ price: '', stock: '', is_active: true });
+  const [edit, setEdit] = useState({ price: '', oldPrice: '', stock: '', is_active: true });
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const { data: categories } = useQuery({ queryKey: ['categories'], queryFn: categoriesApi.list });
@@ -35,6 +35,7 @@ export function ProductsPage() {
         slug: form.slug,
         description: form.description,
         price: Math.round(Number(form.price) * 100),
+        ...(form.oldPrice ? { oldPrice: Math.round(Number(form.oldPrice) * 100) } : {}),
         stock: Number(form.stock || 0),
         ...(form.categoryId ? { categoryId: form.categoryId } : {}),
       }),
@@ -50,6 +51,7 @@ export function ProductsPage() {
     mutationFn: (id: string) =>
       productsApi.update(id, {
         price: Math.round(Number(edit.price) * 100),
+        oldPrice: edit.oldPrice ? Math.round(Number(edit.oldPrice) * 100) : null,
         stock: Number(edit.stock),
         isActive: edit.is_active,
       }),
@@ -76,7 +78,12 @@ export function ProductsPage() {
 
   function startEdit(p: Product) {
     setEditId(p.id);
-    setEdit({ price: String(p.price_cents / 100), stock: String(p.stock), is_active: p.is_active });
+    setEdit({
+      price: String(p.price_cents / 100),
+      oldPrice: p.old_price_cents ? String(p.old_price_cents / 100) : '',
+      stock: String(p.stock),
+      is_active: p.is_active,
+    });
   }
 
   return (
@@ -116,6 +123,17 @@ export function ProductsPage() {
                   required
                   value={form.price}
                   onChange={set('price')}
+                />
+              </label>
+              <label>
+                Стара ціна (акція)
+                <input
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  value={form.oldPrice}
+                  onChange={set('oldPrice')}
+                  placeholder="необов'язково"
                 />
               </label>
               <label>
@@ -205,6 +223,14 @@ export function ProductsPage() {
                           value={edit.price}
                           onChange={(e) => setEdit((s) => ({ ...s, price: e.target.value }))}
                         />
+                        <input
+                          type="number"
+                          step="0.01"
+                          placeholder="стара ціна"
+                          value={edit.oldPrice}
+                          onChange={(e) => setEdit((s) => ({ ...s, oldPrice: e.target.value }))}
+                          style={{ marginTop: '0.3rem' }}
+                        />
                       </td>
                       <td>
                         <input
@@ -239,7 +265,17 @@ export function ProductsPage() {
                     </>
                   ) : (
                     <>
-                      <td>{formatPrice(p.price_cents)}</td>
+                      <td>
+                        {formatPrice(p.price_cents)}
+                        {!!p.old_price_cents && p.old_price_cents > p.price_cents && (
+                          <div
+                            className="muted"
+                            style={{ textDecoration: 'line-through', fontSize: '0.8em' }}
+                          >
+                            {formatPrice(p.old_price_cents)}
+                          </div>
+                        )}
+                      </td>
                       <td>{p.stock}</td>
                       <td>
                         {p.is_active ? (

@@ -40,6 +40,7 @@ async function seed(): Promise<void> {
     const catBySlug = await seedCategories(client, types.ids.gpu);
     const prodBySlug = await seedProducts(client, catBySlug, types);
     await seedComponents(client, types);
+    await seedPromotions(client);
     await seedReviews(client);
     await seedDemoOrders(client, prodBySlug);
     await seedCrm(client);
@@ -269,6 +270,19 @@ async function seedProducts(
   }
   logger.info('GPU products seeded', { products: products.length, attrValues });
   return map;
+}
+
+async function seedPromotions(client: PoolClient): Promise<void> {
+  const res = await client.query(
+    `WITH ranked AS (
+       SELECT id, ROW_NUMBER() OVER (ORDER BY created_at, id) AS rn FROM products
+     )
+     UPDATE products p
+        SET old_price_cents = ROUND(p.price_cents * 1.22)::int
+       FROM ranked
+      WHERE ranked.id = p.id AND ranked.rn % 3 = 0`,
+  );
+  logger.info('Promotions seeded', { discounted: res.rowCount ?? 0 });
 }
 
 async function seedReviews(client: PoolClient): Promise<void> {

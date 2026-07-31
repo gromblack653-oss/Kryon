@@ -6,6 +6,7 @@ import type {
   Facet,
   Order,
   OrderDetail,
+  OrderConfirmation,
   Paged,
   Product,
   ProductType,
@@ -31,8 +32,9 @@ export interface ProductFilters {
   minPrice?: number;
   maxPrice?: number;
   inStock?: boolean;
+  promo?: boolean;
   attrs?: string;
-  sort?: 'newest' | 'rating' | 'price_asc' | 'price_desc' | 'title';
+  sort?: 'newest' | 'rating' | 'price_asc' | 'price_desc' | 'title' | 'discount';
 }
 
 export function encodeAttrs(selected: Record<string, string[]>): string | undefined {
@@ -107,6 +109,8 @@ export const ordersApi = {
       })
       .then((r) => r.data),
   get: (id: string) => api.get<OrderDetail>(`/api/orders/${id}`).then((r) => r.data),
+  confirmation: (id: string) =>
+    api.get<OrderConfirmation>(`/api/orders/${id}/confirmation`).then((r) => r.data),
   checkout: (input: CheckoutInput) => api.post<Order>('/api/orders', input).then((r) => r.data),
   updateStatus: (id: string, status: string) =>
     api.patch<Order>(`/api/orders/${id}/status`, { status }).then((r) => r.data),

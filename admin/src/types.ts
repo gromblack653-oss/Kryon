@@ -22,6 +22,7 @@ export interface Product {
   slug: string;
   description: string;
   price_cents: number;
+  old_price_cents: number | null;
   stock: number;
   image_url: string | null;
   category_id: string | null;

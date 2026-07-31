@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { cartApi, ordersApi, deliveryApi, paymentsApi } from '../api/endpoints';
+import { ordersApi, deliveryApi, paymentsApi } from '../api/endpoints';
 import { formatPrice } from '@shopcore/shared';
 import { apiError } from '../api/client';
 import { useDebounce } from '../hooks/useDebounce';
+import { useCartStore, cartSubtotal } from '../store/cartStore';
+import { useAuthStore } from '../store/authStore';
 import type { DeliveryMethod, PaymentMethod } from '../types';
 
 const DELIVERY: Array<{ value: DeliveryMethod; title: string; hint: string }> = [
@@ -22,18 +24,21 @@ export function CheckoutPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  const items = useCartStore((s) => s.items);
+  const clearCart = useCartStore((s) => s.clear);
+  const user = useAuthStore((s) => s.user);
+
   const [delivery, setDelivery] = useState<DeliveryMethod>('np_warehouse');
   const [payment, setPayment] = useState<PaymentMethod>('card');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [cityQuery, setCityQuery] = useState('');
   const [cityRef, setCityRef] = useState('');
   const [cityName, setCityName] = useState('');
   const [warehouseRef, setWarehouseRef] = useState('');
   const [error, setError] = useState('');
-
-  const { data: cart } = useQuery({ queryKey: ['cart'], queryFn: cartApi.get });
 
   const debouncedCity = useDebounce(cityQuery, 300);
   const { data: cities } = useQuery({
@@ -61,23 +66,28 @@ export function CheckoutPage() {
             : 'Самовивіз зі складу';
 
       const order = await ordersApi.checkout({
+        items: items.map((i) => ({ productId: i.product.id, quantity: i.quantity })),
         shippingAddress,
         deliveryMethod: delivery,
         paymentMethod: payment,
         recipientName: name || undefined,
         recipientPhone: phone || undefined,
+        guestName: user ? undefined : name,
+        guestEmail: user ? undefined : email,
+        guestPhone: user ? undefined : phone,
         npCityRef: delivery === 'pickup' ? undefined : cityRef || undefined,
         npWarehouseRef: delivery === 'np_warehouse' ? warehouseRef || undefined : undefined,
       });
 
+      const successPath = user ? `/orders/${order.id}` : `/order-confirmation/${order.id}`;
       if (payment === 'card') {
         const session = await paymentsApi.createSession(order.id);
-        return { order, redirectUrl: session.redirectUrl };
+        return { redirectUrl: session.redirectUrl };
       }
-      return { order, redirectUrl: `/orders/${order.id}` };
+      return { redirectUrl: successPath };
     },
     onSuccess: ({ redirectUrl }) => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
+      clearCart();
       queryClient.invalidateQueries({ queryKey: ['orders'] });
       navigate(redirectUrl);
     },
@@ -86,9 +96,10 @@ export function CheckoutPage() {
 
   const needsCity = delivery !== 'pickup';
   const ready =
-    Boolean(cart?.items.length) &&
+    items.length > 0 &&
     name.length >= 3 &&
     /^\+?\d{10,13}$/.test(phone) &&
+    (Boolean(user) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) &&
     (!needsCity || Boolean(cityRef)) &&
     (delivery !== 'np_warehouse' || Boolean(warehouseRef)) &&
     (delivery !== 'np_courier' || address.length >= 5);
@@ -130,6 +141,23 @@ export function CheckoutPage() {
                 />
               </label>
             </div>
+            {!user && (
+              <label>
+                Email
+                <input
+                  className="input"
+                  required
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                />
+                <span className="muted small">
+                  Надішлемо підтвердження та статус замовлення. Або{' '}
+                  <Link to="/login">увійдіть</Link>, якщо маєте акаунт.
+                </span>
+              </label>
+            )}
           </section>
 
           <section>
@@ -246,17 +274,17 @@ export function CheckoutPage() {
 
         <div className="card order-summary">
           <h3>Ваше замовлення</h3>
-          {cart?.items.map((i) => (
-            <div key={i.id} className="summary-row">
+          {items.map(({ product, quantity }) => (
+            <div key={product.id} className="summary-row">
               <span>
-                {i.title} × {i.quantity}
+                {product.title} × {quantity}
               </span>
-              <span>{formatPrice(i.line_total_cents)}</span>
+              <span>{formatPrice(product.price_cents * quantity)}</span>
             </div>
           ))}
           <div className="summary-total">
             <span>Разом</span>
-            <strong>{formatPrice(cart?.total_cents ?? 0)}</strong>
+            <strong>{formatPrice(cartSubtotal(items))}</strong>
           </div>
         </div>
       </div>

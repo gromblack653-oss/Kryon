@@ -75,8 +75,10 @@ async function loadOrder(orderId: string): Promise<{ order: InvoiceOrder; items:
     `SELECT o.id, o.status, o.total_cents, o.shipping_address, o.created_at,
             o.delivery_method, o.recipient_name, o.recipient_phone, o.ttn,
             o.payment_method, o.payment_status,
-            u.name AS customer_name, u.email AS customer_email, u.phone AS customer_phone
-     FROM orders o JOIN users u ON u.id = o.user_id
+            COALESCE(u.name, o.guest_name) AS customer_name,
+            COALESCE(u.email, o.guest_email) AS customer_email,
+            COALESCE(u.phone, o.guest_phone) AS customer_phone
+     FROM orders o LEFT JOIN users u ON u.id = o.user_id
      WHERE o.id = $1`,
     [orderId],
   );

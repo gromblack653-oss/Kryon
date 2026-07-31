@@ -2,7 +2,7 @@ import { Router, raw } from 'express';
 import { z } from 'zod';
 import { asyncHandler } from '../../utils/asyncHandler';
 import { validate } from '../../middleware/validate';
-import { authenticate, authorize } from '../../middleware/auth';
+import { optionalAuthenticate } from '../../middleware/auth';
 import { BadRequestError, NotFoundError } from '../../utils/errors';
 import {
   createSession,
@@ -86,10 +86,9 @@ router.post(
  */
 router.post(
   '/orders/:orderId/session',
-  authenticate,
-  authorize('customer'),
+  optionalAuthenticate,
   asyncHandler(async (req, res) => {
-    res.status(201).json(await createSession(req.params.orderId, req.user!.id));
+    res.status(201).json(await createSession(req.params.orderId, req.user?.id ?? null));
   }),
 );
 

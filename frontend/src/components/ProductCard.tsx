@@ -1,29 +1,27 @@
 import { Link } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Product } from '../types';
 import { formatPrice } from '@shopcore/shared';
-import { cartApi } from '../api/endpoints';
-import { useAuthStore } from '../store/authStore';
+import { useCartStore } from '../store/cartStore';
 import { useCompareStore } from '../store/compareStore';
 import { useWishlist } from '../hooks/useWishlist';
 import { ProductImage } from './ProductImage';
 import { Stars } from './Stars';
 
 export function ProductCard({ product }: { product: Product }) {
-  const user = useAuthStore((s) => s.user);
-  const queryClient = useQueryClient();
+  const addToCart = useCartStore((s) => s.add);
   const inCompare = useCompareStore((s) => s.ids.includes(product.id));
   const toggleCompare = useCompareStore((s) => s.toggle);
   const compareFull = useCompareStore((s) => s.ids.length >= 4);
   const wishlist = useWishlist();
 
-  const addToCart = useMutation({
-    mutationFn: () => cartApi.addItem(product.id, 1),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['cart'] }),
-  });
+  const onSale = !!product.old_price_cents && product.old_price_cents > product.price_cents;
+  const discount = onSale
+    ? Math.round((1 - product.price_cents / product.old_price_cents!) * 100)
+    : 0;
 
   return (
     <div className="card product-card">
+      {onSale && <span className="sale-badge">−{discount}%</span>}
       <div className="card-tools">
         {wishlist.enabled && (
           <button
@@ -68,22 +66,32 @@ export function ProductCard({ product }: { product: Product }) {
             ))}
           </div>
         )}
-        <div className="product-price">{formatPrice(product.price_cents)}</div>
+        <div className="product-price">
+          {formatPrice(product.price_cents)}
+          {onSale && <span className="old-price">{formatPrice(product.old_price_cents!)}</span>}
+        </div>
         <div className="product-actions">
           {product.stock > 0 ? (
             <span className="stock in">В наявності</span>
           ) : (
             <span className="stock out">Немає</span>
           )}
-          {user?.role === 'customer' && (
-            <button
-              className="btn btn-primary btn-sm"
-              disabled={product.stock === 0 || addToCart.isPending}
-              onClick={() => addToCart.mutate()}
-            >
-              {addToCart.isPending ? '...' : 'У кошик'}
-            </button>
-          )}
+          <button
+            className="btn btn-primary btn-sm"
+            disabled={product.stock === 0}
+            onClick={() =>
+              addToCart({
+                id: product.id,
+                slug: product.slug,
+                title: product.title,
+                price_cents: product.price_cents,
+                image_url: product.image_url,
+                stock: product.stock,
+              })
+            }
+          >
+            У кошик
+          </button>
         </div>
       </div>
     </div>

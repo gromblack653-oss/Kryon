@@ -1,15 +1,25 @@
 import { z } from 'zod';
 
+const phoneRegex = /^\+?\d{10,13}$/;
+
 export const createOrderSchema = z
   .object({
+    items: z
+      .array(
+        z.object({
+          productId: z.string().uuid(),
+          quantity: z.number().int().min(1).max(99),
+        }),
+      )
+      .min(1, 'Кошик порожній'),
     shippingAddress: z.string().min(5).max(300),
     deliveryMethod: z.enum(['np_warehouse', 'np_courier', 'pickup']).default('np_warehouse'),
     paymentMethod: z.enum(['card', 'cod']).default('cod'),
     recipientName: z.string().min(3).max(120).optional(),
-    recipientPhone: z
-      .string()
-      .regex(/^\+?\d{10,13}$/, 'Телефон у форматі +380XXXXXXXXX')
-      .optional(),
+    recipientPhone: z.string().regex(phoneRegex, 'Телефон у форматі +380XXXXXXXXX').optional(),
+    guestName: z.string().min(3).max(120).optional(),
+    guestEmail: z.string().email().optional(),
+    guestPhone: z.string().regex(phoneRegex, 'Телефон у форматі +380XXXXXXXXX').optional(),
     npCityRef: z.string().optional(),
     npWarehouseRef: z.string().optional(),
   })

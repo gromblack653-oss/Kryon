@@ -2,14 +2,13 @@ import { Router } from 'express';
 import { orderService } from './order.service';
 import { asyncHandler } from '../../utils/asyncHandler';
 import { validate } from '../../middleware/validate';
-import { authenticate, authorize } from '../../middleware/auth';
+import { authenticate, authorize, optionalAuthenticate } from '../../middleware/auth';
 import { createOrderSchema, listOrdersSchema, updateStatusSchema } from './order.schemas';
 import { buildInvoicePdf, invoiceNumber } from '../invoices/invoice.service';
 import { query } from '../../db/pool';
 import { ForbiddenError, NotFoundError } from '../../utils/errors';
 
 const router = Router();
-router.use(authenticate);
 
 /**
  * @openapi
@@ -24,6 +23,7 @@ router.use(authenticate);
  */
 router.get(
   '/:id/invoice',
+  authenticate,
   asyncHandler(async (req, res) => {
     const role = req.user!.role;
     if (role !== 'admin' && role !== 'agent') {
@@ -55,11 +55,28 @@ router.get(
  */
 router.post(
   '/',
-  authorize('customer'),
+  optionalAuthenticate,
   validate(createOrderSchema),
   asyncHandler(async (req, res) => {
-    const order = await orderService.checkout(req.user!.id, req.body);
+    const order = await orderService.checkout(req.user?.id ?? null, req.body);
     res.status(201).json(order);
+  }),
+);
+
+/**
+ * @openapi
+ * /api/orders/{id}/confirmation:
+ *   get:
+ *     tags: [Orders]
+ *     summary: Публічне підтвердження замовлення (для гостя) — доступ за UUID
+ *     responses:
+ *       200: { description: Безпечний зріз замовлення + позиції }
+ *       404: { description: Замовлення не знайдено }
+ */
+router.get(
+  '/:id/confirmation',
+  asyncHandler(async (req, res) => {
+    res.json(await orderService.getConfirmation(req.params.id));
   }),
 );
 
@@ -73,6 +90,7 @@ router.post(
  */
 router.get(
   '/',
+  authenticate,
   validate(listOrdersSchema, 'query'),
   asyncHandler(async (req, res) => {
     const { page, limit } = req.query as unknown as { page: number; limit: number };
@@ -94,6 +112,7 @@ router.get(
  */
 router.get(
   '/:id',
+  authenticate,
   asyncHandler(async (req, res) => {
     const order = await orderService.getForUser(req.params.id, req.user!.id, req.user!.role);
     res.json(order);
@@ -110,6 +129,7 @@ router.get(
  */
 router.patch(
   '/:id/status',
+  authenticate,
   authorize('admin'),
   validate(updateStatusSchema),
   asyncHandler(async (req, res) => {

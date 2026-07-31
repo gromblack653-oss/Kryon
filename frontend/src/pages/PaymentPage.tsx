@@ -4,11 +4,15 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { paymentsApi } from '../api/endpoints';
 import { formatPrice } from '@shopcore/shared';
 import { apiError } from '../api/client';
+import { useAuthStore } from '../store/authStore';
 
 export function PaymentPage() {
   const { externalId = '' } = useParams();
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const isAuthed = useAuthStore((s) => !!s.user);
+  const orderPath = (orderId: string) =>
+    isAuthed ? `/orders/${orderId}` : `/order-confirmation/${orderId}`;
   const [error, setError] = useState('');
 
   const { data: payment, isLoading } = useQuery({
@@ -21,7 +25,7 @@ export function PaymentPage() {
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['orders'] });
       const fresh = await paymentsApi.get(externalId);
-      if (fresh.status === 'paid') navigate(`/orders/${fresh.orderId}`);
+      if (fresh.status === 'paid') navigate(orderPath(fresh.orderId));
       else {
         setError('Оплату відхилено. Спробуйте інший спосіб оплати.');
         qc.invalidateQueries({ queryKey: ['payment', externalId] });
@@ -40,7 +44,7 @@ export function PaymentPage() {
           <div className="pay-badge ok">✓</div>
           <h2>Оплачено</h2>
           <p className="muted">Замовлення на {formatPrice(payment.amountCents)} успішно оплачене.</p>
-          <Link className="btn btn-primary btn-lg full" to={`/orders/${payment.orderId}`}>
+          <Link className="btn btn-primary btn-lg full" to={orderPath(payment.orderId)}>
             До замовлення
           </Link>
         </div>

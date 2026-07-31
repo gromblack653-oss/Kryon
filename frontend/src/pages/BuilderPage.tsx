@@ -1,10 +1,10 @@
 import { useMemo, useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { builderApi, cartApi } from '../api/endpoints';
+import { useQuery } from '@tanstack/react-query';
+import { builderApi } from '../api/endpoints';
 import { formatPrice } from '@shopcore/shared';
 import { assetUrl } from '@shopcore/shared';
-import { useAuthStore } from '../store/authStore';
+import { useCartStore } from '../store/cartStore';
 import type { BuildPart, PartType } from '../types';
 
 const ACC: Record<PartType, string> = {
@@ -27,8 +27,7 @@ const KEY_SPEC: Record<PartType, (a: Record<string, string>) => string> = {
 
 export function BuilderPage() {
   const navigate = useNavigate();
-  const qc = useQueryClient();
-  const user = useAuthStore((s) => s.user);
+  const addToCart = useCartStore((s) => s.add);
   const [openSlot, setOpenSlot] = useState<PartType | null>(null);
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -64,17 +63,22 @@ export function BuilderPage() {
     enabled: Object.keys(picked).length > 0,
   });
 
-  const addAll = useMutation({
-    mutationFn: async () => {
-      for (const id of Object.values(picked)) {
-        if (id) await cartApi.addItem(id, 1);
+  function addAll(): void {
+    for (const id of Object.values(picked)) {
+      const part = id ? partById.get(id) : undefined;
+      if (part) {
+        addToCart({
+          id: part.id,
+          slug: part.slug,
+          title: part.title,
+          price_cents: part.price_cents,
+          image_url: part.image_url,
+          stock: part.stock,
+        });
       }
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['cart'] });
-      navigate('/cart');
-    },
-  });
+    }
+    navigate('/cart');
+  }
 
   const partById = useMemo(() => {
     const m = new Map<string, BuildPart>();
@@ -207,17 +211,9 @@ export function BuilderPage() {
             </p>
           )}
 
-          {user?.role === 'customer' ? (
-            <button
-              className="btn btn-primary btn-lg full"
-              disabled={!canBuy || addAll.isPending}
-              onClick={() => addAll.mutate()}
-            >
-              {addAll.isPending ? 'Додаємо...' : 'Додати збірку в кошик'}
-            </button>
-          ) : (
-            <p className="muted small">Увійдіть як покупець, щоб додати збірку в кошик.</p>
-          )}
+          <button className="btn btn-primary btn-lg full" disabled={!canBuy} onClick={addAll}>
+            Додати збірку в кошик
+          </button>
         </aside>
       </div>
 

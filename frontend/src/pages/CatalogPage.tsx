@@ -178,28 +178,34 @@ export function CatalogPage() {
             </div>
           </div>
 
-          {}
-          {facets?.map((f) => (
-            <div className="filter-group" key={f.key}>
-              <h4>
-                {f.label}
-                {f.unit ? `, ${f.unit}` : ''}
-              </h4>
-              <div className="facet-list">
-                {f.options.map((o) => (
-                  <label key={o.value} className="facet-row">
-                    <input
-                      type="checkbox"
-                      checked={(attrs[f.key] ?? []).includes(o.value)}
-                      onChange={() => toggleAttr(f.key, o.value)}
-                    />
-                    <span>{o.value}</span>
-                    <span className="facet-count">{o.count}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          ))}
+          {facets?.map((f) => {
+            const selected = attrs[f.key]?.length ?? 0;
+            return (
+              <details className="filter-group facet-drop" key={f.key}>
+                <summary>
+                  <span className="fg-title">
+                    {f.label}
+                    {f.unit ? `, ${f.unit}` : ''}
+                  </span>
+                  {selected > 0 && <span className="fg-badge">{selected}</span>}
+                  <span className="fg-caret">▾</span>
+                </summary>
+                <div className="facet-list">
+                  {f.options.map((o) => (
+                    <label key={o.value} className="facet-row">
+                      <input
+                        type="checkbox"
+                        checked={(attrs[f.key] ?? []).includes(o.value)}
+                        onChange={() => toggleAttr(f.key, o.value)}
+                      />
+                      <span>{o.value}</span>
+                      <span className="facet-count">{o.count}</span>
+                    </label>
+                  ))}
+                </div>
+              </details>
+            );
+          })}
 
           <div className="filter-group">
             <label className="check-row">

@@ -1,5 +1,4 @@
 import { withTransaction, query } from '../../db/pool';
-import { ensureCart } from '../cart/cart.repository';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../../utils/errors';
 import { invalidate } from '../../db/redis';
 import { emitToAdmins, emitToUser } from '../../realtime/io';
@@ -13,7 +12,7 @@ export type PaymentStatus = 'unpaid' | 'pending' | 'paid' | 'failed' | 'refunded
 
 export interface Order {
   id: string;
-  user_id: string;
+  user_id: string | null;
   status: OrderStatus;
   total_cents: number;
   shipping_address: string;
@@ -24,6 +23,9 @@ export interface Order {
   np_warehouse_name: string | null;
   recipient_name: string | null;
   recipient_phone: string | null;
+  guest_name: string | null;
+  guest_email: string | null;
+  guest_phone: string | null;
   ttn: string | null;
   payment_method: PaymentMethod;
   payment_status: PaymentStatus;
@@ -56,34 +58,36 @@ function allowedNext(order: Pick<Order, 'status' | 'payment_method'>): OrderStat
 }
 
 export const orderService = {
-  async checkout(userId: string, input: CreateOrderInput): Promise<Order> {
-    const order = await withTransaction(async (client) => {
-      const cartId = await ensureCart(userId, client);
+  async checkout(userId: string | null, input: CreateOrderInput): Promise<Order> {
+    if (!userId && (!input.guestName || !input.guestEmail || !input.guestPhone)) {
+      throw new BadRequestError("Для замовлення без входу вкажіть ім'я, email і телефон");
+    }
 
-      const { rows: items } = await client.query<{
-        product_id: string;
+    const order = await withTransaction(async (client) => {
+      const ids = input.items.map((i) => i.productId);
+      const { rows: products } = await client.query<{
+        id: string;
         title: string;
         price_cents: number;
-        quantity: number;
         stock: number;
       }>(
-        `SELECT ci.product_id, p.title, p.price_cents, ci.quantity, p.stock
-         FROM cart_items ci
-         JOIN products p ON p.id = ci.product_id
-         WHERE ci.cart_id = $1
-         FOR UPDATE OF p`,
-        [cartId],
+        `SELECT id, title, price_cents, stock FROM products
+         WHERE id = ANY($1::uuid[]) AND is_active
+         FOR UPDATE`,
+        [ids],
       );
+      const byId = new Map(products.map((p) => [p.id, p]));
 
-      if (items.length === 0) throw new BadRequestError('Кошик порожній');
-
-      for (const item of items) {
-        if (item.quantity > item.stock) {
+      const items = input.items.map((i) => {
+        const p = byId.get(i.productId);
+        if (!p) throw new BadRequestError('Один із товарів більше недоступний');
+        if (i.quantity > p.stock) {
           throw new BadRequestError(
-            `Недостатньо товару "${item.title}" на складі (є ${item.stock}, потрібно ${item.quantity})`,
+            `Недостатньо товару "${p.title}" на складі (є ${p.stock}, потрібно ${i.quantity})`,
           );
         }
-      }
+        return { ...p, quantity: i.quantity };
+      });
 
       const total = items.reduce((sum, i) => sum + i.price_cents * i.quantity, 0);
 
@@ -96,8 +100,9 @@ export const orderService = {
       const { rows: orderRows } = await client.query<Order>(
         `INSERT INTO orders (user_id, total_cents, shipping_address, delivery_method,
                              np_city_ref, np_city_name, np_warehouse_ref, np_warehouse_name,
-                             recipient_name, recipient_phone, payment_method, payment_status)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'unpaid') RETURNING *`,
+                             recipient_name, recipient_phone, guest_name, guest_email, guest_phone,
+                             payment_method, payment_status)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, 'unpaid') RETURNING *`,
         [
           userId,
           total,
@@ -109,6 +114,9 @@ export const orderService = {
           warehouse ? `${warehouse.name} — ${warehouse.address}` : null,
           input.recipientName ?? null,
           input.recipientPhone ?? null,
+          userId ? null : (input.guestName ?? null),
+          userId ? null : (input.guestEmail ?? null),
+          userId ? null : (input.guestPhone ?? null),
           input.paymentMethod,
         ],
       );
@@ -118,21 +126,53 @@ export const orderService = {
         await client.query(
           `INSERT INTO order_items (order_id, product_id, title, price_cents, quantity)
            VALUES ($1, $2, $3, $4, $5)`,
-          [created.id, item.product_id, item.title, item.price_cents, item.quantity],
+          [created.id, item.id, item.title, item.price_cents, item.quantity],
         );
-        await client.query(`UPDATE products SET stock = stock - $1 WHERE id = $2`, [
-          item.quantity,
-          item.product_id,
-        ]);
+        await client.query(`UPDATE products SET stock = stock - $1 WHERE id = $2`, [item.quantity, item.id]);
       }
 
-      await client.query(`DELETE FROM cart_items WHERE cart_id = $1`, [cartId]);
       return created;
     });
 
     await invalidate('products:list:*');
     emitToAdmins('order:created', { orderId: order.id, total_cents: order.total_cents });
     return order;
+  },
+
+  async getConfirmation(orderId: string): Promise<{
+    id: string;
+    status: OrderStatus;
+    total_cents: number;
+    shipping_address: string;
+    delivery_method: DeliveryMethod;
+    np_city_name: string | null;
+    np_warehouse_name: string | null;
+    recipient_name: string | null;
+    ttn: string | null;
+    payment_method: PaymentMethod;
+    payment_status: PaymentStatus;
+    created_at: string;
+    items: OrderItem[];
+  }> {
+    const rows = await query<Order>('SELECT * FROM orders WHERE id = $1', [orderId]);
+    const order = rows[0];
+    if (!order) throw new NotFoundError('Order not found');
+    const items = await query<OrderItem>('SELECT * FROM order_items WHERE order_id = $1', [orderId]);
+    return {
+      id: order.id,
+      status: order.status,
+      total_cents: order.total_cents,
+      shipping_address: order.shipping_address,
+      delivery_method: order.delivery_method,
+      np_city_name: order.np_city_name,
+      np_warehouse_name: order.np_warehouse_name,
+      recipient_name: order.recipient_name ?? order.guest_name,
+      ttn: order.ttn,
+      payment_method: order.payment_method,
+      payment_status: order.payment_status,
+      created_at: order.created_at,
+      items,
+    };
   },
 
   async getForUser(orderId: string, userId: string, role: UserRole): Promise<Order & { items: OrderItem[] }> {
@@ -188,7 +228,7 @@ export const orderService = {
       [next, ttn, paymentStatus, orderId],
     );
 
-    emitToUser(order.user_id, 'order:status', { orderId, status: next, ttn });
+    if (order.user_id) emitToUser(order.user_id, 'order:status', { orderId, status: next, ttn });
     return updated[0];
   },
 };

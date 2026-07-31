@@ -5,10 +5,12 @@ import { CatalogPage } from './pages/CatalogPage';
 import { ProductPage } from './pages/ProductPage';
 import { ComparePage } from './pages/ComparePage';
 import { BuilderPage } from './pages/BuilderPage';
+import { PromoPage } from './pages/PromoPage';
 import { WishlistPage } from './pages/WishlistPage';
 import { CartPage } from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { PaymentPage } from './pages/PaymentPage';
+import { OrderConfirmationPage } from './pages/OrderConfirmationPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { OrdersPage } from './pages/OrdersPage';
@@ -23,6 +25,7 @@ export default function App() {
         <Route path="products/:id" element={<ProductPage />} />
         <Route path="compare" element={<ComparePage />} />
         <Route path="builder" element={<BuilderPage />} />
+        <Route path="promo" element={<PromoPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
 
@@ -34,30 +37,10 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="cart"
-          element={
-            <ProtectedRoute role="customer">
-              <CartPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="checkout"
-          element={
-            <ProtectedRoute role="customer">
-              <CheckoutPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="payment/:externalId"
-          element={
-            <ProtectedRoute role="customer">
-              <PaymentPage />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="cart" element={<CartPage />} />
+        <Route path="checkout" element={<CheckoutPage />} />
+        <Route path="payment/:externalId" element={<PaymentPage />} />
+        <Route path="order-confirmation/:id" element={<OrderConfirmationPage />} />
         <Route
           path="orders"
           element={

@@ -9,8 +9,9 @@ export const listProductsSchema = z.object({
   minPrice: z.coerce.number().int().min(0).optional(),
   maxPrice: z.coerce.number().int().min(0).optional(),
   inStock: z.coerce.boolean().optional(),
+  promo: z.coerce.boolean().optional(),
   attrs: z.string().max(500).optional(),
-  sort: z.enum(['newest', 'price_asc', 'price_desc', 'title', 'rating']).default('newest'),
+  sort: z.enum(['newest', 'price_asc', 'price_desc', 'title', 'rating', 'discount']).default('newest'),
 });
 
 export const facetsSchema = listProductsSchema.omit({ page: true, limit: true, sort: true });
@@ -27,6 +28,7 @@ export const createProductSchema = z.object({
     .regex(/^[a-z0-9-]+$/, 'slug: лише малі латинські літери, цифри та дефіс'),
   description: z.string().max(5000).default(''),
   price: z.number().int().min(0),
+  oldPrice: z.number().int().min(0).nullable().optional(),
   stock: z.number().int().min(0).default(0),
   categoryId: z.string().uuid().optional(),
 });

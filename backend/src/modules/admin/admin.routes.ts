@@ -62,12 +62,14 @@ router.get(
       items: string;
     }>(
       `SELECT o.id, o.created_at, o.status, o.total_cents, o.shipping_address,
-              u.name AS customer_name, u.email AS customer_email, u.phone AS customer_phone,
+              COALESCE(u.name, o.guest_name, 'Гість') AS customer_name,
+              COALESCE(u.email, o.guest_email, '') AS customer_email,
+              COALESCE(u.phone, o.guest_phone) AS customer_phone,
               COALESCE(string_agg(oi.title || ' x' || oi.quantity, '; '), '') AS items
        FROM orders o
-       JOIN users u ON u.id = o.user_id
+       LEFT JOIN users u ON u.id = o.user_id
        LEFT JOIN order_items oi ON oi.order_id = o.id
-       GROUP BY o.id, u.name, u.email, u.phone
+       GROUP BY o.id, u.name, u.email, u.phone, o.guest_name, o.guest_email, o.guest_phone
        ORDER BY o.created_at DESC`,
     );
 
@@ -145,8 +147,9 @@ router.get(
     );
 
     const recentOrders = await query(
-      `SELECT o.id, o.status, o.total_cents, o.created_at, o.payment_method, u.name AS customer_name
-       FROM orders o JOIN users u ON u.id = o.user_id
+      `SELECT o.id, o.status, o.total_cents, o.created_at, o.payment_method,
+              COALESCE(u.name, o.guest_name, 'Гість') AS customer_name
+       FROM orders o LEFT JOIN users u ON u.id = o.user_id
        ORDER BY o.created_at DESC LIMIT 8`,
     );
 

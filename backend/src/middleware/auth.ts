@@ -19,6 +19,19 @@ export function authenticate(req: Request, _res: Response, next: NextFunction): 
   }
 }
 
+export function optionalAuthenticate(req: Request, _res: Response, next: NextFunction): void {
+  const header = req.headers.authorization;
+  if (header?.startsWith('Bearer ')) {
+    try {
+      const payload = jwt.verify(header.slice('Bearer '.length), env.jwt.accessSecret) as JwtPayload;
+      req.user = { id: payload.sub, role: payload.role, email: payload.email };
+    } catch {
+      /* гість без валідного токена — продовжуємо анонімно */
+    }
+  }
+  next();
+}
+
 export function authorize(...roles: UserRole[]) {
   return (req: Request, _res: Response, next: NextFunction): void => {
     if (!req.user) throw new UnauthorizedError();

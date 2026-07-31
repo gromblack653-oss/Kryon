@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { productsApi, cartApi } from '../api/endpoints';
+import { useQuery } from '@tanstack/react-query';
+import { productsApi } from '../api/endpoints';
 import { formatPrice } from '@shopcore/shared';
-import { useAuthStore } from '../store/authStore';
+import { useCartStore } from '../store/cartStore';
 import { useWishlist } from '../hooks/useWishlist';
 import { ProductImage } from '../components/ProductImage';
 import { assetUrl } from '@shopcore/shared';
@@ -12,9 +12,8 @@ import { Reviews } from '../components/Reviews';
 
 export function ProductPage() {
   const { id } = useParams<{ id: string }>();
-  const user = useAuthStore((s) => s.user);
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const addToCart = useCartStore((s) => s.add);
   const wishlist = useWishlist();
   const [activeImage, setActiveImage] = useState(0);
 
@@ -26,14 +25,6 @@ export function ProductPage() {
     queryKey: ['product', id],
     queryFn: () => productsApi.get(id!),
     enabled: !!id,
-  });
-
-  const addToCart = useMutation({
-    mutationFn: () => cartApi.addItem(id!, 1),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
-      navigate('/cart');
-    },
   });
 
   if (isLoading) return <p className="muted">Завантаження...</p>;
@@ -81,7 +72,17 @@ export function ProductPage() {
               <span className="muted">· {product.rating_count} відгуків</span>
             </a>
           )}
-          <div className="detail-price">{formatPrice(product.price_cents)}</div>
+          <div className="detail-price">
+            {formatPrice(product.price_cents)}
+            {!!product.old_price_cents && product.old_price_cents > product.price_cents && (
+              <>
+                <span className="old-price">{formatPrice(product.old_price_cents)}</span>
+                <span className="sale-badge inline">
+                  −{Math.round((1 - product.price_cents / product.old_price_cents) * 100)}%
+                </span>
+              </>
+            )}
+          </div>
           <p className="detail-desc">{product.description || 'Опис відсутній.'}</p>
 
           {product.attributes && product.attributes.length > 0 && (
@@ -103,15 +104,25 @@ export function ProductPage() {
             {product.stock > 0 ? `В наявності: ${product.stock} шт.` : 'Немає в наявності'}
           </p>
 
-          {user?.role === 'customer' ? (
-            <div className="buy-row">
-              <button
-                className="btn btn-primary btn-lg"
-                disabled={product.stock === 0 || addToCart.isPending}
-                onClick={() => addToCart.mutate()}
-              >
-                Додати в кошик
-              </button>
+          <div className="buy-row">
+            <button
+              className="btn btn-primary btn-lg"
+              disabled={product.stock === 0}
+              onClick={() => {
+                addToCart({
+                  id: product.id,
+                  slug: product.slug,
+                  title: product.title,
+                  price_cents: product.price_cents,
+                  image_url: product.image_url,
+                  stock: product.stock,
+                });
+                navigate('/cart');
+              }}
+            >
+              Додати в кошик
+            </button>
+            {wishlist.enabled && (
               <button
                 className={`btn btn-ghost btn-lg wish-btn ${wishlist.has(product.id) ? 'active' : ''}`}
                 disabled={wishlist.isPending}
@@ -119,12 +130,8 @@ export function ProductPage() {
               >
                 {wishlist.has(product.id) ? '♥ В обраному' : '♡ В обране'}
               </button>
-            </div>
-          ) : !user ? (
-            <Link to="/login" className="btn btn-primary btn-lg">
-              Увійдіть, щоб купити
-            </Link>
-          ) : null}
+            )}
+          </div>
         </div>
       </div>
 

@@ -15,6 +15,7 @@ export interface Product {
   slug: string;
   description: string;
   price_cents: number;
+  old_price_cents: number | null;
   stock: number;
   image_url: string | null;
   category_id: string | null;
@@ -73,6 +74,7 @@ const SORT_SQL: Record<ListProductsQuery['sort'], string> = {
   price_desc: 'p.price_cents DESC',
   title: 'p.title ASC',
   rating: 'rating_avg DESC NULLS LAST, rating_count DESC',
+  discount: '(p.old_price_cents - p.price_cents) DESC NULLS LAST',
 };
 
 const RATING_COLS = `
@@ -120,7 +122,7 @@ async function getImages(productId: string): Promise<ProductImage[]> {
 
 type FilterInput = Pick<
   ListProductsQuery,
-  'search' | 'type' | 'category' | 'minPrice' | 'maxPrice' | 'inStock' | 'attrs'
+  'search' | 'type' | 'category' | 'minPrice' | 'maxPrice' | 'inStock' | 'promo' | 'attrs'
 >;
 
 function baseFilters(q: FilterInput, params: unknown[]): string[] {
@@ -148,6 +150,7 @@ function baseFilters(q: FilterInput, params: unknown[]): string[] {
     where.push(`p.price_cents <= $${params.length}`);
   }
   if (q.inStock) where.push('p.stock > 0');
+  if (q.promo) where.push('p.old_price_cents IS NOT NULL AND p.old_price_cents > p.price_cents');
   return where;
 }
 
@@ -313,10 +316,18 @@ export const productRepository = {
 
   async create(input: CreateProductInput): Promise<Product> {
     const rows = await query<Product>(
-      `INSERT INTO products (title, slug, description, price_cents, stock, category_id)
-       VALUES ($1, $2, $3, $4, $5, $6)
+      `INSERT INTO products (title, slug, description, price_cents, old_price_cents, stock, category_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING *`,
-      [input.title, input.slug, input.description, input.price, input.stock, input.categoryId ?? null],
+      [
+        input.title,
+        input.slug,
+        input.description,
+        input.price,
+        input.oldPrice ?? null,
+        input.stock,
+        input.categoryId ?? null,
+      ],
     );
     return rows[0];
   },
@@ -329,6 +340,7 @@ export const productRepository = {
       slug: input.slug,
       description: input.description,
       price_cents: input.price,
+      old_price_cents: input.oldPrice,
       stock: input.stock,
       category_id: input.categoryId,
       is_active: input.isActive,

@@ -35,17 +35,17 @@ export function verifySignature(rawBody: string, signature: string): boolean {
 
 export async function createSession(
   orderId: string,
-  userId: string,
+  userId: string | null,
 ): Promise<{ paymentId: string; externalId: string; redirectUrl: string; amountCents: number }> {
   const orders = await query<{
     id: string;
-    user_id: string;
+    user_id: string | null;
     total_cents: number;
     payment_status: PaymentStatus;
   }>('SELECT id, user_id, total_cents, payment_status FROM orders WHERE id = $1', [orderId]);
   const order = orders[0];
   if (!order) throw new NotFoundError('Order not found');
-  if (order.user_id !== userId) throw new NotFoundError('Order not found');
+  if (order.user_id && order.user_id !== userId) throw new NotFoundError('Order not found');
   if (order.payment_status === 'paid') throw new BadRequestError('Замовлення вже оплачене');
 
   const externalId = `${env.payments.provider}_${crypto.randomUUID()}`;
