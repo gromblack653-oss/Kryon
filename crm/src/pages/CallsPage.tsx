@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { crmApi } from '../api/endpoints';
+import { useAuthStore } from '../store/authStore';
 import { CallButton } from '../components/CallButton';
 import { CallRecording } from '../components/CallRecording';
 import { Avatar } from '../components/Avatar';
@@ -17,6 +18,7 @@ const SORTS: Array<{ value: CallSort; label: string }> = [
 
 export function CallsPage() {
   const queryClient = useQueryClient();
+  const isAdmin = useAuthStore((s) => s.user?.role === 'admin');
   const [number, setNumber] = useState('');
   const [sort, setSort] = useState<CallSort>('newest');
   const { data: calls } = useQuery({ queryKey: ['calls', sort], queryFn: () => crmApi.recentCalls(sort) });
@@ -25,6 +27,11 @@ export function CallsPage() {
     queryClient.invalidateQueries({ queryKey: ['calls'] });
     queryClient.invalidateQueries({ queryKey: ['stats'] });
   };
+
+  const remove = useMutation({
+    mutationFn: (id: string) => crmApi.deleteCall(id),
+    onSuccess: refresh,
+  });
 
   return (
     <div>
@@ -89,6 +96,7 @@ export function CallsPage() {
                 <th>Запис</th>
                 <th>Оператор</th>
                 <th>Коли</th>
+                {isAdmin && <th></th>}
               </tr>
             </thead>
             <tbody>
@@ -119,11 +127,24 @@ export function CallsPage() {
                   </td>
                   <td className="muted">{c.agent_name ?? '—'}</td>
                   <td className="muted">{formatDate(c.created_at)}</td>
+                  {isAdmin && (
+                    <td>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        disabled={remove.isPending}
+                        onClick={() => {
+                          if (confirm('Видалити цей дзвінок із журналу?')) remove.mutate(c.id);
+                        }}
+                      >
+                        Видалити
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
               {calls && calls.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="empty">
+                  <td colSpan={isAdmin ? 9 : 8} className="empty">
                     Дзвінків ще немає.
                   </td>
                 </tr>

@@ -173,6 +173,11 @@ export const crmRepository = {
     return rows[0] ?? null;
   },
 
+  async deleteCall(callId: string): Promise<boolean> {
+    const rows = await query<{ id: string }>(`DELETE FROM call_logs WHERE id = $1 RETURNING id`, [callId]);
+    return rows.length > 0;
+  },
+
   async addNote(input: {
     customerId: string;
     agentId: string;

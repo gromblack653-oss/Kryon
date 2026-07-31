@@ -185,4 +185,19 @@ router.post(
   }),
 );
 
+/**
+ * @openapi
+ * /api/crm/calls/{id}:
+ *   delete: { tags: [CRM], summary: Видалити дзвінок із журналу (лише admin), security: [{ bearerAuth: [] }] }
+ */
+router.delete(
+  '/calls/:id',
+  authorize('admin'),
+  asyncHandler(async (req, res) => {
+    const deleted = await crmRepository.deleteCall(req.params.id);
+    if (!deleted) throw new NotFoundError('Call not found');
+    res.status(204).send();
+  }),
+);
+
 export default router;

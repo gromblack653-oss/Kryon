@@ -41,6 +41,8 @@ export const crmApi = {
     form.append('recording', file);
     return api.post<CallLog>(`/api/crm/calls/${callId}/recording`, form).then((r) => r.data);
   },
+
+  deleteCall: (callId: string) => api.delete(`/api/crm/calls/${callId}`).then((r) => r.data),
 };
 
 export const telephonyApi = {
