@@ -58,6 +58,14 @@ export function createApiClient(baseURL: string, auth: AuthAdapter) {
 }
 
 export function apiError(err: unknown): string {
-  if (axios.isAxiosError(err)) return err.response?.data?.error?.message ?? err.message;
+  if (axios.isAxiosError(err)) {
+    const data = err.response?.data?.error;
+    const details = data?.details as Array<{ message?: string }> | undefined;
+    if (details?.length) {
+      const messages = details.map((d) => d.message).filter(Boolean);
+      if (messages.length) return messages.join('; ');
+    }
+    return data?.message ?? err.message;
+  }
   return 'Невідома помилка';
 }
