@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useMutation } from '@tanstack/react-query';
 import { telephonyApi } from '../api/endpoints';
 import { useCallSocket } from '../hooks/useCallSocket';
@@ -51,7 +52,7 @@ export function CallPanel({ call: initial, customerName, onDone }: Props) {
 
   const done = call.state === 'completed';
 
-  return (
+  return createPortal(
     <div className="modal-backdrop">
       <div className="modal call-panel" onClick={(e) => e.stopPropagation()}>
         <div className="modal-head">
@@ -147,6 +148,7 @@ export function CallPanel({ call: initial, customerName, onDone }: Props) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
